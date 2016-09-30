@@ -14,6 +14,7 @@ GroupFiles(Header_Files)
 GroupFiles(Source_Files)
 
 add_library(${target} STATIC ${Header_Files} ${Source_Files})
+add_library(${META_PROJECT_NAME}::${target} ALIAS ${target}) # Create namespaced alias
 
 target_include_directories(${target} 
 	PUBLIC
