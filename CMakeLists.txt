@@ -4,7 +4,7 @@ find_package(Boost REQUIRED)
 find_package(fmt REQUIRED)
 find_package(odil REQUIRED)
 
-set(target Core)
+set(target emdl)
 
 file(GLOB_RECURSE Header_Files "*.h")
 file(GLOB_RECURSE Source_Files "*.cpp")
@@ -29,5 +29,5 @@ target_link_libraries(${target}
 set_target_properties(${target} PROPERTIES FOLDER "Libraries")
 
 if(WIN32)
-	target_compile_definitions(${target} PRIVATE BUILDING_CORE)
+	target_compile_definitions(${target} PRIVATE BUILDING_EMDL)
 endif()
