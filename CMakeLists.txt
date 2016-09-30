@@ -37,8 +37,10 @@ generate_export_header(${target} EXPORT_FILE_NAME ${export_file} EXPORT_MACRO_NA
 target_include_directories(${target} 
 	PRIVATE
 	${CMAKE_SOURCE_DIR}/libs
+	${CMAKE_CURRENT_BINARY_DIR}/include
 	INTERFACE
-	$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/libs>  
+	$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/libs> 
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include> 
 	$<INSTALL_INTERFACE:include>)
 
 # Libraries
@@ -48,6 +50,18 @@ target_link_libraries(${target}
 	Boost::boost
 	PRIVATE
 	fmt)
+
+# Compile definitions
+target_compile_definitions(${target} PUBLIC
+	${target_upper}_STATIC_DEFINE
+	${DEFAULT_COMPILE_DEFINITIONS}
+)
+
+# Compile options
+target_compile_options(${target} PUBLIC ${DEFAULT_COMPILE_OPTIONS})
+
+# Linker options
+target_link_libraries(${target} PUBLIC ${DEFAULT_LINKER_OPTIONS})
 
 # Project options
 set_target_properties(${target} PROPERTIES FOLDER "Libraries")
