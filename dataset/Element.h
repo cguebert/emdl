@@ -2,8 +2,8 @@
 
 #include "Value.h"
 
-#include "odil/Tag.h"
-#include "odil/VR.h"
+#include <odil/Tag.h>
+#include <odil/VR.h>
 
 namespace
 {
