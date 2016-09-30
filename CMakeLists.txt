@@ -1,25 +1,47 @@
 cmake_minimum_required(VERSION 3.5)
 
+# External dependencies
 find_package(Boost REQUIRED)
 find_package(fmt REQUIRED)
 find_package(odil REQUIRED)
 
+# Target name
 set(target emdl)
 
+# Set API export file and macro
+string(TOUPPER ${target} target_upper)
+set(export_file  "include/${target}/${target}_api.h")
+set(export_macro "${target_upper}_API")
+
+# Sources
 file(GLOB_RECURSE Header_Files "*.h")
 file(GLOB_RECURSE Source_Files "*.cpp")
 
-# Regroup files by folder
+# Group source files
 GroupFiles(Header_Files)
 GroupFiles(Source_Files)
 
+# Create library
 add_library(${target} STATIC ${Header_Files} ${Source_Files})
-add_library(${META_PROJECT_NAME}::${target} ALIAS ${target}) # Create namespaced alias
 
+ # Create namespaced alias
+add_library(${META_PROJECT_NAME}::${target} ALIAS ${target})
+
+# Export library for downstream projects
+export(TARGETS ${target} NAMESPACE ${META_PROJECT_NAME}:: FILE ${PROJECT_BINARY_DIR}/cmake/${target}/${target}-export.cmake)
+
+# Create API export header
+generate_export_header(${target} EXPORT_FILE_NAME ${export_file} EXPORT_MACRO_NAME ${export_macro})
+
+# Include directories
 target_include_directories(${target} 
-	PUBLIC
-	${CMAKE_SOURCE_DIR}/libs)
+	PRIVATE
+	${CMAKE_SOURCE_DIR}/libs
+	INTERFACE
+	$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/libs>  
+	$<INSTALL_INTERFACE:include>)
 
+# Libraries
 target_link_libraries(${target}
 	PUBLIC
 	libodil
@@ -27,8 +49,37 @@ target_link_libraries(${target}
 	PRIVATE
 	fmt)
 
+# Project options
 set_target_properties(${target} PROPERTIES FOLDER "Libraries")
 
-if(WIN32)
-	target_compile_definitions(${target} PRIVATE BUILDING_EMDL)
-endif()
+# 
+# Deployment
+# 
+
+# Library
+install(TARGETS ${target}
+	EXPORT  "${target}-export"            COMPONENT dev
+	RUNTIME DESTINATION ${INSTALL_BIN}    COMPONENT runtime
+	LIBRARY DESTINATION ${INSTALL_SHARED} COMPONENT runtime
+	ARCHIVE DESTINATION ${INSTALL_LIB}    COMPONENT dev
+)
+
+# Header files
+install(DIRECTORY
+	${CMAKE_CURRENT_SOURCE_DIR} DESTINATION ${INSTALL_INCLUDE} 
+	COMPONENT dev
+	FILES_MATCHING PATTERN "*.h"
+)
+
+# Generated header files
+install(DIRECTORY
+	${CMAKE_CURRENT_BINARY_DIR}/include/${target} DESTINATION ${INSTALL_INCLUDE}
+	COMPONENT dev
+)
+
+# CMake config
+install(EXPORT ${target}-export
+	NAMESPACE   ${META_PROJECT_NAME}::
+	DESTINATION ${INSTALL_CMAKE}/${target}
+	COMPONENT   dev
+)
