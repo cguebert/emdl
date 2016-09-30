@@ -29,7 +29,7 @@ namespace message
 	CMoveResponse::CMoveResponse(Value::Integer msgIdResponse, Value::Integer status, const SparseDataSet& dataSet)
 		: CMoveResponse(msgIdResponse, status)
 	{
-		copyDataSet(dataSet);
+		setDataSet(dataSet);
 	}
 
 	CMoveResponse::CMoveResponse(const Message& message)

@@ -22,7 +22,7 @@ namespace message
 		affectedSopClassUid.set(sopClass);
 		priority.set(prio);
 
-		copyDataSet(dataSet);
+		setDataSet(dataSet);
 	}
 
 	CFindRequest::CFindRequest(const Message& message)

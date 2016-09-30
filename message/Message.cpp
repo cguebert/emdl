@@ -131,13 +131,6 @@ namespace message
 			field->copyFrom(dataSet);
 	}
 
-	void Message::copyDataSet(const Message& message)
-	{
-		if (!message.hasDataSet() || message.dataSet().empty())
-			throw Exception("A data set is required for the construction this message");
-		setDataSet(message.dataSet());
-	}
-
 	void Message::copyFromMessage(const Message& message, Value::Integer commandField, DataSetRequirement dataSetRequired)
 	{
 		if (message.commandField.get() != commandField)

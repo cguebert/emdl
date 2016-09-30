@@ -76,16 +76,16 @@ namespace message
 		Message();
 
 		//! Create a message from existing data.
-		Message(const SparseDataSet& commandSet);
-		Message(SparseDataSet&& commandSet);
+		explicit Message(const SparseDataSet& commandSet);
+		explicit Message(SparseDataSet&& commandSet);
 
 		//! Create a message from existing data.
-		Message(const SparseDataSet& commandSet, const SparseDataSet& dataSet);
-		Message(SparseDataSet&& commandSet, SparseDataSet&& dataSet);
+		explicit Message(const SparseDataSet& commandSet, const SparseDataSet& dataSet);
+		explicit Message(SparseDataSet&& commandSet, SparseDataSet&& dataSet);
 
 		//! Create a message from existing data.
-		Message(const SparseDataSet& commandSet, const BinaryBufferSPtr& dataBuffer, TransferSyntax transferSyntax);
-		Message(SparseDataSet&& commandSet, const BinaryBufferSPtr& dataBuffer, TransferSyntax transferSyntax);
+		explicit Message(const SparseDataSet& commandSet, const BinaryBufferSPtr& dataBuffer, TransferSyntax transferSyntax);
+		explicit Message(SparseDataSet&& commandSet, const BinaryBufferSPtr& dataBuffer, TransferSyntax transferSyntax);
 
 		//! Destructor;
 		virtual ~Message();
@@ -127,9 +127,6 @@ namespace message
 
 		//! Automatically copy the fields from the other message
 		void copyFieldsFromMessage(const Message& message);
-
-		//! Verify the presence of a data set and copy it
-		void copyDataSet(const Message& message);
 
 		enum class DataSetRequirement { Ignore, Absent, Optional, Mandatory };
 

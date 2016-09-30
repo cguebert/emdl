@@ -32,7 +32,7 @@ namespace message
 		if (originMsgId >= 0)
 			moveOriginatorMessageId.set(originMsgId);
 
-		copyDataSet(dataSet);
+		setDataSet(dataSet);
 	}
 
 	CStoreRequest::CStoreRequest(const Message& message)

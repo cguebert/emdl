@@ -24,7 +24,7 @@ namespace message
 		priority.set(prio);
 		moveDestination.set(dest);
 
-		copyDataSet(dataSet);
+		setDataSet(dataSet);
 	}
 
 	CMoveRequest::CMoveRequest(const Message& message)
