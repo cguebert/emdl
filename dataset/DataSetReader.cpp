@@ -40,6 +40,27 @@ namespace emds
 		return buffer;
 	}
 
+	bool isDicomFile(const BinaryBufferSPtr& buffer)
+	{
+		if (buffer->size() < 132)
+			return false;
+		auto reader = BaseReader { buffer, TransferSyntax::ExplicitVRLittleEndian };
+		reader.ignore(128);
+		return reader.readString(4) == "DICM";
+	}
+
+	bool isDicomFile(const std::string& filePath)
+	{
+		std::ifstream in(filePath, std::ios_base::binary);
+		if (!in)
+			throw emds::Exception("Error while opening {}", filePath);
+
+		in.ignore(128);
+		std::string value(4, 0);
+		in.read(&value[0], 4);
+		return value == "DICM";
+	}
+
 	FileSparseDataSets DataSetReader::readFile(const std::string& fileName, HaltConditionFunc func)
 	{
 		const auto buffer = createBufferFromFile(fileName);

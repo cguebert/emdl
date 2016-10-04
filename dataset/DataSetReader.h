@@ -11,6 +11,8 @@ namespace emds
 	BinaryBufferSPtr createBufferFromFile(const std::string& fileName);
 	BinaryBufferSPtr createBufferFromStream(std::istream& stream);
 	BinaryBufferSPtr createBufferFromString(const std::string& str);
+	bool isDicomFile(const BinaryBufferSPtr& buffer);
+	bool isDicomFile(const std::string& filePath); // Does not load the whole file
 
 	struct FileSparseDataSets
 	{
@@ -27,7 +29,7 @@ namespace emds
 		DataSetReader(const BinaryBufferSPtr& buffer, TransferSyntax transferSyntax);
 
 		static FileSparseDataSets readFile(const BinaryBufferSPtr& buffer, HaltConditionFunc func = {});
-		static FileSparseDataSets readFile(const std::string& fileName, HaltConditionFunc func = {});
+		static FileSparseDataSets readFile(const std::string& filePath, HaltConditionFunc func = {});
 
 		SparseDataSet readDataSet();
 		SparseDataSet readDataSet(HaltConditionFunc haltFunc);
