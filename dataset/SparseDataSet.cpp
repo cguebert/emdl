@@ -9,7 +9,7 @@
 #include <iostream>
 #include <sstream>
 
-namespace emds
+namespace emdl
 {
 	const uint32_t SparseDataSet::TagElementStruct::npos = static_cast<uint32_t>(-1);
 
@@ -412,4 +412,4 @@ namespace emds
 		return !(*this == rhs);
 	}
 
-} // namespace emds
+} // namespace emdl

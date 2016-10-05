@@ -2,7 +2,7 @@
 
 #include "Response.h"
 
-namespace emds
+namespace emdl
 {
 
 namespace message

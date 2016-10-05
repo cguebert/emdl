@@ -5,7 +5,7 @@
 #include <cassert>
 #include <memory>
 
-namespace emds
+namespace emdl
 {
 
 // Wrapper around either a vector or an array view
@@ -97,4 +97,4 @@ private:
 	view_type m_view; // We do not own the memory pointed by the view
 };
 
-} // namespace emds
+} // namespace emdl

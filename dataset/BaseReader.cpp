@@ -5,7 +5,7 @@
 
 #include <fstream>
 
-namespace emds
+namespace emdl
 {
 
 	BaseReader::BaseReader(const BinaryBufferSPtr& buffer, BinaryView view, TransferSyntax transferSyntax)
@@ -135,4 +135,4 @@ namespace emds
 		return { m_view.data() + pos, size };
 	}
 
-} // namespace emds
+} // namespace emdl

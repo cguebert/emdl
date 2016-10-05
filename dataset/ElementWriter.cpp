@@ -22,13 +22,13 @@ namespace
 		{
 			stream << *it;
 			if (!stream)
-				throw emds::Exception("{} Could not write to stream", LOG_POSITION);
+				throw emdl::Exception("{} Could not write to stream", LOG_POSITION);
 
 			if (it != last)
 			{
 				stream << "\\";
 				if (!stream)
-					throw emds::Exception("{} Could not write to stream", LOG_POSITION);
+					throw emdl::Exception("{} Could not write to stream", LOG_POSITION);
 			}
 		}
 
@@ -37,7 +37,7 @@ namespace
 		{
 			stream.put(padding);
 			if (!stream)
-				throw emds::Exception("{} Could not write to stream", LOG_POSITION);
+				throw emdl::Exception("{} Could not write to stream", LOG_POSITION);
 		}
 	}
 
@@ -51,7 +51,7 @@ namespace
 
 }
 
-namespace emds
+namespace emdl
 {
 
 	ElementWriter::ElementWriter(std::ostream& stream, bool explicitVR, ItemEncoding itemEncoding)
@@ -132,7 +132,7 @@ namespace emds
 	{
 	}
 
-	void ElementWriter::WriterVisitor::operator()(const emds::Value::Integers& value) const
+	void ElementWriter::WriterVisitor::operator()(const emdl::Value::Integers& value) const
 	{
 		using VR = odil::VR;
 		switch (m_vr)
@@ -167,7 +167,7 @@ namespace emds
 		}
 	}
 
-	void ElementWriter::WriterVisitor::operator()(const emds::Value::Reals& value) const
+	void ElementWriter::WriterVisitor::operator()(const emdl::Value::Reals& value) const
 	{
 		using VR = odil::VR;
 		if (m_vr == VR::DS)
@@ -215,7 +215,7 @@ namespace emds
 			throw Exception("Cannot write {} as reals", odil::as_string(m_vr));
 	}
 
-	void ElementWriter::WriterVisitor::operator()(const emds::Value::Strings& value) const
+	void ElementWriter::WriterVisitor::operator()(const emdl::Value::Strings& value) const
 	{
 		using VR = odil::VR;
 		if (m_vr == VR::AT)
@@ -233,7 +233,7 @@ namespace emds
 			writeStrings(m_stream, value, (m_vr == VR::UI) ? '\0' : ' ');
 	}
 
-	void ElementWriter::WriterVisitor::operator()(const emds::Value::DataSets& value) const
+	void ElementWriter::WriterVisitor::operator()(const emdl::Value::DataSets& value) const
 	{
 		bool undefinedlength = (itemEncoding() == ItemEncoding::UndefinedLength);
 
@@ -276,7 +276,7 @@ namespace emds
 		}
 	}
 
-	void ElementWriter::WriterVisitor::operator()(const emds::Value::Binaries& value) const
+	void ElementWriter::WriterVisitor::operator()(const emdl::Value::Binaries& value) const
 	{
 		using VR = odil::VR;
 		if (value.empty())
@@ -295,7 +295,7 @@ namespace emds
 		}
 	}
 
-	void ElementWriter::WriterVisitor::writeEncapsulatedPixelData(const emds::Value::Binaries& value) const
+	void ElementWriter::WriterVisitor::writeEncapsulatedPixelData(const emdl::Value::Binaries& value) const
 	{
 		for (const auto& fragment : value)
 		{

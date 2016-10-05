@@ -1,7 +1,7 @@
 #include "Value.h"
 #include "SparseDataSet.h"
 
-namespace emds
+namespace emdl
 {
 
 	Value::Type Value::type() const

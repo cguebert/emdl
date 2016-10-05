@@ -4,7 +4,7 @@
 #include <utility>
 #include <vector>
 
-namespace emds
+namespace emdl
 {
 
 // Wrapper around continuous data. Does not do any memory management.
@@ -78,4 +78,4 @@ private:
 	std::size_t m_size = 0;
 };
 
-} // namespace emds
+} // namespace emdl

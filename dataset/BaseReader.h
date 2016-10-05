@@ -9,7 +9,7 @@
 
 #include <memory>
 
-namespace emds
+namespace emdl
 {
 
 	using BinaryBuffer = std::vector<uint8_t>;
@@ -73,4 +73,4 @@ namespace emds
 		const bool m_explicit;
 	};
 
-} // namespace emds
+} // namespace emdl

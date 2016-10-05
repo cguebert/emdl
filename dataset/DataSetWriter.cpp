@@ -9,7 +9,7 @@
 #include <fstream>
 #include <sstream>
 
-namespace emds
+namespace emdl
 {
 
 	DataSetWriter::DataSetWriter(std::ostream& stream, TransferSyntax transferSyntax, ItemEncoding itemEncoding)
@@ -142,4 +142,4 @@ namespace emds
 		writer.writeElement(element);
 	}
 
-} // namespace emds
+} // namespace emdl

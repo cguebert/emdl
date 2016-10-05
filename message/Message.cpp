@@ -5,11 +5,12 @@
 #include <emdl/dataset/DataSetReader.h>
 #include <emds/config/logUtils.h>
 
+#include <boost/container/flat_map.hpp>
 #include <odil/registry.h>
 
 namespace reg = odil::registry;
 
-namespace emds
+namespace emdl
 {
 
 namespace message
@@ -134,7 +135,7 @@ namespace message
 	void Message::copyFromMessage(const Message& message, Value::Integer commandField, DataSetRequirement dataSetRequired)
 	{
 		if (message.commandField.get() != commandField)
-			throw Exception("Message is not a {}", log::getCommandName(commandField));
+			throw Exception("Message is not a {}", getCommandName(commandField));
 
 		switch (dataSetRequired)
 		{
@@ -154,12 +155,54 @@ namespace message
 
 		case DataSetRequirement::Mandatory:
 			if (!message.hasDataSet() || message.dataSet().empty())
-				throw Exception("A data set is required for the construction of a {}", log::getCommandName(commandField));
+				throw Exception("A data set is required for the construction of a {}", getCommandName(commandField));
 			setDataSet(message.dataSet());
 			break;
 		}
 
 		copyFieldsFromMessage(message);
+	}
+
+	std::string Message::getCommandName(int64_t command)
+	{
+		using Commands = boost::container::flat_map<int64_t, std::string>;
+		static Commands commands;
+		if (commands.empty())
+		{
+			using cmd = message::Message::Command;
+
+#define ADD_CMD(c) commands.emplace(cmd::c, #c)
+			ADD_CMD(C_STORE_RQ);
+			ADD_CMD(C_STORE_RSP);
+			ADD_CMD(C_FIND_RQ);
+			ADD_CMD(C_FIND_RSP);
+			ADD_CMD(C_CANCEL_RQ);
+			ADD_CMD(C_GET_RQ);
+			ADD_CMD(C_GET_RSP);
+			ADD_CMD(C_MOVE_RQ);
+			ADD_CMD(C_MOVE_RSP);
+			ADD_CMD(C_ECHO_RQ);
+			ADD_CMD(C_ECHO_RSP);
+			ADD_CMD(N_EVENT_REPORT_RQ);
+			ADD_CMD(N_EVENT_REPORT_RSP);
+			ADD_CMD(N_GET_RQ);
+			ADD_CMD(N_GET_RSP);
+			ADD_CMD(N_SET_RQ);
+			ADD_CMD(N_SET_RSP);
+			ADD_CMD(N_ACTION_RQ);
+			ADD_CMD(N_ACTION_RSP);
+			ADD_CMD(N_CREATE_RQ);
+			ADD_CMD(N_CREATE_RSP);
+			ADD_CMD(N_DELETE_RQ);
+			ADD_CMD(N_DELETE_RSP);
+#undef ADD_CMD
+		}
+
+		auto it = commands.find(command);
+		if (it == commands.end())
+			return "Not recognized";
+		else
+			return it->second;
 	}
 
 }

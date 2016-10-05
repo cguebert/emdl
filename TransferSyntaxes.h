@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace emds
+namespace emdl
 {
 
 	// We removed completely all traces of the big endian TS, to simplify a lot of code

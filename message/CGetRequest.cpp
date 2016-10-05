@@ -2,7 +2,7 @@
 
 #include <odil/registry.h>
 
-namespace emds
+namespace emdl
 {
 
 namespace message

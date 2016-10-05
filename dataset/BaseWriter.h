@@ -13,7 +13,7 @@ namespace odil
 	class Tag;
 }
 
-namespace emds
+namespace emdl
 {
 
 	class BaseWriter
@@ -42,4 +42,4 @@ namespace emds
 		const ItemEncoding m_itemEncoding;
 	};
 
-} // namespace emds
+} // namespace emdl

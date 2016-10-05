@@ -123,7 +123,7 @@ namespace
 		return odil::VR::UNKNOWN;
 	}
 
-	odil::VR groupLength(const odil::Tag& tag, const emds::SparseDataSet&, emds::TransferSyntax)
+	odil::VR groupLength(const odil::Tag& tag, const emdl::SparseDataSet&, emdl::TransferSyntax)
 	{
 		if (tag.element == 0)
 			return odil::VR::UL;
@@ -131,7 +131,7 @@ namespace
 		return odil::VR::UNKNOWN;
 	}
 
-	odil::VR privateTag(const odil::Tag& tag, const emds::SparseDataSet&, emds::TransferSyntax)
+	odil::VR privateTag(const odil::Tag& tag, const emdl::SparseDataSet&, emdl::TransferSyntax)
 	{
 		if (tag.group % 2 == 1)
 			return odil::VR::UN;
@@ -139,9 +139,9 @@ namespace
 		return odil::VR::UNKNOWN;
 	}
 
-	odil::VR implicitVRLittleEndian(const odil::Tag& tag, const emds::SparseDataSet& dataSet, emds::TransferSyntax transferSyntax)
+	odil::VR implicitVRLittleEndian(const odil::Tag& tag, const emdl::SparseDataSet& dataSet, emdl::TransferSyntax transferSyntax)
 	{
-		if (transferSyntax != emds::TransferSyntax::ImplicitVRLittleEndian)
+		if (transferSyntax != emdl::TransferSyntax::ImplicitVRLittleEndian)
 			return odil::VR::UNKNOWN;
 
 		if(tag == odil::registry::PixelData)
@@ -181,9 +181,9 @@ namespace
 			return odil::VR::UNKNOWN;
 	}
 
-	odil::VR explicitVRLittleEndian(const odil::Tag& tag, const emds::SparseDataSet& dataSet, emds::TransferSyntax transferSyntax)
+	odil::VR explicitVRLittleEndian(const odil::Tag& tag, const emdl::SparseDataSet& dataSet, emdl::TransferSyntax transferSyntax)
 	{
-		if (transferSyntax != emds::TransferSyntax::ExplicitVRLittleEndian)
+		if (transferSyntax != emdl::TransferSyntax::ExplicitVRLittleEndian)
 			return odil::VR::UNKNOWN;
 		
 		if(tag == odil::registry::PixelData)
@@ -230,7 +230,7 @@ namespace
 
 }
 
-namespace emds
+namespace emdl
 {
 
 	odil::VR asVR(const odil::Tag& tag)
@@ -251,4 +251,4 @@ namespace emds
 		return publicDictionary(tag);
 	}
 
-} // namespace emds
+} // namespace emdl

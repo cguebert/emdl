@@ -8,11 +8,11 @@
 namespace
 {
 
-	using SOPClassPair = std::pair<emds::SOP_Class, std::string>;
+	using SOPClassPair = std::pair<emdl::SOP_Class, std::string>;
 	using SOPClassPairs = std::vector<SOPClassPair>;
 	const SOPClassPairs& getSOPClassPairs()
 	{
-		using SOP = emds::SOP_Class;
+		using SOP = emdl::SOP_Class;
 		static SOPClassPairs sops = {
 			{ SOP::Unknown,                                                            "Not supported" },
 			{ SOP::VerificationSOPClass,                                               "1.2.840.10008.1.1" },
@@ -175,7 +175,7 @@ namespace
 		return sops;
 	}
 
-	using SOPClassMap = boost::container::flat_map<std::string, emds::SOP_Class>;
+	using SOPClassMap = boost::container::flat_map<std::string, emdl::SOP_Class>;
 	const SOPClassMap& getSOPClassMap()
 	{
 		static SOPClassMap sopClassMap = [] {
@@ -190,10 +190,10 @@ namespace
 		return sopClassMap;
 	}
 
-	using SOPClasses = std::vector<emds::SOP_Class>;
+	using SOPClasses = std::vector<emdl::SOP_Class>;
 	const SOPClasses& getStorageClasses()
 	{
-		using SOP = emds::SOP_Class;
+		using SOP = emdl::SOP_Class;
 		static SOPClasses storageClasses = {
 			SOP::StoredPrintStorage,
 			SOP::HardcopyGrayscaleImageStorage,
@@ -340,7 +340,7 @@ namespace
 
 	const SOPClasses& getStructuredReportsClasses()
 	{
-		using SOP = emds::SOP_Class;
+		using SOP = emdl::SOP_Class;
 		static SOPClasses structuredReports = {
 			SOP::BasicTextSRStorage,
 			SOP::EnhancedSRStorage,
@@ -363,7 +363,7 @@ namespace
 
 	const SOPClasses& getPresentationStatesClasses()
 	{
-		using SOP = emds::SOP_Class;
+		using SOP = emdl::SOP_Class;
 		static SOPClasses presentationStates = {
 			SOP::StandaloneVOILUTStorage,
 			SOP::GrayscaleSoftcopyPresentationStateStorage,
@@ -435,7 +435,7 @@ namespace
 
 }
 
-namespace emds
+namespace emdl
 {
 
 	SOP_Class getSOPClass(const std::string& uid)

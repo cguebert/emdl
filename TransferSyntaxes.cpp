@@ -8,11 +8,11 @@
 namespace
 {
 
-	using TransferSyntaxPair = std::pair<emds::TransferSyntax, std::string>;
+	using TransferSyntaxPair = std::pair<emdl::TransferSyntax, std::string>;
 	using TransferSyntaxPairs = std::vector<TransferSyntaxPair>;
 	const TransferSyntaxPairs& getTransferSyntaxPairs()
 	{
-		using TS = emds::TransferSyntax;
+		using TS = emdl::TransferSyntax;
 		static TransferSyntaxPairs transferSyntaxes = {
 			{ TS::Unknown,                              "Not supported" },
 			{ TS::ImplicitVRLittleEndian,               "1.2.840.10008.1.2" },
@@ -46,7 +46,7 @@ namespace
 		return transferSyntaxes;
 	}
 
-	using TransferSyntaxMap = boost::container::flat_map<std::string, emds::TransferSyntax>;
+	using TransferSyntaxMap = boost::container::flat_map<std::string, emdl::TransferSyntax>;
 	const TransferSyntaxMap& getTransferSyntaxMap()
 	{
 		static TransferSyntaxMap transferSyntaxMap = [] {
@@ -63,7 +63,7 @@ namespace
 
 }
 
-namespace emds
+namespace emdl
 {
 
 	TransferSyntax getTransferSyntax(const std::string& uid)

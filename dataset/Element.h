@@ -9,10 +9,10 @@ namespace
 {
 	// Returns true if T is a Value after removing const, volatile and references
 	template <class T>
-	constexpr bool is_element = typename std::is_same<emds::Element, std::remove_cv_t<std::remove_reference_t<T>>>::value;
+	constexpr bool is_element = typename std::is_same<emdl::Element, std::remove_cv_t<std::remove_reference_t<T>>>::value;
 }
 
-namespace emds
+namespace emdl
 {
 
 //! Element of a DICOM data set

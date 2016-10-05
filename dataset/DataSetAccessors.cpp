@@ -1,6 +1,6 @@
 #include "DataSetAccessors.h"
 
-namespace emds
+namespace emdl
 {
 
 	template<typename C>
@@ -188,4 +188,4 @@ namespace emds
 		return {};
 	}
 
-} // namespace emds
+} // namespace emdl

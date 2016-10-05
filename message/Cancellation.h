@@ -2,7 +2,7 @@
 
 #include "Message.h"
 
-namespace emds
+namespace emdl
 {
 
 namespace message

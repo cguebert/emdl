@@ -10,7 +10,7 @@ namespace odil
 	class Tag;
 }
 
-namespace emds
+namespace emdl
 {
 
 	class DataSetWriter : public BaseWriter
@@ -31,4 +31,4 @@ namespace emds
 		void writeElementStruct(const SparseDataSet& dataSet, const SparseDataSet::TagElementStruct& tes, bool fastWrite) const;
 	};
 
-} // namespace emds
+} // namespace emdl

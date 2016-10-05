@@ -5,7 +5,7 @@
 
 #include <boost/variant/get.hpp>
 
-namespace emds
+namespace emdl
 {
 
 namespace message

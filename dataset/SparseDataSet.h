@@ -13,7 +13,7 @@
 
 #include <boost/optional.hpp>
 
-namespace emds
+namespace emdl
 {
 
 	using BinaryBuffer = std::vector<uint8_t>;
@@ -224,4 +224,4 @@ namespace emds
 		mutable bool m_modified = false;
 	};
 
-} // namespace emds
+} // namespace emdl

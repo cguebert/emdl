@@ -1,6 +1,6 @@
 #include "Exception.h"
 
-namespace emds
+namespace emdl
 {
 
 	Exception::Exception(const std::string& message)

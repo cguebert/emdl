@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace emds
+namespace emdl
 {
 
 	enum class SOP_Class

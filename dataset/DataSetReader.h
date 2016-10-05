@@ -5,7 +5,7 @@
 
 #include <functional>
 
-namespace emds
+namespace emdl
 {
 
 	BinaryBufferSPtr createBufferFromFile(const std::string& fileName);
@@ -44,4 +44,4 @@ namespace emds
 		void ignoreItem();
 	};
 
-} // namespace emds
+} // namespace emdl

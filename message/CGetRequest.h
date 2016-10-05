@@ -2,7 +2,7 @@
 
 #include "Request.h"
 
-namespace emds
+namespace emdl
 {
 
 namespace message

@@ -4,7 +4,7 @@
 
 #include <boost/optional.hpp>
 
-namespace emds
+namespace emdl
 {
 
 	//! Test whether an existing element has integer type.
@@ -101,4 +101,4 @@ namespace emds
 	//! Return the first binary item if it exists (element is present and not empty)
 	boost::optional<const Value::Binaries::value_type&> firstBinary(const SparseDataSet& dataSet, odil::Tag tag);
 
-} // namespace emds
+} // namespace emdl

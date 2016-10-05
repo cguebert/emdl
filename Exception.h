@@ -11,7 +11,7 @@
 #define LOG_POSITION ("[" __FILE__ " line " EMDSLOG_STR_HELPER(__LINE__) "] ")
 #endif
 
-namespace emds
+namespace emdl
 {
 
 	//! Base class for EMDS exceptions, allowing use of std::string

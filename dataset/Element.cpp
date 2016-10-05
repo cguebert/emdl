@@ -30,7 +30,7 @@ namespace
 
 }
 
-namespace emds
+namespace emdl
 {
 
 	bool Element::empty() const

@@ -2,7 +2,7 @@
 
 #include <emdl/message/MessageField.h>
 
-namespace emds
+namespace emdl
 {
 
 namespace message
@@ -110,6 +110,9 @@ namespace message
 
 		//! Return the buffer of the data set (before being parsed)
 		BinaryBufferSPtr dataBuffer() const;
+
+		//! Get a human friendly string for a Message::Command::Type value
+		static std::string getCommandName(int64_t command);
 
 	private: // We put this variable here so that it is initialized before commandField
 		//! Fields specific to this message

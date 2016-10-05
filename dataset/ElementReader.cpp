@@ -7,7 +7,7 @@
 namespace
 {
 
-	emds::Value::Strings splitString(const std::string& str)
+	emdl::Value::Strings splitString(const std::string& str)
 	{
 		const size_t nb = 1 + std::count(str.begin(), str.end(), '\\');
 		std::vector<std::string> result;
@@ -35,7 +35,7 @@ namespace
 
 }
 
-namespace emds
+namespace emdl
 {
 
 	ElementReader::ElementReader(const BinaryBufferSPtr& buffer, BinaryView view, TransferSyntax transferSyntax)

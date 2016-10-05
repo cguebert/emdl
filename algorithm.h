@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-namespace emds
+namespace emdl
 {
 
 	template <class T>

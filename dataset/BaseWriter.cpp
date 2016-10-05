@@ -5,7 +5,7 @@
 
 #include <fstream>
 
-namespace emds
+namespace emdl
 {
 
 	BaseWriter::BaseWriter(std::ostream& stream, bool explicitTS, ItemEncoding itemEncoding)
@@ -31,4 +31,4 @@ namespace emds
 		write(tag.element);
 	}
 
-} // namespace emds
+} // namespace emdl

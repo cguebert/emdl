@@ -8,7 +8,7 @@
 
 #include <istream>
 
-namespace emds
+namespace emdl
 {
 
 //! Read DICOM elements from a view in memory

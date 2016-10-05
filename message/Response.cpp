@@ -4,7 +4,7 @@
 
 namespace reg = odil::registry;
 
-namespace emds
+namespace emdl
 {
 
 namespace message
