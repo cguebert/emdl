@@ -19,12 +19,15 @@ namespace emdl
 		DataSetWriter(std::ostream& stream, TransferSyntax transferSyntax, ItemEncoding itemEncoding = ItemEncoding::ExplicitLength);
 		DataSetWriter(std::ostream& stream, bool explicitTS, ItemEncoding itemEncoding = ItemEncoding::ExplicitLength);
 
+		void writeDataSet(const SparseDataSet& dataSet);
+
 		static void writeFile(std::ostream& out,
 							  const SparseDataSet& dataSet, 
 							  SparseDataSet metaInformation = SparseDataSet(),
 							  ItemEncoding itemEncoding = ItemEncoding::ExplicitLength);
 
-		void writeDataSet(const SparseDataSet& dataSet);
+		//! Write the data set to a stream using the transfer syntax set of the data set
+		static void writeDataSet(std::ostream& out, const SparseDataSet& dataSet, ItemEncoding itemEncoding = ItemEncoding::ExplicitLength);
 
 	private:
 		void writeElement(const Element& element) const;

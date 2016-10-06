@@ -60,12 +60,15 @@ namespace emdl
 		out.write(prefix.data(), 4);
 
 		// Always use explicit VR little endian for the meta information
-		auto metaWriter = DataSetWriter(out, TransferSyntax::ExplicitVRLittleEndian, itemEncoding);
-		metaWriter.writeDataSet(metaInformation);
+		DataSetWriter { out, TransferSyntax::ExplicitVRLittleEndian, itemEncoding }.writeDataSet(metaInformation);
 
 		// Data set
-		auto dataSetWriter = DataSetWriter(out, dataSet.transferSyntax(), itemEncoding);
-		dataSetWriter.writeDataSet(dataSet);
+		DataSetWriter::writeDataSet(out, dataSet, itemEncoding);
+	}
+
+	void DataSetWriter::writeDataSet(std::ostream& out, const SparseDataSet& dataSet, ItemEncoding itemEncoding)
+	{
+		DataSetWriter { out, dataSet.transferSyntax(), itemEncoding }.writeDataSet(dataSet);
 	}
 	
 	void DataSetWriter::writeDataSet(const SparseDataSet& dataSet)
@@ -112,7 +115,7 @@ namespace emdl
 		if (!tes.size)
 		{
 			writeTag(tes.tag);
-			writeElement(dataSet.getElement(tes));
+			writeElement(dataSet.getElement(tes)); // Use the ElementWriter to write the value
 		}
 		else
 		{
@@ -122,8 +125,7 @@ namespace emdl
 				// Copy the tag
 				m_stream.write(reinterpret_cast<const char*>(&tes.tag), sizeof(odil::Tag));
 
-				// TODO: test if the value has been modified
-				// Use odil to write the value
+				// Use the ElementWriter to write the value
 				writeElement(dataSet.getElement(tes));
 			}
 			else // Or directly copy from the raw view

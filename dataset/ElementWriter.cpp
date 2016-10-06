@@ -73,9 +73,11 @@ namespace emdl
 
 		// Write a dummy value for the value length
 		const auto lenPos = m_stream.tellp();
+		bool explicitLargeLength = false;
 		if (isExplicitTS())
 		{
-			if (needLargeLength(vr))
+			explicitLargeLength = needLargeLength(vr);
+			if (explicitLargeLength)
 			{
 				write<uint16_t>(0);
 				write<uint32_t>(0);
@@ -102,7 +104,7 @@ namespace emdl
 		if (isExplicitTS())
 		{
 			using VR = odil::VR;
-			if (needLargeLength(vr))
+			if (explicitLargeLength)
 			{
 				write<uint16_t>(0);
 
@@ -248,8 +250,7 @@ namespace emdl
 
 			// Data set
 			const auto startPos = m_stream.tellp();
-			auto itemWriter = DataSetWriter(m_stream, isExplicitTS(), itemEncoding());
-			itemWriter.writeDataSet(item);
+			DataSetWriter { m_stream, isExplicitTS(), itemEncoding() }.writeDataSet(item);
 			const auto endPos = m_stream.tellp();
 
 			if (undefinedlength)
