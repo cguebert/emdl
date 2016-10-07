@@ -77,6 +77,11 @@ namespace message
 		return m_commandSet;
 	}
 
+	SparseDataSet& Message::commandSet()
+	{
+		return m_commandSet;
+	}
+
 	bool Message::hasDataSet() const
 	{
 		return (asInt(m_commandSet, reg::CommandDataSetType, 0) == DataSetType::PRESENT);
@@ -87,8 +92,13 @@ namespace message
 		if (!hasDataSet() || (!m_dataSet && !m_dataBuffer))
 			throw Exception("No data set in message");
 		if (!m_dataSet && m_dataBuffer)
-			m_dataSet = DataSetReader(m_dataBuffer, m_transferSyntax).readDataSet();
+			m_dataSet = DataSetReader { m_dataBuffer, m_transferSyntax }.readDataSet();
 		return *m_dataSet;
+	}
+
+	SparseDataSet& Message::dataSet()
+	{
+		return const_cast<SparseDataSet&>(const_cast<const Message*>(this)->dataSet());
 	}
 
 	void Message::setDataSet(const SparseDataSet& dataSet)

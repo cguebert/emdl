@@ -93,11 +93,17 @@ namespace message
 		//! Return the command set of the message.
 		const SparseDataSet& commandSet() const;
 
+		//! Return the command set of the message.
+		SparseDataSet& commandSet();
+
 		//! Test whether as data set is present in the message.
 		bool hasDataSet() const;
 
 		//! Return the data set of the message, raise an exception if no data set is present.
 		const SparseDataSet& dataSet() const;
+
+		//! Return the data set of the message, raise an exception if no data set is present.
+		SparseDataSet& dataSet();
 
 		//! Set the data set of the message.
 		void setDataSet(const SparseDataSet& data_set);
