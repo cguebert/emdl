@@ -26,12 +26,17 @@ namespace
 				if (elt.first.get_type() != odil::ElementsDictionaryKey::Type::Tag)
 					continue;
 
+				const auto& tag = elt.first.get_tag();
+				if (tag == odil::registry::Item
+					|| tag == odil::registry::ItemDelimitationItem
+					|| tag == odil::registry::SequenceDelimitationItem)
+					continue;
+
 				odil::VR vr = odil::VR::UNKNOWN;
 				try { vr = odil::as_vr(elt.second.vr.substr(0, 2)); } // HACK: only take the first VR when there are two or more (better to have something than not)
 				catch (...) { continue; }
 
 				// Find the group
-				const auto& tag = elt.first.get_tag();
 				auto grIt = std::lower_bound(groups.begin(), groups.end(), tag, [](const GroupPair& lhs, const odil::Tag& rhs) {
 					return lhs.first < rhs.group;
 				});
