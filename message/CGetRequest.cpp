@@ -9,17 +9,17 @@ namespace message
 {
 
 	CGetRequest::CGetRequest()
-		: affectedSopClassUid(initField(odil::registry::AffectedSOPClassUID))
+		: affectedSopClass(initField(odil::registry::AffectedSOPClassUID))
 		, priority(initField(odil::registry::Priority))
 	{
 		commandField.set(Command::C_GET_RQ);
 	}
 
-	CGetRequest::CGetRequest(Value::Integer msgId, const Value::String& sopClass, Value::Integer prio, const SparseDataSet& dataSet)
+	CGetRequest::CGetRequest(Value::Integer msgId, SOP_Class sopClass, Value::Integer prio, const SparseDataSet& dataSet)
 		: CGetRequest()
 	{
 		messageId.set(msgId);
-		affectedSopClassUid.set(sopClass);
+		affectedSopClass.set(sopClass);
 		priority.set(prio);
 
 		setDataSet(dataSet);

@@ -9,18 +9,18 @@ namespace message
 {
 
 	CMoveRequest::CMoveRequest()
-		: affectedSopClassUid(initField(odil::registry::AffectedSOPClassUID))
+		: affectedSopClass(initField(odil::registry::AffectedSOPClassUID))
 		, priority(initField(odil::registry::Priority))
 		, moveDestination(initField(odil::registry::MoveDestination))
 	{
 		commandField.set(Command::C_MOVE_RQ);
 	}
 
-	CMoveRequest::CMoveRequest(Value::Integer msgId, const Value::String& sopClass, Value::Integer prio, const Value::String& dest, const SparseDataSet& dataSet)
+	CMoveRequest::CMoveRequest(Value::Integer msgId, SOP_Class sopClass, Value::Integer prio, const Value::String& dest, const SparseDataSet& dataSet)
 		: CMoveRequest()
 	{
 		messageId.set(msgId);
-		affectedSopClassUid.set(sopClass);
+		affectedSopClass.set(sopClass);
 		priority.set(prio);
 		moveDestination.set(dest);
 

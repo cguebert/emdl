@@ -10,7 +10,7 @@ namespace message
 
 	CFindResponse::CFindResponse()
 		: messageId(initField(odil::registry::MessageID))
-		, affectedSopClassUid(initField(odil::registry::AffectedSOPClassUID))
+		, affectedSopClass(initField(odil::registry::AffectedSOPClassUID))
 	{
 		commandField.set(Command::C_FIND_RSP);
 	}

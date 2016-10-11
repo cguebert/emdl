@@ -1,7 +1,7 @@
 #pragma once
 
 #include <emdl/dataset/SparseDataSet.h>
-#include <odil/Tag.h>
+#include <emdl/SOPClasses.h>
 
 #include <boost/variant/get.hpp>
 
@@ -13,6 +13,7 @@ namespace message
 
 	class Message;
 
+	// Base class for all message fields
 	class BaseField
 	{
 	public:
@@ -55,11 +56,11 @@ namespace message
 	{
 
 		template <class T>
-		const T& getValue(const SparseDataSet& dataSet, odil::Tag tag)
+		const T& read(const SparseDataSet& dataSet, odil::Tag tag)
 		{ return boost::get<T>(dataSet[tag]->value().value()); }
 
 		template <class T>
-		T& getValue(SparseDataSet& dataSet, odil::Tag tag)
+		T& write(SparseDataSet& dataSet, odil::Tag tag)
 		{
 			if (!dataSet[tag])
 				dataSet.set(tag);
@@ -68,57 +69,85 @@ namespace message
 
 	}
 
+	// Templated base class for message fields
 	template <class T>
-	class MandatoryField : public BaseField
+	class Field : public BaseField
 	{
 	public:
 		using value_type = T;
 		using variant_type = std::vector<T>;
 
-		explicit MandatoryField(const BaseField::BaseInitField& init)
+		explicit Field(const BaseField::BaseInitField& init)
 			: BaseField(init)
+		{ }
+
+		const value_type& get() const
+		{ return details::read<variant_type>(m_dataSet, m_tag)[0]; }
+
+		void set(const value_type& val)
+		{ details::write<variant_type>(m_dataSet, m_tag) = { val }; }
+	};
+
+	// Specialization for SOP_Class
+	template <>
+	class Field<SOP_Class> : public BaseField
+	{
+	public:
+		using value_type = Value::String;
+		using variant_type = Value::Strings;
+
+		explicit Field(const BaseField::BaseInitField& init)
+			: BaseField(init)
+		{ }
+
+		SOP_Class get() const
+		{ return getSOPClass(details::read<variant_type>(m_dataSet, m_tag)[0]); }
+
+		void set(SOP_Class val)
+		{ details::write<variant_type>(m_dataSet, m_tag) = { getSOPClassUID(val) }; }
+	};
+
+	// Templated class for mandatory fields
+	template <class T>
+	class MandatoryField : public Field<T>
+	{
+	public:
+		using value_type = typename Field::value_type;
+		using variant_type = typename Field::variant_type;
+
+		explicit MandatoryField(const BaseField::BaseInitField& init)
+			: Field(init)
 		{ }
 
 		template<class U> explicit MandatoryField(const BaseField::InitField<U>& init)
-			: BaseField(init)
+			: Field(init)
 		{ set(init.value); }
 
-		value_type get() const
-		{ return details::getValue<variant_type>(m_dataSet, m_tag)[0]; }
-
-		void set(const value_type& val)
-		{ details::getValue<variant_type>(m_dataSet, m_tag) = { val }; }
-
 		void copyFrom(const SparseDataSet& dataSet) override
-		{ details::getValue<variant_type>(m_dataSet, m_tag) = details::getValue<variant_type>(dataSet, m_tag); }
+		{ details::write<variant_type>(m_dataSet, m_tag) = details::read<variant_type>(dataSet, m_tag); }
 	};
 
+	// Templated class for optional fields
 	template <class T>
-	class OptionalField : public BaseField
+	class OptionalField : public Field<T>
 	{
 	public:
-		using value_type = T;
-		using variant_type = std::vector<T>;
+		using value_type = typename Field::value_type;
+		using variant_type = typename Field::variant_type;
 
 		explicit OptionalField(const BaseField::BaseInitField& init)
-			: BaseField(init)
+			: Field(init)
 		{ }
 
 		template<class U> explicit OptionalField(const BaseField::InitField<U>& init)
-			: BaseField(init)
+			: Field(init)
 		{ set(init.value); }
-
-		value_type get() const
-		{ return details::getValue<variant_type>(m_dataSet, m_tag)[0]; }
-
-		void set(const value_type& val)
-		{ details::getValue<variant_type>(m_dataSet, m_tag) = { val }; }
 
 		void copyFrom(const SparseDataSet& dataSet) override
 		{
 			auto element = dataSet[m_tag];
 			if(element && !element->empty()) // Copy only if non null
-				details::getValue<variant_type>(m_dataSet, m_tag) = details::getValue<variant_type>(dataSet, m_tag); 
+				details::write<variant_type>(m_dataSet, m_tag) = details::read<variant_type>(dataSet, m_tag); 
 		}
 
 		bool isPresent()

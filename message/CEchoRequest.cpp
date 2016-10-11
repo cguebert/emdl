@@ -9,16 +9,16 @@ namespace message
 {
 
 	CEchoRequest::CEchoRequest()
-		: affectedSopClassUid(initField(odil::registry::AffectedSOPClassUID))
+		: affectedSopClass(initField(odil::registry::AffectedSOPClassUID))
 	{
 		commandField.set(Command::C_ECHO_RQ);
 	}
 
-	CEchoRequest::CEchoRequest(Value::Integer msgId, const Value::String& sopClass)
+	CEchoRequest::CEchoRequest(Value::Integer msgId, SOP_Class sopClass)
 		: CEchoRequest()
 	{
 		messageId.set(msgId);
-		affectedSopClassUid.set(sopClass);
+		affectedSopClass.set(sopClass);
 	}
 
 	CEchoRequest::CEchoRequest(const Message& message)

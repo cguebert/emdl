@@ -10,7 +10,7 @@ namespace message
 
 	CStoreResponse::CStoreResponse()
 		: messageId(initField(odil::registry::MessageID))
-		, affectedSopClassUid(initField(odil::registry::AffectedSOPClassUID))
+		, affectedSopClass(initField(odil::registry::AffectedSOPClassUID))
 		, affectedSopInstanceUid(initField(odil::registry::AffectedSOPInstanceUID))
 	{
 		commandField.set(Command::C_STORE_RSP);

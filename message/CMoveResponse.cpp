@@ -10,7 +10,7 @@ namespace message
 
 	CMoveResponse::CMoveResponse()
 		: messageId(initField(odil::registry::MessageID))
-		, affectedSopClassUid(initField(odil::registry::AffectedSOPClassUID))
+		, affectedSopClass(initField(odil::registry::AffectedSOPClassUID))
 		, numberOfRemainingSubOperations(initField(odil::registry::NumberOfRemainingSuboperations))
 		, numberOfCompletedSubOperations(initField(odil::registry::NumberOfCompletedSuboperations))
 		, numberOfFailedSubOperations(initField(odil::registry::NumberOfFailedSuboperations))

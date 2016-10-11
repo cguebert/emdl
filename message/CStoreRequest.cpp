@@ -9,7 +9,7 @@ namespace message
 {
 
 	CStoreRequest::CStoreRequest()
-		: affectedSopClassUid(initField(odil::registry::AffectedSOPClassUID))
+		: affectedSopClass(initField(odil::registry::AffectedSOPClassUID))
 		, affectedSopInstanceUid(initField(odil::registry::AffectedSOPInstanceUID))
 		, priority(initField(odil::registry::Priority))
 		, moveOriginatorAet(initField(odil::registry::MoveOriginatorApplicationEntityTitle))
@@ -18,12 +18,12 @@ namespace message
 		commandField.set(Command::C_STORE_RQ);
 	}
 
-	CStoreRequest::CStoreRequest(Value::Integer msgId, const Value::String& sopClass, const Value::String& sopInstance,
+	CStoreRequest::CStoreRequest(Value::Integer msgId, SOP_Class sopClass, const Value::String& sopInstance,
 		Value::Integer prio, const SparseDataSet& dataSet, const Value::String& originAet, Value::Integer originMsgId)
 		: CStoreRequest()
 	{
 		messageId.set(msgId);
-		affectedSopClassUid.set(sopClass);
+		affectedSopClass.set(sopClass);
 		affectedSopInstanceUid.set(sopInstance);
 		priority.set(prio);
 

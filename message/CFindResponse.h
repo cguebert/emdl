@@ -33,7 +33,7 @@ namespace message
 		CFindResponse(const Message& message);
 
 		OptionalField<Value::Integer> messageId;
-		OptionalField<Value::String> affectedSopClassUid;
+		OptionalField<SOP_Class> affectedSopClass;
 
 	private:
 		CFindResponse();

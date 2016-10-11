@@ -34,7 +34,7 @@ namespace message
 		CGetResponse(const Message& message);
 
 		OptionalField<Value::Integer> messageId;
-		OptionalField<Value::String> affectedSopClassUid;
+		OptionalField<SOP_Class> affectedSopClass;
 
 		OptionalField<Value::Integer> numberOfRemainingSubOperations;
 		OptionalField<Value::Integer> numberOfCompletedSubOperations;

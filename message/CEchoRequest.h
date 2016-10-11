@@ -12,13 +12,13 @@ namespace message
 	class CEchoRequest : public Request
 	{
 	public:
-		//! Create an echo request with given Message ID and affected SOP class UID.
-		CEchoRequest(Value::Integer messageId, const Value::String& affectedSopClassUid);
+		//! Create an echo request with given Message ID and affected SOP class.
+		CEchoRequest(Value::Integer messageId, SOP_Class affectedSopClass);
 
 		//! Create a C-ECHO-RQ from a generic Message.
 		CEchoRequest(const Message& message);
 
-		MandatoryField<Value::String> affectedSopClassUid;
+		MandatoryField<SOP_Class> affectedSopClass;
 	
 	private:
 		CEchoRequest();

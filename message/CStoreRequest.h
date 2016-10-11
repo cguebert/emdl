@@ -12,8 +12,8 @@ namespace message
 	class CStoreRequest: public Request
 	{
 	public:
-		//! Create an store request with given Message ID, affected SOP class UID, priority, and data set.
-		CStoreRequest(Value::Integer messageId, const Value::String& affectedSopClassUid,
+		//! Create an store request with given Message ID, affected SOP class, priority, and data set.
+		CStoreRequest(Value::Integer messageId, SOP_Class affectedSopClass,
 			const Value::String& affectedSopInstanceUid,
 			Value::Integer priority, const SparseDataSet& dataSet,
 			const Value::String& moveOriginatorAet = "",
@@ -22,7 +22,7 @@ namespace message
 		//! Create a C-STORE-RQ from a generic Message.
 		CStoreRequest(const Message& message);
 
-		MandatoryField<Value::String> affectedSopClassUid;
+		MandatoryField<SOP_Class> affectedSopClass;
 		MandatoryField<Value::String> affectedSopInstanceUid;
 		MandatoryField<Value::Integer> priority;
 
