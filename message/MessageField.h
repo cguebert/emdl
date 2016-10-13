@@ -150,7 +150,7 @@ namespace message
 				details::write<variant_type>(m_dataSet, m_tag) = details::read<variant_type>(dataSet, m_tag); 
 		}
 
-		bool isPresent()
+		bool isPresent() const
 		{ return m_dataSet.has(m_tag);}
 
 		void remove()
