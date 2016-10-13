@@ -1,12 +1,14 @@
 #pragma once
 
+#include <emdl/emdl_api.h>
+
 #include <string>
 
 namespace emdl
 {
 
 	// We removed completely all traces of the big endian TS, to simplify a lot of code
-	enum class TransferSyntax
+	enum class EMDL_API TransferSyntax
 	{
 		Unknown, /// Not supported, or not recognized
 		ImplicitVRLittleEndian,
@@ -37,13 +39,13 @@ namespace emdl
 		RLELossless
 	};
 
-	TransferSyntax getTransferSyntax(const std::string& uid);
-	const std::string& getTransferSyntaxUID(TransferSyntax transferSyntax);
+	EMDL_API TransferSyntax getTransferSyntax(const std::string& uid);
+	EMDL_API const std::string& getTransferSyntaxUID(TransferSyntax transferSyntax);
 
-	bool isImplicit(TransferSyntax ts);
-	bool isExplicit(TransferSyntax ts);
-	bool isEncapsulated(TransferSyntax ts);
-//	bool isLossy(TransferSyntax ts);
-//	bool isLossless(TransferSyntax ts);
+	EMDL_API bool isImplicit(TransferSyntax ts);
+	EMDL_API bool isExplicit(TransferSyntax ts);
+	EMDL_API bool isEncapsulated(TransferSyntax ts);
+//	EMDL_API bool isLossy(TransferSyntax ts);
+//	EMDL_API bool isLossless(TransferSyntax ts);
 
 }

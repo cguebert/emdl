@@ -9,7 +9,7 @@ namespace message
 {
 
 	//! C-FIND-RSP message.
-	class CFindResponse : public Response
+	class EMDL_API CFindResponse : public Response
 	{
 	public:
 		//! C-FIND status codes, PS 3.4, C.4.1.1.4

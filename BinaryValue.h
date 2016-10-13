@@ -9,7 +9,7 @@ namespace emdl
 {
 
 // Wrapper around either a vector or an array view
-class BinaryValue
+class EMDL_API BinaryValue
 {
 public:
 	using vector_type = std::vector<unsigned char>;

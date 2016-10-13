@@ -16,7 +16,7 @@ namespace emdl
 {
 
 //! Element of a DICOM data set
-class Element
+class EMDL_API Element
 {
 public:
 

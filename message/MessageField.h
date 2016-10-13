@@ -14,7 +14,7 @@ namespace message
 	class Message;
 
 	// Base class for all message fields
-	class BaseField
+	class EMDL_API BaseField
 	{
 	public:
 		class BaseInitField

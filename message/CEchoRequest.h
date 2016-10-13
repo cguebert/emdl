@@ -9,7 +9,7 @@ namespace message
 {
 
 	//! C-ECHO-RQ message.
-	class CEchoRequest : public Request
+	class EMDL_API CEchoRequest : public Request
 	{
 	public:
 		//! Create an echo request with given Message ID and affected SOP class.

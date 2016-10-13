@@ -16,7 +16,7 @@ namespace emdl
 	using BinaryBufferSPtr = std::shared_ptr<BinaryBuffer>;
 	using BinaryView = ArrayView<const uint8_t>;
 	
-	class BaseReader
+	class EMDL_API BaseReader
 	{
 	public:
 		BaseReader(const BinaryBufferSPtr& buffer, BinaryView view, TransferSyntax transferSyntax);

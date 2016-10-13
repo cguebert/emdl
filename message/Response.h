@@ -9,7 +9,7 @@ namespace message
 {
 
 	//! Base class for all DIMSE response messages.
-	class Response: public Message
+	class EMDL_API Response: public Message
 	{
 	public:
 		//! General status codes, from PS3.7, C

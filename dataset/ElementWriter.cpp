@@ -7,6 +7,9 @@
 
 #include <sstream>
 
+#define TEST_STREAM if(!m_stream) \
+		throw Exception("{} Could not write to stream", LOG_POSITION);
+
 namespace
 {
 

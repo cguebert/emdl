@@ -13,7 +13,7 @@ namespace odil
 namespace emdl
 {
 
-	class DataSetWriter : public BaseWriter
+	class EMDL_API DataSetWriter : public BaseWriter
 	{
 	public:
 		DataSetWriter(std::ostream& stream, TransferSyntax transferSyntax, ItemEncoding itemEncoding = ItemEncoding::ExplicitLength);

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <emdl/emdl_api.h>
+
 // SparseDataSet.h is not included, to break the circular inclusion. It then needs to be included each time this file is included.
 #include <emdl/BinaryValue.h>
 
@@ -18,7 +20,7 @@ namespace emdl
 	class SparseDataSet;
 
 	//! The value of a DICOM element
-	class Value
+	class EMDL_API Value
 	{
 	public:
 		//! Possible types stored in the value.

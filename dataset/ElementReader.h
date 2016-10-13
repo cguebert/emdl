@@ -12,7 +12,7 @@ namespace emdl
 {
 
 //! Read DICOM elements from a view in memory
-class ElementReader : public BaseReader
+class EMDL_API ElementReader : public BaseReader
 {
 public:
 	ElementReader(const BinaryBufferSPtr& buffer, BinaryView view, TransferSyntax transferSyntax);

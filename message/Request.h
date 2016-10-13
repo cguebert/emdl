@@ -9,7 +9,7 @@ namespace message
 {
 
 //! Base class for all DIMSE request messages.
-class Request: public Message
+class EMDL_API Request: public Message
 {
 public:
 	//! Create a request with given Message ID.

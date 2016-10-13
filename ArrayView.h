@@ -1,5 +1,7 @@
 #pragma once
 
+#include <emdl/emdl_api.h>
+
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -9,7 +11,7 @@ namespace emdl
 
 // Wrapper around continuous data. Does not do any memory management.
 template <class T>
-class ArrayView
+class EMDL_API ArrayView
 {
 public:
 	using Type = T;
@@ -45,7 +47,7 @@ private:
 // Specialization of ArrayView, compatible to ArrayView of any type.
 // Size is recalculated to take into account the type size and convert to size in bytes.
 template <> 
-class ArrayView<const void> 
+class EMDL_API ArrayView<const void> 
 {
 public:
 	using Type = const void;

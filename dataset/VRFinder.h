@@ -10,7 +10,7 @@ namespace emdl
 
 	class SparseDataSet;
 
-	odil::VR asVR(const odil::Tag& tag);
-	odil::VR findVR(const odil::Tag& tag, const SparseDataSet& dataSet);
+	EMDL_API odil::VR asVR(const odil::Tag& tag);
+	EMDL_API odil::VR findVR(const odil::Tag& tag, const SparseDataSet& dataSet);
 
 } // namespace emdl

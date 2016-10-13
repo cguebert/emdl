@@ -8,19 +8,19 @@
 namespace emdl
 {
 
-	BinaryBufferSPtr createBufferFromFile(const std::string& fileName);
-	BinaryBufferSPtr createBufferFromStream(std::istream& stream);
-	BinaryBufferSPtr createBufferFromString(const std::string& str);
-	bool isDicomFile(const BinaryBufferSPtr& buffer);
-	bool isDicomFile(const std::string& filePath); // Does not load the whole file
+	EMDL_API BinaryBufferSPtr createBufferFromFile(const std::string& fileName);
+	EMDL_API BinaryBufferSPtr createBufferFromStream(std::istream& stream);
+	EMDL_API BinaryBufferSPtr createBufferFromString(const std::string& str);
+	EMDL_API bool isDicomFile(const BinaryBufferSPtr& buffer);
+	EMDL_API bool isDicomFile(const std::string& filePath); // Does not load the whole file
 
-	struct FileSparseDataSets
+	struct EMDL_API FileSparseDataSets
 	{
 		SparseDataSet metaInformation;
 		SparseDataSet dataSet;
 	};
 
-	class DataSetReader : public BaseReader
+	class EMDL_API DataSetReader : public BaseReader
 	{
 	public:
 		using HaltConditionFunc = std::function<bool(const odil::Tag&)>;

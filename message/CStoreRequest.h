@@ -9,7 +9,7 @@ namespace message
 {
 
 	//! C-STORE-RQ message.
-	class CStoreRequest: public Request
+	class EMDL_API CStoreRequest: public Request
 	{
 	public:
 		//! Create an store request with given Message ID, affected SOP class, priority, and data set.

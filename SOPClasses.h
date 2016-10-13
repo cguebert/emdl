@@ -1,5 +1,7 @@
 #pragma once
 
+#include <emdl/emdl_api.h>
+
 #include <string>
 
 namespace emdl
@@ -165,12 +167,12 @@ namespace emdl
 		ImplantTemplateGroupStorage
 	};
 
-	SOP_Class getSOPClass(const std::string& uid);
-	const std::string& getSOPClassUID(SOP_Class sop_class);
+	EMDL_API SOP_Class getSOPClass(const std::string& uid);
+	EMDL_API const std::string& getSOPClassUID(SOP_Class sop_class);
 
-	bool isStorage(SOP_Class sop);
-	bool isImage(SOP_Class sop);
-	bool isStructuredReport(SOP_Class sop);
-	bool isPresentationState(SOP_Class sop);
+	EMDL_API bool isStorage(SOP_Class sop);
+	EMDL_API bool isImage(SOP_Class sop);
+	EMDL_API bool isStructuredReport(SOP_Class sop);
+	EMDL_API bool isPresentationState(SOP_Class sop);
 
 }

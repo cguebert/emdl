@@ -9,7 +9,7 @@ namespace message
 {
 
 	//! C-GET-RSP message.
-	class CGetResponse : public Response
+	class EMDL_API CGetResponse : public Response
 	{
 	public:
 		//! C-GET status codes, PS 3.4, C.4.3.1.4

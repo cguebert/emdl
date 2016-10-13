@@ -9,7 +9,7 @@ namespace message
 {
 
 	//! C-MOVE-RQ message.
-	class CMoveRequest : public Request
+	class EMDL_API CMoveRequest : public Request
 	{
 	public:
 		//! Create an move request with given Message ID, affected SOP class, priority, move destination, and data set.

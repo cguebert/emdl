@@ -5,9 +5,6 @@
 
 #include <ostream>
 
-#define TEST_STREAM if(!m_stream) \
-		throw Exception("{} Could not write to stream", LOG_POSITION);
-
 namespace odil
 {
 	class Tag;
@@ -16,7 +13,7 @@ namespace odil
 namespace emdl
 {
 
-	class BaseWriter
+	class EMDL_API BaseWriter
 	{
 	public:
 		enum class ItemEncoding : char { ExplicitLength, UndefinedLength };

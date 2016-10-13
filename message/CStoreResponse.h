@@ -9,7 +9,7 @@ namespace message
 {
 
 	//! C-STORE-RSP message.
-	class CStoreResponse : public Response
+	class EMDL_API CStoreResponse : public Response
 	{
 	public:
 		//! C-STORE status codes, PS 3.4, B.2.3

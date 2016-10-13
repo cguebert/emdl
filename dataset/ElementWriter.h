@@ -9,7 +9,7 @@ namespace emdl
 {
 
 //! Write DICOM objects to a stream
-class ElementWriter : public BaseWriter
+class EMDL_API ElementWriter : public BaseWriter
 {
 public:
 	ElementWriter(std::ostream& stream, bool explicitTS, ItemEncoding itemEncoding = ItemEncoding::ExplicitLength);

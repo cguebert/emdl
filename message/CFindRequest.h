@@ -9,7 +9,7 @@ namespace message
 {
 
 	//! C-FIND-RQ message.
-	class CFindRequest : public Request
+	class EMDL_API CFindRequest : public Request
 	{
 	public:
 		//! Create an find request with given Message ID, affected SOP class, priority, and data set.

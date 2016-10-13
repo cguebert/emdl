@@ -9,7 +9,7 @@ namespace message
 {
 
 	//! Base class for cancellation messages.
-	class Cancellation : public Message
+	class EMDL_API Cancellation : public Message
 	{
 	public:
 		//! Create a response with given message id being responded to.

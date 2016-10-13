@@ -9,7 +9,7 @@ namespace message
 {
 
 	//! Base class for all DIMSE messages.
-	class Message
+	class EMDL_API Message
 	{
 	public:
 		struct Command

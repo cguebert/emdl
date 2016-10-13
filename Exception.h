@@ -1,5 +1,7 @@
 #pragma once
 
+#include <emdl/emdl_api.h>
+
 #include <exception>
 #include <string>
 
@@ -15,7 +17,7 @@ namespace emdl
 {
 
 	//! Base class for EMDS exceptions, allowing use of std::string
-	class Exception : public std::exception
+	class EMDL_API Exception : public std::exception
 	{
 	public:
 		Exception(const std::string& message = ""); //!< Message string constructor.

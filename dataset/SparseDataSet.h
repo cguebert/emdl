@@ -22,7 +22,7 @@ namespace emdl
 
 	class Element;
 
-	class SparseDataSet
+	class EMDL_API SparseDataSet
 	{
 	public:
 		explicit SparseDataSet(TransferSyntax transferSyntax = TransferSyntax::ExplicitVRLittleEndian);
@@ -120,7 +120,7 @@ namespace emdl
 		using Groups = std::vector<Group>;
 
 		// This is the class we get when deferencing an iterator
-		class iterator_value
+		class EMDL_API iterator_value
 		{
 		public:
 			iterator_value();
@@ -135,7 +135,7 @@ namespace emdl
 			const TagElementStruct* m_element = nullptr;
 		};
 
-		class const_iterator
+		class EMDL_API const_iterator
 		{
 		public:
 			using value_type = iterator_value;

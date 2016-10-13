@@ -22,7 +22,7 @@ GroupFiles(Header_Files)
 GroupFiles(Source_Files)
 
 # Create library
-add_library(${target} STATIC ${Header_Files} ${Source_Files})
+add_library(${target} SHARED ${Header_Files} ${Source_Files})
 
  # Create namespaced alias
 add_library(${META_PROJECT_NAME}::${target} ALIAS ${target})
@@ -48,14 +48,10 @@ target_link_libraries(${target}
 	PUBLIC
 	libodil
 	Boost::boost
-	PRIVATE
 	fmt)
 
 # Compile definitions
-target_compile_definitions(${target} PUBLIC
-	${target_upper}_STATIC_DEFINE
-	${DEFAULT_COMPILE_DEFINITIONS}
-)
+target_compile_definitions(${target} PUBLIC ${DEFAULT_COMPILE_DEFINITIONS})
 
 # Compile options
 target_compile_options(${target} PUBLIC ${DEFAULT_COMPILE_OPTIONS})
@@ -97,3 +93,9 @@ install(EXPORT ${target}-export
 	DESTINATION ${INSTALL_CMAKE}/${target}
 	COMPONENT   dev
 )
+
+# Dlls for the package
+if(WIN32)
+	install(TARGETS ${target} RUNTIME DESTINATION debug   CONFIGURATIONS Debug   COMPONENT runtime)
+	install(TARGETS ${target} RUNTIME DESTINATION release CONFIGURATIONS Release COMPONENT runtime)
+endif()

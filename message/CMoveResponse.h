@@ -9,7 +9,7 @@ namespace message
 {
 
 	//! C-MOVE-RSP message.
-	class CMoveResponse: public Response
+	class EMDL_API CMoveResponse: public Response
 	{
 	public:
 		//! C-MOVE status codes, PS 3.4, C.4.2.1.5

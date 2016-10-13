@@ -9,7 +9,7 @@ namespace message
 {
 
 	//! C-GET-RQ message.
-	class CGetRequest : public Request
+	class EMDL_API CGetRequest : public Request
 	{
 	public:
 		//! Create an get request with given Message ID, affected SOP class, priority, and data set.

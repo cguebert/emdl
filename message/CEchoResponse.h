@@ -9,7 +9,7 @@ namespace message
 {
 
 	//! C-ECHO-RSP message.
-	class CEchoResponse : public Response
+	class EMDL_API CEchoResponse : public Response
 	{
 	public:
 		//! Create an echo response with given Message ID and affected SOP class.
