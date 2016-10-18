@@ -1,13 +1,7 @@
 #include "SparseDataSet.h"
 #include "ElementReader.h"
 
-#include <boost/iostreams/stream.hpp>
-#include <boost/iostreams/device/array.hpp>
-
 #include <odil/registry.h>
-
-#include <iostream>
-#include <sstream>
 
 namespace emdl
 {

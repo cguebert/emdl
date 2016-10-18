@@ -10,6 +10,9 @@
 #define TEST_STREAM if(!m_stream) \
 		throw Exception("{} Could not write to stream", LOG_POSITION);
 
+#define TEST_STREAM_NONMEMBER if(!stream) \
+		throw emdl::Exception("{} Could not write to stream", LOG_POSITION);
+
 namespace
 {
 
@@ -24,14 +27,12 @@ namespace
 		for (auto it = sequence.begin(); it != sequence.end(); ++it)
 		{
 			stream << *it;
-			if (!stream)
-				throw emdl::Exception("{} Could not write to stream", LOG_POSITION);
+			TEST_STREAM_NONMEMBER
 
 			if (it != last)
 			{
 				stream << "\\";
-				if (!stream)
-					throw emdl::Exception("{} Could not write to stream", LOG_POSITION);
+				TEST_STREAM_NONMEMBER
 			}
 		}
 
@@ -39,8 +40,7 @@ namespace
 		if ((end - start) % 2 == 1)
 		{
 			stream.put(padding);
-			if (!stream)
-				throw emdl::Exception("{} Could not write to stream", LOG_POSITION);
+			TEST_STREAM_NONMEMBER
 		}
 	}
 
