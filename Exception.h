@@ -27,8 +27,6 @@ namespace emdl
 			: m_message(fmt::format(str, std::forward<Args>(args)...))
 		{}
 
-		virtual ~Exception(); //!< Destructor.
-
 		const char* what() const override; //!< Return the reason for the exception.
 
 	protected:

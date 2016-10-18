@@ -9,7 +9,7 @@
 namespace emdl
 {
 
-	emdl::BinaryBufferSPtr createBufferFromFile(const std::string& fileName)
+	BinaryBufferSPtr createBufferFromFile(const std::string& fileName)
 	{
 		std::ifstream in(fileName, std::ios_base::binary);
 		if (in)
@@ -19,14 +19,14 @@ namespace emdl
 			return buffer;
 		}
 		else
-			throw emdl::Exception("Error while opening {}", fileName);
+			throw Exception("Error while opening {}", fileName);
 	}
 
 	BinaryBufferSPtr createBufferFromStream(std::istream& stream)
 	{
-		auto buffer = std::make_shared<emdl::BinaryBuffer>();
+		auto buffer = std::make_shared<BinaryBuffer>();
 		stream.seekg(0, std::ios::end);
-		(*buffer).resize((size_t)stream.tellg());
+		buffer->resize((size_t)stream.tellg());
 		stream.seekg(0, std::ios::beg);
 		stream.read(reinterpret_cast<char*>(&(*buffer)[0]), buffer->size());
 		return buffer;
@@ -34,7 +34,7 @@ namespace emdl
 
 	BinaryBufferSPtr createBufferFromString(const std::string& str)
 	{
-		auto buffer = std::make_shared<emdl::BinaryBuffer>();
+		auto buffer = std::make_shared<BinaryBuffer>();
 		(*buffer).resize(str.size());
 		memcpy(buffer->data(), str.data(), str.size());
 		return buffer;
@@ -53,7 +53,7 @@ namespace emdl
 	{
 		std::ifstream in(filePath, std::ios_base::binary);
 		if (!in)
-			throw emdl::Exception("Error while opening {}", filePath);
+			throw Exception("Error while opening {}", filePath);
 
 		in.ignore(128);
 		std::string value(4, 0);

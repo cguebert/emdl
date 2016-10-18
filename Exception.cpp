@@ -8,10 +8,6 @@ namespace emdl
 	{
 	}
 
-	Exception::~Exception() 
-	{
-	}
-
 	const char* Exception::what() const
 	{
 		return m_message.c_str();

@@ -137,7 +137,7 @@ namespace emdl
 	{
 	}
 
-	void ElementWriter::WriterVisitor::operator()(const emdl::Value::Integers& value) const
+	void ElementWriter::WriterVisitor::operator()(const Value::Integers& value) const
 	{
 		using VR = odil::VR;
 		switch (m_vr)
@@ -172,7 +172,7 @@ namespace emdl
 		}
 	}
 
-	void ElementWriter::WriterVisitor::operator()(const emdl::Value::Reals& value) const
+	void ElementWriter::WriterVisitor::operator()(const Value::Reals& value) const
 	{
 		using VR = odil::VR;
 		if (m_vr == VR::DS)
@@ -220,7 +220,7 @@ namespace emdl
 			throw Exception("Cannot write {} as reals", odil::as_string(m_vr));
 	}
 
-	void ElementWriter::WriterVisitor::operator()(const emdl::Value::Strings& value) const
+	void ElementWriter::WriterVisitor::operator()(const Value::Strings& value) const
 	{
 		using VR = odil::VR;
 		if (m_vr == VR::AT)
@@ -238,7 +238,7 @@ namespace emdl
 			writeStrings(m_stream, value, (m_vr == VR::UI) ? '\0' : ' ');
 	}
 
-	void ElementWriter::WriterVisitor::operator()(const emdl::Value::DataSets& value) const
+	void ElementWriter::WriterVisitor::operator()(const Value::DataSets& value) const
 	{
 		bool undefinedlength = (itemEncoding() == ItemEncoding::UndefinedLength);
 
@@ -280,7 +280,7 @@ namespace emdl
 		}
 	}
 
-	void ElementWriter::WriterVisitor::operator()(const emdl::Value::Binaries& value) const
+	void ElementWriter::WriterVisitor::operator()(const Value::Binaries& value) const
 	{
 		using VR = odil::VR;
 		if (value.empty())
@@ -299,7 +299,7 @@ namespace emdl
 		}
 	}
 
-	void ElementWriter::WriterVisitor::writeEncapsulatedPixelData(const emdl::Value::Binaries& value) const
+	void ElementWriter::WriterVisitor::writeEncapsulatedPixelData(const Value::Binaries& value) const
 	{
 		for (const auto& fragment : value)
 		{

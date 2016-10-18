@@ -26,14 +26,14 @@ private:
 		WriterVisitor(std::ostream& stream, odil::VR vr, bool explicitTS, ItemEncoding itemEncoding);
 
 		void operator()(const boost::blank& value) const {}
-		void operator()(const emdl::Value::Integers& value) const;
-		void operator()(const emdl::Value::Reals&    value) const;
-		void operator()(const emdl::Value::Strings&  value) const;
-		void operator()(const emdl::Value::DataSets& value) const;
-		void operator()(const emdl::Value::Binaries& value) const;
+		void operator()(const Value::Integers& value) const;
+		void operator()(const Value::Reals&    value) const;
+		void operator()(const Value::Strings&  value) const;
+		void operator()(const Value::DataSets& value) const;
+		void operator()(const Value::Binaries& value) const;
 
 	private:
-		void writeEncapsulatedPixelData(const emdl::Value::Binaries& value) const;
+		void writeEncapsulatedPixelData(const Value::Binaries& value) const;
 
 		const odil::VR m_vr;
 	};
