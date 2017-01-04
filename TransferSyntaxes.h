@@ -41,6 +41,7 @@ namespace emdl
 
 	EMDL_API TransferSyntax getTransferSyntax(const std::string& uid);
 	EMDL_API const std::string& getTransferSyntaxUID(TransferSyntax transferSyntax);
+	EMDL_API const std::string& getTransferSyntaxDescription(TransferSyntax transferSyntax);
 
 	EMDL_API bool isImplicit(TransferSyntax ts);
 	EMDL_API bool isExplicit(TransferSyntax ts);

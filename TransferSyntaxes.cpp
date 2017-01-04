@@ -8,39 +8,43 @@
 namespace
 {
 
-	using TransferSyntaxPair = std::pair<emdl::TransferSyntax, std::string>;
-	using TransferSyntaxPairs = std::vector<TransferSyntaxPair>;
-	const TransferSyntaxPairs& getTransferSyntaxPairs()
+	struct TransferSyntaxInfo
+	{
+		emdl::TransferSyntax code;
+		std::string uid, description;
+	};
+	using TransferSyntaxInfos = std::vector<TransferSyntaxInfo>;
+	const TransferSyntaxInfos& getTransferSyntaxInfos()
 	{
 		using TS = emdl::TransferSyntax;
-		static TransferSyntaxPairs transferSyntaxes = {
-			{ TS::Unknown,                              "Not supported" },
-			{ TS::ImplicitVRLittleEndian,               "1.2.840.10008.1.2" },
-			{ TS::ExplicitVRLittleEndian,               "1.2.840.10008.1.2.1"},
-			{ TS::DeflatedExplicitVRLittleEndian,       "1.2.840.10008.1.2.1.99"},
-			{ TS::JPEGBaselineProcess1,					"1.2.840.10008.1.2.4.50"},
-			{ TS::JPEGExtendedProcess2_4,				"1.2.840.10008.1.2.4.51"},
-			{ TS::JPEGExtendedProcess3_5,				"1.2.840.10008.1.2.4.52"},
-			{ TS::JPEGSpectralSelectionProcess6_8,		"1.2.840.10008.1.2.4.53"},
-			{ TS::JPEGFullProgressionProcess10_12,		"1.2.840.10008.1.2.4.55"},
-			{ TS::JPEGLosslessProcess14,				"1.2.840.10008.1.2.4.57"},
-			{ TS::JPEGLosslessProcess14SV1,				"1.2.840.10008.1.2.4.70"},
-			{ TS::JPEGLSLossless,                       "1.2.840.10008.1.2.4.80"},
-			{ TS::JPEGLSLossy,                          "1.2.840.10008.1.2.4.81"},
-			{ TS::JPEG2000Lossless,						"1.2.840.10008.1.2.4.90"},
-			{ TS::JPEG2000,                             "1.2.840.10008.1.2.4.91"},
-			{ TS::JPEG2000Part2Lossless,				"1.2.840.10008.1.2.4.92"},
-			{ TS::JPEG2000Part2,                        "1.2.840.10008.1.2.4.93"},
-			{ TS::JPIPReferenced,                       "1.2.840.10008.1.2.4.94"},
-			{ TS::JPIPReferencedDeflate,                "1.2.840.10008.1.2.4.95"},
-			{ TS::MPEG2MainProfile,						"1.2.840.10008.1.2.4.100"},
-			{ TS::MPEG2MainProfileHighLevel,			"1.2.840.10008.1.2.4.101"},
-			{ TS::MPEG4HighProfileLevel4_1,             "1.2.840.10008.1.2.4.102"},
-			{ TS::MPEG4BDcompatibleHighProfileLevel4_1, "1.2.840.10008.1.2.4.103"},
-			{ TS::MPEG4HighProfileLevel4_2_For2DVideo,  "1.2.840.10008.1.2.4.104"},
-			{ TS::MPEG4HighProfileLevel4_2_For3DVideo,  "1.2.840.10008.1.2.4.105"},
-			{ TS::MPEG4StereoHighProfileLevel4_2,       "1.2.840.10008.1.2.4.106"},
-			{ TS::RLELossless,                          "1.2.840.10008.1.2.4.5"}
+		static TransferSyntaxInfos transferSyntaxes = {
+			{ TS::Unknown,                              "Not supported",           "Not supported" },
+			{ TS::ImplicitVRLittleEndian,               "1.2.840.10008.1.2",       "Implicit VR Little Endian" },
+			{ TS::ExplicitVRLittleEndian,               "1.2.840.10008.1.2.1",     "Explicit VR Little Endian" },
+			{ TS::DeflatedExplicitVRLittleEndian,       "1.2.840.10008.1.2.1.99",  "Deflated Explicit VR Little Endian" },
+			{ TS::JPEGBaselineProcess1,					"1.2.840.10008.1.2.4.50",  "JPEG Baseline" },
+			{ TS::JPEGExtendedProcess2_4,				"1.2.840.10008.1.2.4.51",  "JPEG Extended" },
+			{ TS::JPEGExtendedProcess3_5,				"1.2.840.10008.1.2.4.52",  "JPEG Extended (Processes 3 & 5)" },
+			{ TS::JPEGSpectralSelectionProcess6_8,		"1.2.840.10008.1.2.4.53",  "JPEG Spectral Selection" },
+			{ TS::JPEGFullProgressionProcess10_12,		"1.2.840.10008.1.2.4.55",  "JPEG Full Progression" },
+			{ TS::JPEGLosslessProcess14,				"1.2.840.10008.1.2.4.57",  "JPEG Lossless" },
+			{ TS::JPEGLosslessProcess14SV1,				"1.2.840.10008.1.2.4.70",  "JPEG Lossless First-Order" },
+			{ TS::JPEGLSLossless,                       "1.2.840.10008.1.2.4.80",  "JPEG-LS Lossless" },
+			{ TS::JPEGLSLossy,                          "1.2.840.10008.1.2.4.81",  "JPEG-LS Near-Lossless" },
+			{ TS::JPEG2000Lossless,						"1.2.840.10008.1.2.4.90",  "JPEG 2000 Lossless" },
+			{ TS::JPEG2000,                             "1.2.840.10008.1.2.4.91",  "JPEG 2000 Lossy" },
+			{ TS::JPEG2000Part2Lossless,				"1.2.840.10008.1.2.4.92",  "JPEG 2000 Part 2 Lossless" },
+			{ TS::JPEG2000Part2,                        "1.2.840.10008.1.2.4.93",  "JPEG 2000 Part 2 Lossy" },
+			{ TS::JPIPReferenced,                       "1.2.840.10008.1.2.4.94",  "JPIP Referenced" },
+			{ TS::JPIPReferencedDeflate,                "1.2.840.10008.1.2.4.95",  "JPIP Referenced Deflate" },
+			{ TS::MPEG2MainProfile,						"1.2.840.10008.1.2.4.100", "MPEG2 Main Profile Main Level" },
+			{ TS::MPEG2MainProfileHighLevel,			"1.2.840.10008.1.2.4.101", "MPEG2 Main Profile High Level" },
+			{ TS::MPEG4HighProfileLevel4_1,             "1.2.840.10008.1.2.4.102", "MPEG-4 High Profile" },
+			{ TS::MPEG4BDcompatibleHighProfileLevel4_1, "1.2.840.10008.1.2.4.103", "MPEG-4 BD-compatible High Profile" },
+			{ TS::MPEG4HighProfileLevel4_2_For2DVideo,  "1.2.840.10008.1.2.4.104", "MPEG-4 High Profile For 2D Video" },
+			{ TS::MPEG4HighProfileLevel4_2_For3DVideo,  "1.2.840.10008.1.2.4.105", "MPEG-4 High Profile For 3D Video" },
+			{ TS::MPEG4StereoHighProfileLevel4_2,       "1.2.840.10008.1.2.4.106", "MPEG-4 Stereo High Profile" },
+			{ TS::RLELossless,                          "1.2.840.10008.1.2.4.5",   "RLE Lossless" }
 		};
 
 		return transferSyntaxes;
@@ -51,10 +55,10 @@ namespace
 	{
 		static TransferSyntaxMap transferSyntaxMap = [] {
 			TransferSyntaxMap tsm;
-			const auto& tsp = getTransferSyntaxPairs();
-			tsm.reserve(tsp.size());
-			for (const auto& p : tsp)
-				tsm[p.second] = p.first;
+			const auto& tsi = getTransferSyntaxInfos();
+			tsm.reserve(tsi.size());
+			for (const auto& i : tsi)
+				tsm[i.uid] = i.code;
 			return tsm;
 		}();
 
@@ -77,9 +81,16 @@ namespace emdl
 
 	const std::string& getTransferSyntaxUID(TransferSyntax transferSyntax)
 	{
-		const auto& ts = getTransferSyntaxPairs();
+		const auto& tsi = getTransferSyntaxInfos();
 		int index = static_cast<int>(transferSyntax);
-		return ts[index].second;
+		return tsi[index].uid;
+	}
+
+	const std::string& getTransferSyntaxDescription(TransferSyntax transferSyntax)
+	{
+		const auto& tsi = getTransferSyntaxInfos();
+		int index = static_cast<int>(transferSyntax);
+		return tsi[index].description;
 	}
 
 	bool isImplicit(TransferSyntax ts)
