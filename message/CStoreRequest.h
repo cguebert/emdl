@@ -12,7 +12,7 @@ namespace message
 	class EMDL_API CStoreRequest: public Request
 	{
 	public:
-		//! Create an store request with given Message ID, affected SOP class, priority, and data set.
+		//! Create a store request with given Message ID, affected SOP class, priority, and data set.
 		CStoreRequest(Value::Integer messageId, SOP_Class affectedSopClass,
 			const Value::String& affectedSopInstanceUid,
 			Value::Integer priority, const SparseDataSet& dataSet,

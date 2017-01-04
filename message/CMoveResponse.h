@@ -25,10 +25,10 @@ namespace message
 			SubOperationsCompleteOneOrMoreFailuresOrWarnings = 0xB000
 		};
 
-		//! Create an move response with given Message ID, and status.
+		//! Create a move response with given Message ID, and status.
 		CMoveResponse(Value::Integer messageIdBeingRespondedTo, Value::Integer status);
 
-		//! Create an move response with given Message ID, status, and data set.
+		//! Create a move response with given Message ID, status, and data set.
 		CMoveResponse(Value::Integer messageIdBeingRespondedTo, Value::Integer status, const SparseDataSet& dataSet);
 
 		//! Create a C-MOVE-RSP from a generic Message.

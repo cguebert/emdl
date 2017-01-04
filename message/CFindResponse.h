@@ -23,10 +23,10 @@ namespace message
 			PendingWarningOptionalKeysNotSupported = 0xFF01,
 		};
 
-		//! Create an find response with given Message ID, and status.
+		//! Create a find response with given Message ID, and status.
 		CFindResponse(Value::Integer messageIdBeingRespondedTo, Value::Integer status);
 
-		//! Create an find response with given Message ID, status, and data set.
+		//! Create a find response with given Message ID, status, and data set.
 		CFindResponse(Value::Integer messageIdBeingRespondedTo, Value::Integer status, const SparseDataSet& dataSet);
 
 		//! Create a C-FIND-RSP from a generic Message.

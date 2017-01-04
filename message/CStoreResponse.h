@@ -25,7 +25,7 @@ namespace message
 			ElementsDiscarded = 0xB006
 		};
 
-		//! Create an store response with given Message ID, and status.
+		//! Create a store response with given Message ID, and status.
 		CStoreResponse(Value::Integer messageIdBeingRespondedTo, Value::Integer status);
 
 		//! Create a C-STORE-RSP from a generic Message.

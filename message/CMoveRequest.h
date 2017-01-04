@@ -12,7 +12,7 @@ namespace message
 	class EMDL_API CMoveRequest : public Request
 	{
 	public:
-		//! Create an move request with given Message ID, affected SOP class, priority, move destination, and data set.
+		//! Create a move request with given Message ID, affected SOP class, priority, move destination, and data set.
 		CMoveRequest(Value::Integer messageId,
 					 SOP_Class affectedSopClass,
 					 Value::Integer priority,

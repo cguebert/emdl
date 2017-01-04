@@ -24,10 +24,10 @@ namespace message
 			SubOperationsCompleteOneOrMoreFailuresOrWarnings = 0xB000
 		};
 
-		//! Create an get response with given Message ID, and status.
+		//! Create a get response with given Message ID, and status.
 		CGetResponse(Value::Integer messageIdBeingRespondedTo, Value::Integer status);
 
-		//! Create an get response with given Message ID, status, and data set.
+		//! Create a get response with given Message ID, status, and data set.
 		CGetResponse(Value::Integer messageIdBeingRespondedTo, Value::Integer status, const SparseDataSet& dataSet);
 
 		//! Create a C-GET-RSP from a generic Message.
