@@ -3,7 +3,6 @@
 #include <emdl/Exception.h>
 #include <emdl/dataset/DataSetAccessors.h>
 #include <emdl/dataset/DataSetReader.h>
-#include <emds/config/logUtils.h>
 
 #include <boost/container/flat_map.hpp>
 #include <odil/registry.h>

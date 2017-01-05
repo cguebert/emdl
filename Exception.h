@@ -8,9 +8,9 @@
 #include <fmt/format.h>
 
 #ifndef LOG_POSITION
-#define EMDSLOG_STR_H(x) #x
-#define EMDSLOG_STR_HELPER(x) EMDSLOG_STR_H(x)
-#define LOG_POSITION ("[" __FILE__ " line " EMDSLOG_STR_HELPER(__LINE__) "] ")
+#define EMDLLOG_STR_H(x) #x
+#define EMDLLOG_STR_HELPER(x) EMDLLOG_STR_H(x)
+#define LOG_POSITION ("[" __FILE__ " line " EMDLLOG_STR_HELPER(__LINE__) "] ")
 #endif
 
 namespace emdl
