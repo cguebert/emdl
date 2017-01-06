@@ -19,7 +19,7 @@ namespace message
 		NEventReportResponse(const Message& message);
 	
 		OptionalField<SOP_Class> affectedSopClass;
-		OptionalField<SOP_Class> affectedSopInstance;
+		OptionalField<Value::String> affectedSopInstance;
 		OptionalField<Value::Integer> eventTypeId;
 
 	private:

@@ -15,7 +15,7 @@ namespace message
 		commandField.set(Command::N_SET_RQ);
 	}
 
-	NSetRequest::NSetRequest(Value::Integer msgId, SOP_Class sopClass, SOP_Class sopInstance)
+	NSetRequest::NSetRequest(Value::Integer msgId, SOP_Class sopClass, Value::String sopInstance)
 		: NSetRequest()
 	{
 		messageId.set(msgId);

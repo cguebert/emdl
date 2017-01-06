@@ -16,7 +16,7 @@ namespace message
 		commandField.set(Command::N_GET_RQ);
 	}
 
-	NGetRequest::NGetRequest(Value::Integer msgId, SOP_Class sopClass, SOP_Class sopInstance)
+	NGetRequest::NGetRequest(Value::Integer msgId, SOP_Class sopClass, Value::String sopInstance)
 		: NGetRequest()
 	{
 		messageId.set(msgId);

@@ -19,7 +19,7 @@ namespace message
 		NCreateRequest(const Message& message);
 
 		MandatoryField<SOP_Class> affectedSopClass;
-		OptionalField<SOP_Class> affectedSopInstance;
+		OptionalField<Value::String> affectedSopInstance;
 	
 	private:
 		NCreateRequest();

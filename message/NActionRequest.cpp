@@ -16,7 +16,7 @@ namespace message
 		commandField.set(Command::N_ACTION_RQ);
 	}
 
-	NActionRequest::NActionRequest(Value::Integer msgId, SOP_Class sopClass, SOP_Class sopInstance, Value::Integer typeId)
+	NActionRequest::NActionRequest(Value::Integer msgId, SOP_Class sopClass, Value::String sopInstance, Value::Integer typeId)
 		: NActionRequest()
 	{
 		messageId.set(msgId);

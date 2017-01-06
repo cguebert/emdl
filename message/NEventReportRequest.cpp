@@ -16,7 +16,7 @@ namespace message
 		commandField.set(Command::N_EVENT_REPORT_RQ);
 	}
 
-	NEventReportRequest::NEventReportRequest(Value::Integer msgId, SOP_Class sopClass, SOP_Class sopInstance, Value::Integer typeId)
+	NEventReportRequest::NEventReportRequest(Value::Integer msgId, SOP_Class sopClass, Value::String sopInstance, Value::Integer typeId)
 		: NEventReportRequest()
 	{
 		messageId.set(msgId);

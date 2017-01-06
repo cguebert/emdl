@@ -15,7 +15,7 @@ namespace message
 		commandField.set(Command::N_DELETE_RQ);
 	}
 
-	NDeleteRequest::NDeleteRequest(Value::Integer msgId, SOP_Class sopClass, SOP_Class sopInstance)
+	NDeleteRequest::NDeleteRequest(Value::Integer msgId, SOP_Class sopClass, Value::String sopInstance)
 		: NDeleteRequest()
 	{
 		messageId.set(msgId);

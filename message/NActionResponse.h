@@ -20,7 +20,7 @@ namespace message
 	
 		OptionalField<Value::Integer> actionTypeId;
 		OptionalField<SOP_Class> affectedSopClass;
-		OptionalField<SOP_Class> affectedSopInstance;
+		OptionalField<Value::String> affectedSopInstance;
 
 	private:
 		NActionResponse();

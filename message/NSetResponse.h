@@ -19,7 +19,7 @@ namespace message
 		NSetResponse(const Message& message);
 	
 		OptionalField<SOP_Class> affectedSopClass;
-		OptionalField<SOP_Class> affectedSopInstance;
+		OptionalField<Value::String> affectedSopInstance;
 
 	private:
 		NSetResponse();

@@ -13,13 +13,13 @@ namespace message
 	{
 	public:
 		//! Create an action request with given Message ID, requested SOP class, requested SOP instance and action type ID.
-		NActionRequest(Value::Integer messageId, SOP_Class requestedSopClass, SOP_Class requestedSopInstance, Value::Integer actionTypeId);
+		NActionRequest(Value::Integer messageId, SOP_Class requestedSopClass, Value::String requestedSopInstance, Value::Integer actionTypeId);
 
 		//! Create a N-ACTION-RQ from a generic Message.
 		NActionRequest(const Message& message);
 
 		MandatoryField<SOP_Class> requestedSopClass;
-		MandatoryField<SOP_Class> requestedSopInstance;
+		MandatoryField<Value::String> requestedSopInstance;
 		MandatoryField<Value::Integer> actionTypeId;
 	
 	private:
