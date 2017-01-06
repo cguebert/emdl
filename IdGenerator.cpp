@@ -31,7 +31,7 @@ namespace
 
 		std::random_device rd;
 		std::default_random_engine engine(rd());
-		std::uniform_int_distribution<int> dist(0, std::numeric_limits<uint32_t>::max());
+		std::uniform_int_distribution<uint32_t> dist(0, std::numeric_limits<uint32_t>::max());
 
 		m_atomicCounter = static_cast<uint32_t>(dist(engine));
 	}
