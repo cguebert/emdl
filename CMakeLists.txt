@@ -51,13 +51,13 @@ target_link_libraries(${target}
 	fmt)
 
 # Compile definitions
-target_compile_definitions(${target} PUBLIC ${DEFAULT_COMPILE_DEFINITIONS})
+target_compile_definitions(${target} PRIVATE ${DEFAULT_COMPILE_DEFINITIONS})
 
 # Compile options
-target_compile_options(${target} PUBLIC ${DEFAULT_COMPILE_OPTIONS})
+target_compile_options(${target} PRIVATE ${DEFAULT_COMPILE_OPTIONS})
 
 # Linker options
-target_link_libraries(${target} PUBLIC ${DEFAULT_LINKER_OPTIONS})
+target_link_libraries(${target} PRIVATE ${DEFAULT_LINKER_OPTIONS})
 
 # Project options
 set_target_properties(${target} PROPERTIES FOLDER "Libraries")
