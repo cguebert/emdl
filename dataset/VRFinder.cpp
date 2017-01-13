@@ -125,7 +125,7 @@ namespace
 		if(it2 != strings.end() && it2->first == tagStr)
 			return it2->second;
 
-		return odil::VR::UNKNOWN;
+		return odil::VR::UN;
 	}
 
 	odil::VR groupLength(const odil::Tag& tag, const emdl::SparseDataSet&, emdl::TransferSyntax)
