@@ -3,6 +3,7 @@
 #include <emdl/emdl_api.h>
 
 #include <string>
+#include <vector>
 
 namespace emdl
 {
@@ -265,6 +266,7 @@ namespace emdl
 
 	EMDL_API SOP_Class getSOPClass(const std::string& uid);
 	EMDL_API const std::string& getSOPClassUID(SOP_Class sop_class);
+	EMDL_API std::vector<SOP_Class> getSOPClassList();
 
 	EMDL_API bool isStorage(SOP_Class sop);
 	EMDL_API bool isImage(SOP_Class sop);

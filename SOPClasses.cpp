@@ -650,6 +650,19 @@ namespace emdl
 		return sops[index].second;
 	}
 
+	std::vector<SOP_Class> getSOPClassList()
+	{
+		static const auto list = [] {
+			std::vector<SOP_Class> list;
+			const auto& sopcp = getSOPClassPairs();
+			list.reserve(sopcp.size());
+			for (const auto& sop : sopcp)
+				list.push_back(sop.first);
+			return list;
+		}();
+		return list;
+	}
+
 	bool isStorage(SOP_Class sop)
 	{
 		int index = static_cast<int>(sop);

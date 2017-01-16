@@ -93,6 +93,19 @@ namespace emdl
 		return tsi[index].description;
 	}
 
+	std::vector<TransferSyntax> getTransferSyntaxList()
+	{
+		static const auto list = [] {
+			std::vector<TransferSyntax> list;
+			const auto& tsi = getTransferSyntaxInfos();
+			list.reserve(tsi.size());
+			for (const auto& i : tsi)
+				list.push_back(i.code);
+			return list;
+		}();
+		return list;
+	}
+
 	bool isImplicit(TransferSyntax ts)
 	{
 		if (ts == TransferSyntax::Unknown)
