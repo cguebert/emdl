@@ -10,26 +10,104 @@ namespace emdl
 	enum class SOP_Class
 	{
 		Unknown, /// Not supported, or not recognized
-		VerificationSOPClass,
+		Verification,
+		StorageCommitmentPushModel,
+		StorageCommitmentPullModel,	            // Retired
+		ProceduralEventLogging,
+		SubstanceAdministrationLogging,
+		BasicStudyContentNotification,	        // Retired
+		DetachedPatientManagement,	            // Retired
+		DetachedPatientManagementMeta,	        // Retired
+		DetachedVisitManagement,	            // Retired
+		DetachedStudyManagement,	            // Retired
+		StudyComponentManagement,	            // Retired
+		ModalityPerformedProcedureStep,
+		ModalityPerformedProcedureStepRetrieve,
+		ModalityPerformedProcedureStepNotification,
+		DetachedResultsManagement,	            // Retired
+		DetachedResultsManagementMeta,	        // Retired
+		DetachedStudyManagementMeta,	        // Retired
+		DetachedInterpretationManagement,	    // Retired
+		BasicFilmSession,
+		PrintJob,
+		BasicAnnotationBox,
+		Printer,
+		PrinterConfigurationRetrieval,
+		BasicColorPrintManagementMeta,
+		ReferencedColorPrintManagementMeta,	    // Retired
+		BasicFilmBox,
+		VOILUTBox,
+		PresentationLUT,
+		ImageOverlayBox,	                    // Retired
+		BasicPrintImageOverlayBox,	            // Retired
+		PrintQueueManagement,	                // Retired
+		PullPrintRequest,	                    // Retired
+		PullStoredPrintManagementMeta,	        // Retired
+		MediaCreationManagementUID,
+		BasicGrayscaleImageBox,
+		BasicColorImageBox,
+		ReferencedImageBox,	                    // Retired
+		DisplaySystem,
+		BasicGrayscalePrintManagementMeta,
+		ReferencedGrayscalePrintManagementMeta,	// Retired
 		PatientRootQR_Find,
 		PatientRootQR_Move,
 		PatientRootQR_Get,
 		StudyRootQR_Find,
 		StudyRootQR_Move,
 		StudyRootQR_Get,
-		PatientStudyOnlyQR_Find,                 // Retired
-		PatientStudyOnlyQR_Move,                 // Retired
-		PatientStudyOnlyQR_Get,                  // Retired
+		PatientStudyOnlyQR_Find,	            // Retired
+		PatientStudyOnlyQR_Move,	            // Retired
+		PatientStudyOnlyQR_Get,	                // Retired
 		CompositeInstanceRootRetrieve_Move,
 		CompositeInstanceRootRetrieve_Get,
-		CompositeInstanceRootRetrieveWithoutBulkData_Get,
+		CompositeInstanceRetrieveWithoutBulkData_Get,
+		DefinedProcedureProtocol_Find,
+		DefinedProcedureProtocol_Move,
+		DefinedProcedureProtocol_Get,
 		ModalityWorklist_Find,
-		GeneralPurposeWorklist_Find,
-		StorageCommitmentPushModel,
+		GeneralPurposeWorklistManagementMeta,	// Retired
+		GeneralPurposeWorklist_Find,	        // Retired
+		GeneralPurposeScheduledProcedureStep,	// Retired
+		GeneralPurposePerformedProcedureStep,	// Retired
+		InstanceAvailabilityNotification,
+		RTConventionalMachineVerificationTrial,	// Retired
+		RTIonMachineVerificationTrial,	        // Retired
+		UnifiedProcedureStepPushTrial,	        // Retired
+		UnifiedProcedureStepWatchTrial,	        // Retired
+		UnifiedProcedureStepPullTrial,	        // Retired
+		UnifiedProcedureStepEventTrial,	        // Retired
+		UnifiedProcedureStepPush,
+		UnifiedProcedureStepWatch,
+		UnifiedProcedureStepPull,
+		UnifiedProcedureStepEvent,
+		RTConventionalMachineVerification,
+		RTIonMachineVerification,
+		GeneralRelevantPatientInformationQuery,
+		BreastImagingRelevantPatientInformationQuery,
+		CardiacRelevantPatientInformationQuery,
+		HangingProtocol_Find,
+		HangingProtocol_Move,
+		HangingProtocol_Get,
+		ColorPaletteQR_Find,
+		ColorPaletteQR_Move,
+		ColorPaletteQR_Get,
+		ProductCharacteristicsQuery,
+		SubstanceApprovalQuery,
+		GenericImplantTemplate_Find,
+		GenericImplantTemplate_Move,
+		GenericImplantTemplate_Get,
+		ImplantAssemblyTemplate_Find,
+		ImplantAssemblyTemplate_Move,
+		ImplantAssemblyTemplate_Get,
+		ImplantTemplateGroup_Find,
+		ImplantTemplateGroup_Move,
+		ImplantTemplateGroup_Get,
 
-		StoredPrintStorage,                      // Retired
-		HardcopyGrayscaleImageStorage,           // Retired
-		HardcopyColorImageStorage,               // Retired
+		MediaStorageDirectoryStorage,
+		StoredPrintStorage,	                    // Retired
+		HardcopyGrayscaleImageStorage,	        // Retired
+		HardcopyColorImageStorage,	            // Retired
 		ComputedRadiographyImageStorage,
 		DigitalXRayImageStorageForPresentation,
 		DigitalXRayImageStorageForProcessing,
@@ -37,38 +115,10 @@ namespace emdl
 		DigitalMammographyXRayImageStorageForProcessing,
 		DigitalIntraOralXRayImageStorageForPresentation,
 		DigitalIntraOralXRayImageStorageForProcessing,
-		CTImageStorage,
-		EnhancedCTImageStorage,
-		LegacyConvertedEnhancedCTImageStorage,
-		RetiredUltrasoundMultiframeImageStorage, // Retired
-		UltrasoundMultiframeImageStorage,
-		MRImageStorage,
-		EnhancedMRImageStorage,
-		MRSpectroscopyStorage,
-		EnhancedMRColorImageStorage,
-		LegacyConvertedEnhancedMRImageStorage,
-		RetiredNuclearMedicineImageStorage,      // Retired
-		RetiredUltrasoundImageStorage,           // Retired
-		UltrasoundImageStorage,
-		EnhancedUSVolumeStorage,
-		SecondaryCaptureImageStorage,
-		MultiframeSingleBitSecondaryCaptureImageStorage,
-		MultiframeGrayscaleByteSecondaryCaptureImageStorage,
-		MultiframeGrayscaleWordSecondaryCaptureImageStorage,
-		MultiframeTrueColorSecondaryCaptureImageStorage,
-		StandaloneOverlayStorage,                // Retired
-		StandaloneCurveStorage,                  // Retired
-		TwelveLeadECGWaveformStorage,
-		GeneralECGWaveformStorage,
-		AmbulatoryECGWaveformStorage,
-		HemodynamicWaveformStorage,
-		CardiacElectrophysiologyWaveformStorage,
-		BasicVoiceAudioWaveformStorage,
-		GeneralAudioWaveformStorage,
-		ArterialPulseWaveformStorage,
-		RespiratoryWaveformStorage,
-		StandaloneModalityLUTStorage,            // Retired
-		StandaloneVOILUTStorage,                 // Retired
+		StandaloneModalityLUTStorage,	        // Retired
+		EncapsulatedPDFStorage,
+		EncapsulatedCDAStorage,
+		StandaloneVOILUTStorage,	            // Retired
 		GrayscaleSoftcopyPresentationStateStorage,
 		ColorSoftcopyPresentationStateStorage,
 		PseudoColorSoftcopyPresentationStateStorage,
@@ -80,16 +130,55 @@ namespace emdl
 		EnhancedXAImageStorage,
 		XRayRadiofluoroscopicImageStorage,
 		EnhancedXRFImageStorage,
-		XRayAngiographicBiPlaneImageStorage,     // Retired
+		XRayAngiographicBiPlaneImageStorage,	// Retired
+		PositronEmissionTomographyImageStorage,
+		LegacyConvertedEnhancedPETImageStorage,
+		StandalonePETCurveStorage,	            // Retired
 		XRay3DAngiographicImageStorage,
 		XRay3DCraniofacialImageStorage,
 		BreastTomosynthesisImageStorage,
 		BreastProjectionXRayImageStorageForPresentation,
 		BreastProjectionXRayImageStorageForProcessing,
+		EnhancedPETImageStorage,
+		BasicStructuredDisplayStorage,
 		IntravascularOpticalCoherenceTomographyImageStorageForPresentation,
 		IntravascularOpticalCoherenceTomographyImageStorageForProcessing,
+		CTImageStorage,
+		EnhancedCTImageStorage,
+		LegacyConvertedEnhancedCTImageStorage,
 		NuclearMedicineImageStorage,
+		CTDefinedProcedureProtocolStorage,
+		CTPerformedProcedureProtocolStorage,
+		UltrasoundMultiframeImageStorage,	    // Retired
+		UltrasoundMultiframeImageStorage,
 		ParametricMapStorage,
+		MRImageStorage,
+		EnhancedMRImageStorage,
+		MRSpectroscopyStorage,
+		EnhancedMRColorImageStorage,
+		LegacyConvertedEnhancedMRImageStorage,
+		RTImageStorage,
+		RTDoseStorage,
+		RTStructureSetStorage,
+		RTBeamsTreatmentRecordStorage,
+		RTPlanStorage,
+		RTBrachyTreatmentRecordStorage,
+		RTTreatmentSummaryRecordStorage,
+		RTIonPlanStorage,
+		RTIonBeamsTreatmentRecordStorage,
+		NuclearMedicineImageStorage,	        // Retired
+		DICOSCTImageStorage,
+		DICOSDigitalXRayImageStorageForPresentation,
+		DICOSDigitalXRayImageStorageForProcessing,
+		DICOSThreatDetectionReportStorage,
+		DICOS2DAITStorage,
+		DICOS3DAITStorage,
+		DICOSQuadrupoleResonanceQRStorage,
+		UltrasoundImageStorage,	                // Retired
+		UltrasoundImageStorage,
+		EnhancedUSVolumeStorage,
+		EddyCurrentImageStorage,
+		EddyCurrentMultiframeImageStorage,
 		RawDataStorage,
 		SpatialRegistrationStorage,
 		SpatialFiducialsStorage,
@@ -100,7 +189,12 @@ namespace emdl
 		RealWorldValueMappingStorage,
 		SurfaceScanMeshStorage,
 		SurfaceScanPointCloudStorage,
-		VLImageStorage,                          // Retired
+		SecondaryCaptureImageStorage,
+		MultiframeSingleBitSecondaryCaptureImageStorage,
+		MultiframeGrayscaleByteSecondaryCaptureImageStorage,
+		MultiframeGrayscaleWordSecondaryCaptureImageStorage,
+		MultiframeTrueColorSecondaryCaptureImageStorage,
+		VLImageStorageTrial,	                // Retired
 		VLEndoscopicImageStorage,
 		VideoEndoscopicImageStorage,
 		VLMicroscopicImageStorage,
@@ -115,7 +209,7 @@ namespace emdl
 		WideFieldOphthalmicPhotographyStereographicProjectionImageStorage,
 		WideFieldOphthalmicPhotography3DCoordinatesImageStorage,
 		VLWholeSlideMicroscopyImageStorage,
-		VLMultiFrameImageStorage,                // Retired
+		VLMultiframeImageStorageTrial,	        // Retired
 		LensometryMeasurementsStorage,
 		AutorefractionMeasurementsStorage,
 		KeratometryMeasurementsStorage,
@@ -124,15 +218,20 @@ namespace emdl
 		SpectaclePrescriptionReportStorage,
 		OphthalmicAxialMeasurementsStorage,
 		IntraocularLensCalculationsStorage,
-		MacularGridThicknessAndVolumeReportStorage,
+		MacularGridThicknessandVolumeReportStorage,
+		StandaloneOverlayStorage,	            // Retired
 		OphthalmicVisualFieldStaticPerimetryMeasurementsStorage,
 		OphthalmicThicknessMapStorage,
 		CornealTopographyMapStorage,
+		TextSRStorageTrial,	                    // Retired
 		BasicTextSRStorage,
+		AudioSRStorageTrial,	                // Retired
 		EnhancedSRStorage,
+		DetailSRStorageTrial,	                // Retired
 		ComprehensiveSRStorage,
 		Comprehensive3DSRStorage,
 		ExtensibleSRStorage,
+		ComprehensiveSRStorageTrial,	        // Retired
 		ProcedureLogStorage,
 		MammographyCADSRStorage,
 		KeyObjectSelectionDocumentStorage,
@@ -140,27 +239,24 @@ namespace emdl
 		XRayRadiationDoseSRStorage,
 		RadiopharmaceuticalRadiationDoseSRStorage,
 		ColonCADSRStorage,
-		ImplantationPlanSRDocumentStorage,
+		ImplantationPlanSRStorage,
 		AcquisitionContextSRStorage,
+		SimplifiedAdultEchoSRStorage,
+		StandaloneCurveStorage,	                // Retired
+		WaveformStorageTrial,	                // Retired
+		TwelveleadECGWaveformStorage,
+		GeneralECGWaveformStorage,
+		AmbulatoryECGWaveformStorage,
+		HemodynamicWaveformStorage,
+		CardiacElectrophysiologyWaveformStorage,
+		BasicVoiceAudioWaveformStorage,
+		GeneralAudioWaveformStorage,
+		ArterialPulseWaveformStorage,
+		RespiratoryWaveformStorage,
 		ContentAssessmentResultsStorage,
-		EncapsulatedPDFStorage,
-		EncapsulatedCDAStorage,
-		PositronEmissionTomographyImageStorage,
-		LegacyConvertedEnhancedPETImageStorage,
-		StandalonePETCurveStorage,               // Retired
-		EnhancedPETImageStorage,
-		BasicStructuredDisplayStorage,
-		RTImageStorage,
-		RTDoseStorage,
-		RTStructureSetStorage,
-		RTBeamsTreatmentRecordStorage,
-		RTPlanStorage,
-		RTBrachyTreatmentRecordStorage,
-		RTTreatmentSummaryRecordStorage,
-		RTIonPlanStorage,
-		RTIonBeamsTreatmentRecordStorage,
-		RTBeamsDeliveryInstructionStorage,
+		RTBeamsDeliveryInstructionStorageTrial,	// Retired
 		RTBrachyApplicationSetupDeliveryInstructionStorage,
+		RTBeamsDeliveryInstructionStorage,
 		HangingProtocolStorage,
 		GenericImplantTemplateStorage,
 		ImplantAssemblyTemplateStorage,
@@ -174,5 +270,6 @@ namespace emdl
 	EMDL_API bool isImage(SOP_Class sop);
 	EMDL_API bool isStructuredReport(SOP_Class sop);
 	EMDL_API bool isPresentationState(SOP_Class sop);
+	EMDL_API bool isRetired(SOP_Class sop);
 
 }
