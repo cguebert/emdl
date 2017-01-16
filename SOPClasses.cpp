@@ -153,7 +153,7 @@ namespace
 			{ SOP::NuclearMedicineImageStorage,                                        "1.2.840.10008.5.1.4.1.1.20" },
 			{ SOP::CTDefinedProcedureProtocolStorage,                                  "1.2.840.10008.5.1.4.1.1.200.1" },
 			{ SOP::CTPerformedProcedureProtocolStorage,                                "1.2.840.10008.5.1.4.1.1.200.2" },
-			{ SOP::UltrasoundMultiframeImageStorage,                                   "1.2.840.10008.5.1.4.1.1.3" },
+			{ SOP::UltrasoundMultiframeImageStorage_Retired,                           "1.2.840.10008.5.1.4.1.1.3" },
 			{ SOP::UltrasoundMultiframeImageStorage,                                   "1.2.840.10008.5.1.4.1.1.3.1" },
 			{ SOP::ParametricMapStorage,                                               "1.2.840.10008.5.1.4.1.1.30" },
 			{ SOP::MRImageStorage,                                                     "1.2.840.10008.5.1.4.1.1.4" },
@@ -170,7 +170,7 @@ namespace
 			{ SOP::RTTreatmentSummaryRecordStorage,                                    "1.2.840.10008.5.1.4.1.1.481.7" },
 			{ SOP::RTIonPlanStorage,                                                   "1.2.840.10008.5.1.4.1.1.481.8" },
 			{ SOP::RTIonBeamsTreatmentRecordStorage,                                   "1.2.840.10008.5.1.4.1.1.481.9" },
-			{ SOP::NuclearMedicineImageStorage,                                        "1.2.840.10008.5.1.4.1.1.5" },
+			{ SOP::NuclearMedicineImageStorage_Retired,                                "1.2.840.10008.5.1.4.1.1.5" },
 			{ SOP::DICOSCTImageStorage,                                                "1.2.840.10008.5.1.4.1.1.501.1" },
 			{ SOP::DICOSDigitalXRayImageStorageForPresentation,                        "1.2.840.10008.5.1.4.1.1.501.2.1" },
 			{ SOP::DICOSDigitalXRayImageStorageForProcessing,                          "1.2.840.10008.5.1.4.1.1.501.2.2" },
@@ -178,7 +178,7 @@ namespace
 			{ SOP::DICOS2DAITStorage,                                                  "1.2.840.10008.5.1.4.1.1.501.4" },
 			{ SOP::DICOS3DAITStorage,                                                  "1.2.840.10008.5.1.4.1.1.501.5" },
 			{ SOP::DICOSQuadrupoleResonanceQRStorage,                                  "1.2.840.10008.5.1.4.1.1.501.6" },
-			{ SOP::UltrasoundImageStorage,                                             "1.2.840.10008.5.1.4.1.1.6" },
+			{ SOP::UltrasoundImageStorage_Retired,                                     "1.2.840.10008.5.1.4.1.1.6" },
 			{ SOP::UltrasoundImageStorage,                                             "1.2.840.10008.5.1.4.1.1.6.1" },
 			{ SOP::EnhancedUSVolumeStorage,                                            "1.2.840.10008.5.1.4.1.1.6.2" },
 			{ SOP::EddyCurrentImageStorage,                                            "1.2.840.10008.5.1.4.1.1.601.1" },
@@ -248,7 +248,7 @@ namespace
 			{ SOP::SimplifiedAdultEchoSRStorage,                                       "1.2.840.10008.5.1.4.1.1.88.72" },
 			{ SOP::StandaloneCurveStorage,                                             "1.2.840.10008.5.1.4.1.1.9" },
 			{ SOP::WaveformStorageTrial,                                               "1.2.840.10008.5.1.4.1.1.9.1" },
-			{ SOP::TwelveleadECGWaveformStorage,                                       "1.2.840.10008.5.1.4.1.1.9.1.1" },
+			{ SOP::TwelveLeadECGWaveformStorage,                                       "1.2.840.10008.5.1.4.1.1.9.1.1" },
 			{ SOP::GeneralECGWaveformStorage,                                          "1.2.840.10008.5.1.4.1.1.9.1.2" },
 			{ SOP::AmbulatoryECGWaveformStorage,                                       "1.2.840.10008.5.1.4.1.1.9.1.3" },
 			{ SOP::HemodynamicWaveformStorage,                                         "1.2.840.10008.5.1.4.1.1.9.2.1" },
@@ -335,7 +335,7 @@ namespace
 			SOP::NuclearMedicineImageStorage,
 			SOP::CTDefinedProcedureProtocolStorage,
 			SOP::CTPerformedProcedureProtocolStorage,
-			SOP::UltrasoundMultiframeImageStorage,
+			SOP::UltrasoundMultiframeImageStorage_Retired,
 			SOP::UltrasoundMultiframeImageStorage,
 			SOP::ParametricMapStorage,
 			SOP::MRImageStorage,
@@ -352,7 +352,7 @@ namespace
 			SOP::RTTreatmentSummaryRecordStorage,
 			SOP::RTIonPlanStorage,
 			SOP::RTIonBeamsTreatmentRecordStorage,
-			SOP::NuclearMedicineImageStorage,
+			SOP::NuclearMedicineImageStorage_Retired,
 			SOP::DICOSCTImageStorage,
 			SOP::DICOSDigitalXRayImageStorageForPresentation,
 			SOP::DICOSDigitalXRayImageStorageForProcessing,
@@ -360,7 +360,7 @@ namespace
 			SOP::DICOS2DAITStorage,
 			SOP::DICOS3DAITStorage,
 			SOP::DICOSQuadrupoleResonanceQRStorage,
-			SOP::UltrasoundImageStorage,
+			SOP::UltrasoundImageStorage_Retired,
 			SOP::UltrasoundImageStorage,
 			SOP::EnhancedUSVolumeStorage,
 			SOP::EddyCurrentImageStorage,
@@ -430,7 +430,7 @@ namespace
 			SOP::SimplifiedAdultEchoSRStorage,
 			SOP::StandaloneCurveStorage,
 			SOP::WaveformStorageTrial,
-			SOP::TwelveleadECGWaveformStorage,
+			SOP::TwelveLeadECGWaveformStorage,
 			SOP::GeneralECGWaveformStorage,
 			SOP::AmbulatoryECGWaveformStorage,
 			SOP::HemodynamicWaveformStorage,
@@ -446,7 +446,7 @@ namespace
 			SOP::HangingProtocolStorage,
 			SOP::GenericImplantTemplateStorage,
 			SOP::ImplantAssemblyTemplateStorage,
-			SOP::ImplantTemplateGroupStorage,
+			SOP::ImplantTemplateGroupStorage
 		};
 
 		return storageClasses;
@@ -477,7 +477,7 @@ namespace
 			SOP::ColonCADSRStorage,
 			SOP::ImplantationPlanSRStorage,
 			SOP::AcquisitionContextSRStorage,
-			SOP::SimplifiedAdultEchoSRStorage,
+			SOP::SimplifiedAdultEchoSRStorage
 		};
 
 		return structuredReports;
@@ -494,7 +494,7 @@ namespace
 			SOP::BlendingSoftcopyPresentationStateStorage,
 			SOP::XAXRFGrayscaleSoftcopyPresentationStateStorage,
 			SOP::GrayscalePlanarMPRVolumetricPresentationStateStorage,
-			SOP::CompositingPlanarMPRVolumetricPresentationStateStorage,
+			SOP::CompositingPlanarMPRVolumetricPresentationStateStorage
 		};
 
 		return presentationStates;
@@ -543,9 +543,9 @@ namespace
 			SOP::StandaloneVOILUTStorage,
 			SOP::XRayAngiographicBiPlaneImageStorage,
 			SOP::StandalonePETCurveStorage,
-			SOP::UltrasoundMultiframeImageStorage,
-			SOP::NuclearMedicineImageStorage,
-			SOP::UltrasoundImageStorage,
+			SOP::UltrasoundMultiframeImageStorage_Retired,
+			SOP::NuclearMedicineImageStorage_Retired,
+			SOP::UltrasoundImageStorage_Retired,
 			SOP::VLImageStorageTrial,
 			SOP::VLMultiframeImageStorageTrial,
 			SOP::StandaloneOverlayStorage,
@@ -555,7 +555,7 @@ namespace
 			SOP::ComprehensiveSRStorageTrial,
 			SOP::StandaloneCurveStorage,
 			SOP::WaveformStorageTrial,
-			SOP::RTBeamsDeliveryInstructionStorageTrial,
+			SOP::RTBeamsDeliveryInstructionStorageTrial
 		};
 
 		return retired;
