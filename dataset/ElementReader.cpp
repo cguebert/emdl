@@ -33,6 +33,18 @@ namespace
 		return result;
 	}
 
+	void removePadding(std::string& str)
+	{
+		static const std::string padding = { '\0', ' ' };
+		const auto last = str.find_last_not_of(padding);
+		if (last + 1 == str.size()) // No padding
+			return;
+		else if (last != std::string::npos)
+			str = str.substr(0, last + 1);
+		else // Empty string
+			str.clear();
+	}
+
 }
 
 namespace emdl
@@ -229,24 +241,18 @@ namespace emdl
 		}
 		else
 		{
-			const auto str = readString(length);
+			auto str = readString(length);
+			removePadding(str);
+			if (str.empty())
+				return {};
+
 			if (vr == VR::LT || vr == VR::ST || vr == VR::UT)
 				result = { str };
 			else
 				result = splitString(str);
 
-			// Remove padding
-			static const std::string padding = { '\0', ' ' };
 			for (auto& item : result)
-			{
-				const auto last = item.find_last_not_of(padding);
-				if (last == item.size()) // No padding
-					continue;
-				else if (last != std::string::npos)
-					item = item.substr(0, last + 1);
-				else // Empty string
-					item.clear();
-			}
+				removePadding(item);
 		}
 
 		return result;
