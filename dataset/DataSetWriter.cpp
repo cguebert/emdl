@@ -93,7 +93,10 @@ namespace emdl
 				// Write the entire group
 				const auto startPos = m_stream.tellp();
 				for (const auto& tes : group.elements)
-					writeElementStruct(dataSet, tes, fastWrite);
+				{
+					if(tes.tag.element != 0) //do not write group length twice if already present in dataset
+						writeElementStruct(dataSet, tes, fastWrite);
+				}
 				const auto endPos = m_stream.tellp();
 
 				// Update the length
