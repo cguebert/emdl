@@ -83,7 +83,7 @@ namespace emdl
 	}
 
 	template <class Container, class Key>
-	typename Container::mapped_type valueOrDefault(Container& map, const Key& key, const typename Container::mapped_type& defaultValue = typename Container::mapped_type())
+	typename Container::mapped_type valueOrDefault(const Container& map, const Key& key, const typename Container::mapped_type& defaultValue = typename Container::mapped_type())
 	{
 		using value_type = typename Container::mapped_type;
 		auto it = map.find(key);
@@ -105,6 +105,23 @@ namespace emdl
 			val.replace(pos, fromSize, to);
 			pos += toSize;
 		}
+	}
+
+	template <class Container>
+	typename Container::value_type join(const Container& container, const typename Container::value_type& token)
+	{
+		typename Container::value_type result;
+		bool first = true;
+		for (const auto& value : container)
+		{
+			if (first)
+				first = false;
+			else
+				result += token;
+			result += value;
+		}
+
+		return result;
 	}
 
 }
