@@ -32,6 +32,9 @@ public:
 	//! Move an existing element
 	Element(Element&&) = default;
 
+	//! Create an element. The type of the value created depends on the VR.
+	Element(odil::VR vr);
+
 	//! Create an element by creating, copying or moving a value
 	template <class T, std::enable_if_t<!is_element<T>, bool> = true>
 	Element(T&& value, const odil::VR& vr = odil::VR::INVALID)

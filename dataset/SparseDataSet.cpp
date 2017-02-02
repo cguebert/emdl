@@ -40,19 +40,7 @@ namespace emdl
 		if (vr == odil::VR::UNKNOWN)
 			vr = odil::as_vr(tag);
 
-		Value value;
-		if(odil::is_int(vr))
-			value = Value::Integers();
-		else if(odil::is_real(vr))
-			value = Value::Reals();
-		else if(odil::is_string(vr))
-			value = Value::Strings();
-		else if(odil::is_binary(vr))
-			value = Value::Binaries();
-		else if(vr == odil::VR::SQ)
-			value = Value::DataSets();
-
-		getPreparedElement(edit(tag)) = { true, Element{ std::move(value), vr } };
+		getPreparedElement(edit(tag)) = { true, Element { vr } };
 	}
 
 	void SparseDataSet::set(const odil::Tag& tag, BinaryView view)
@@ -98,7 +86,7 @@ namespace emdl
 	{
 		auto tes = find(tag);
 		if (!tes)
-			return{};
+			return {};
 		return getElement(*tes);
 	}
 
@@ -111,7 +99,7 @@ namespace emdl
 	{
 		auto tes = find(tag);
 		if (!tes)
-			return{};
+			return {};
 		return getElement(*tes);
 	}
 

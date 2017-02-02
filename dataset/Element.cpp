@@ -33,6 +33,21 @@ namespace
 namespace emdl
 {
 
+	Element::Element(odil::VR vr)
+		: vr(vr)
+	{
+		if(odil::is_int(vr))
+			m_value = Value::Integers();
+		else if(odil::is_real(vr))
+			m_value = Value::Reals();
+		else if(odil::is_string(vr))
+			m_value = Value::Strings();
+		else if(odil::is_binary(vr))
+			m_value = Value::Binaries();
+		else if(vr == odil::VR::SQ)
+			m_value = Value::DataSets();
+	}
+
 	bool Element::empty() const
 	{
 		return applyVisitor(EmptyVisitor{});
