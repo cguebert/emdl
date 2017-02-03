@@ -619,7 +619,7 @@ namespace
 	{
 		static BitSet imagesBitSet = [] {
 			BitSet bitSet = getStorageBitSet();
-			for (auto sop : getStructuredReportsBitSet())
+			for (auto sop : getStructuredReportsClasses())
 				bitSet[static_cast<int>(sop)] = false;
 			for (auto sop : getPresentationStatesClasses())
 				bitSet[static_cast<int>(sop)] = false;
