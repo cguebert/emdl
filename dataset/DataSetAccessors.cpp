@@ -52,6 +52,16 @@ namespace emdl
 		return {};
 	}
 
+	const Value::Integers& intList(const SparseDataSet& dataSet, odil::Tag tag)
+	{
+		const auto elt = dataSet[tag];
+		if (elt)
+			return elt->asInt();
+		static const Value::Integers emptyList;
+		return emptyList;
+	}
+
+/*****************************************************************************/
 
 	bool isReal(const SparseDataSet& dataSet, odil::Tag tag)
 	{
@@ -86,6 +96,16 @@ namespace emdl
 		return {};
 	}
 
+	const Value::Reals& realList(const SparseDataSet& dataSet, odil::Tag tag)
+	{
+		const auto elt = dataSet[tag];
+		if (elt)
+			return elt->asReal();
+		static const Value::Reals emptyList;
+		return emptyList;
+	}
+
+/*****************************************************************************/
 
 	bool isString(const SparseDataSet& dataSet, odil::Tag tag)
 	{
@@ -120,6 +140,16 @@ namespace emdl
 		return {};
 	}
 
+	const Value::Strings& stringList(const SparseDataSet& dataSet, odil::Tag tag)
+	{
+		const auto elt = dataSet[tag];
+		if (elt)
+			return elt->asString();
+		static const Value::Strings emptyList;
+		return emptyList;
+	}
+
+/*****************************************************************************/
 
 	bool isDataSet(const SparseDataSet& dataSet, odil::Tag tag)
 	{
@@ -154,6 +184,16 @@ namespace emdl
 		return {};
 	}
 
+	const Value::DataSets& dataSetList(const SparseDataSet& dataSet, odil::Tag tag)
+	{
+		const auto elt = dataSet[tag];
+		if (elt)
+			return elt->asDataSet();
+		static const Value::DataSets emptyList;
+		return emptyList;
+	}
+
+/*****************************************************************************/
 
 	bool isBinary(const SparseDataSet& dataSet, odil::Tag tag)
 	{
@@ -186,6 +226,15 @@ namespace emdl
 		if (elt && !elt->empty())
 			return elt->asBinary()[0];
 		return {};
+	}
+
+	const Value::Binaries& binaryList(const SparseDataSet& dataSet, odil::Tag tag)
+	{
+		const auto elt = dataSet[tag];
+		if (elt)
+			return elt->asBinary();
+		static const Value::Binaries emptyList;
+		return emptyList;
 	}
 
 } // namespace emdl

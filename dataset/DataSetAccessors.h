@@ -22,9 +22,13 @@ namespace emdl
 	//! Return an integer contained in an existing element (read-write).
 	EMDL_API Value::Integer& asInt(SparseDataSet& dataSet, odil::Tag tag, size_t position);
 
-	//! Return the first integer if it exists (element is present and not empty)
+	//! Return the first integer if it exists (element is present and not empty).
 	EMDL_API boost::optional<const Value::Integer&> firstInt(const SparseDataSet& dataSet, odil::Tag tag);
 
+	//! Return the integers if they exist, or an empty list.
+	EMDL_API const Value::Integers& intList(const SparseDataSet& dataSet, odil::Tag tag);
+
+/*****************************************************************************/
 
 	//! Test whether an existing element has real type.
 	EMDL_API bool isReal(const SparseDataSet& dataSet, odil::Tag tag);
@@ -41,9 +45,13 @@ namespace emdl
 	//! Return an real contained in an existing element (read-write).
 	EMDL_API Value::Real& asReal(SparseDataSet& dataSet, odil::Tag tag, size_t position);
 
-	//! Return the first real if it exists (element is present and not empty)
+	//! Return the first real if it exists (element is present and not empty).
 	EMDL_API boost::optional<const Value::Real&> firstReal(const SparseDataSet& dataSet, odil::Tag tag);
 
+	//! Return the reals if they exist, or an empty list.
+	EMDL_API const Value::Reals& realList(const SparseDataSet& dataSet, odil::Tag tag);
+
+/*****************************************************************************/
 
 	//! Test whether an existing element has string type.
 	EMDL_API bool isString(const SparseDataSet& dataSet, odil::Tag tag);
@@ -60,9 +68,13 @@ namespace emdl
 	//! Return a string contained in an existing element (read-write).
 	EMDL_API Value::String& asString(SparseDataSet& dataSet, odil::Tag tag, size_t position);
 
-	//! Return the first string if it exists (element is present and not empty)
+	//! Return the first string if it exists (element is present and not empty).
 	EMDL_API boost::optional<const Value::String&> firstString(const SparseDataSet& dataSet, odil::Tag tag);
 
+	//! Return the strings if they exist, or an empty list.
+	EMDL_API const Value::Strings& stringList(const SparseDataSet& dataSet, odil::Tag tag);
+
+/*****************************************************************************/
 
 	//! Test whether an existing element has data set type.
 	EMDL_API bool isDataSet(const SparseDataSet& dataSet, odil::Tag tag);
@@ -79,9 +91,13 @@ namespace emdl
 	//! Return a data set contained in an existing element (read-write).
 	EMDL_API SparseDataSet& asDataSet(SparseDataSet& dataSet, odil::Tag tag, size_t position);
 
-	//! Return the first data set if it exists (element is present and not empty)
+	//! Return the first data set if it exists (element is present and not empty).
 	EMDL_API boost::optional<const SparseDataSet&> firstDataSet(const SparseDataSet& dataSet, odil::Tag tag);
 
+	//! Return the data sets if they exist, or an empty list.
+	EMDL_API const Value::DataSets& dataSetList(const SparseDataSet& dataSet, odil::Tag tag);
+
+/*****************************************************************************/
 
 	//! Test whether an existing element has binary type.
 	EMDL_API bool isBinary(const SparseDataSet& dataSet, odil::Tag tag);
@@ -98,7 +114,10 @@ namespace emdl
 	//! Return a binary item contained in an existing element (read-write).
 	EMDL_API Value::Binaries::value_type& asBinary(SparseDataSet& dataSet, odil::Tag tag, size_t position);
 
-	//! Return the first binary item if it exists (element is present and not empty)
+	//! Return the first binary item if it exists (element is present and not empty).
 	EMDL_API boost::optional<const Value::Binaries::value_type&> firstBinary(const SparseDataSet& dataSet, odil::Tag tag);
+
+	//! Return the binary items if they exist, or an empty list.
+	EMDL_API const Value::Binaries& binaryList(const SparseDataSet& dataSet, odil::Tag tag);
 
 } // namespace emdl
