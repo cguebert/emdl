@@ -41,6 +41,10 @@ namespace message
 		};
 
 		explicit BaseField(const BaseInitField& init);
+		BaseField(const BaseField&) = delete;
+		BaseField& operator=(const BaseField&) = delete;
+		BaseField(BaseField&&) = default;
+		BaseField& operator=(BaseField&&) = default;
 
 		odil::Tag tag() const;
 
