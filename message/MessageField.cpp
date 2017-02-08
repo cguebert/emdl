@@ -8,7 +8,6 @@ namespace message
 
 	BaseField::BaseField(const BaseInitField& init)
 		: m_tag(init.tag)
-		, m_owner(init.owner)
 		, m_dataSet(init.dataSet)
 	{
 		init.registerField(*this);

@@ -43,8 +43,8 @@ namespace message
 		explicit BaseField(const BaseInitField& init);
 		BaseField(const BaseField&) = delete;
 		BaseField& operator=(const BaseField&) = delete;
-		BaseField(BaseField&&) = default;
-		BaseField& operator=(BaseField&&) = default;
+		BaseField(BaseField&&) = delete;
+		BaseField& operator=(BaseField&&) = delete;
 
 		odil::Tag tag() const;
 
@@ -52,7 +52,6 @@ namespace message
 
 	protected:
 		odil::Tag m_tag;
-		Message& m_owner;
 		SparseDataSet& m_dataSet;
 	};
 

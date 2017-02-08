@@ -148,7 +148,7 @@ namespace message
 		//! Templated version of initField which accepts an initial value (otherwise the value is default constructed)
 		template <class T>
 		typename BaseField::InitField<T> initField(odil::Tag tag, const T& value)
-		{ return BaseField::InitField<T>(tag, value, *this, m_commandSet); }
+		{ return BaseField::InitField<T>(tag, value, m_commandSet); }
 
 		//! Command set of the message.
 		SparseDataSet m_commandSet;
