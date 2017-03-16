@@ -214,6 +214,41 @@ namespace message
 			return it->second;
 	}
 
+	bool Message::shouldLogDataSet(int64_t command)
+	{
+		using cmd = message::Message::Command;
+
+		switch (command)
+		{
+		case cmd::C_FIND_RQ:
+		case cmd::C_FIND_RSP:
+		case cmd::C_CANCEL_RQ:
+		case cmd::C_GET_RQ:
+		case cmd::C_GET_RSP:
+		case cmd::C_MOVE_RQ:
+		case cmd::C_MOVE_RSP:
+		case cmd::N_EVENT_REPORT_RQ:
+		case cmd::N_EVENT_REPORT_RSP:
+		case cmd::N_GET_RQ:
+		case cmd::N_GET_RSP:
+		case cmd::N_SET_RQ:
+		case cmd::N_SET_RSP:
+		case cmd::N_ACTION_RQ:
+		case cmd::N_ACTION_RSP:
+		case cmd::N_CREATE_RQ:
+		case cmd::N_CREATE_RSP:
+		case cmd::N_DELETE_RQ:
+		case cmd::N_DELETE_RSP:
+			return true;
+
+		case cmd::C_STORE_RQ: // no DataSet or DataSets are too big 
+		case cmd::C_STORE_RSP:
+		case cmd::C_ECHO_RQ:
+		case cmd::C_ECHO_RSP:
+		default:
+			return false;
+		}
+	}
 }
 
 }

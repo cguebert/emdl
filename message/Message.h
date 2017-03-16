@@ -120,6 +120,9 @@ namespace message
 		//! Get a human friendly string for a Message::Command::Type value
 		static std::string getCommandName(int64_t command);
 
+		//! Get the log policy toward the dataset (if any) for the given commandMessage::Command::Type 
+		static bool shouldLogDataSet(int64_t command);
+
 	private: // We put this variable here so that it is initialized before commandField
 		//! Fields specific to this message
 		std::vector<BaseField*> m_fields;
