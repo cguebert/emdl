@@ -266,6 +266,7 @@ namespace emdl
 
 	EMDL_API SOP_Class getSOPClass(const std::string& uid);
 	EMDL_API const std::string& getSOPClassUID(SOP_Class sop_class);
+	EMDL_API const std::string& getSOPClassDescription(SOP_Class sop_class);
 	EMDL_API std::vector<SOP_Class> getSOPClassList();
 
 	EMDL_API bool isStorage(SOP_Class sop);
