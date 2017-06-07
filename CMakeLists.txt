@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
 # External dependencies
-find_package(Boost REQUIRED)
+find_package(Boost REQUIRED COMPONENTS filesystem system date_time)
 find_package(fmt REQUIRED)
 find_package(odil REQUIRED)
 
@@ -22,7 +22,7 @@ GroupFiles(Header_Files)
 GroupFiles(Source_Files)
 
 # Create library
-add_library(${target} SHARED ${Header_Files} ${Source_Files})
+add_library(${target} ${Header_Files} ${Source_Files})
 
  # Create namespaced alias
 add_library(${META_PROJECT_NAME}::${target} ALIAS ${target})
@@ -95,7 +95,7 @@ install(EXPORT ${target}-export
 )
 
 # Dlls for the package
-if(WIN32)
+if(WIN32 AND BUILD_SHARED_LIBS)
 	install(TARGETS ${target} RUNTIME DESTINATION debug   CONFIGURATIONS Debug   COMPONENT runtime)
 	install(TARGETS ${target} RUNTIME DESTINATION release CONFIGURATIONS Release COMPONENT runtime)
 endif()
