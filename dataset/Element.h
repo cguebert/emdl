@@ -85,7 +85,7 @@ public:
 	{ return boost::apply_visitor(visitor, m_value.value()); }
 
 	template <class Visitor>
-	typename Visitor::result_type applyVisitor(Visitor& visitor)
+	typename Visitor::result_type applyModifyingVisitor(Visitor& visitor)
 	{ return boost::apply_visitor(visitor, m_value.value()); }
 
 private:
