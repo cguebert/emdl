@@ -48,7 +48,7 @@ target_link_libraries(${target}
 	PUBLIC
 	libodil
 	Boost::boost
-	fmt)
+	fmt::fmt)
 
 # Compile definitions
 target_compile_definitions(${target} PRIVATE ${DEFAULT_COMPILE_DEFINITIONS})
