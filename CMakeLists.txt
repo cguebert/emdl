@@ -47,7 +47,8 @@ target_include_directories(${target}
 target_link_libraries(${target}
 	PUBLIC
 	libodil
-	Boost::boost
+	Boost::date_time
+	Boost::system
 	fmt::fmt)
 
 # Compile definitions
@@ -61,6 +62,23 @@ target_link_libraries(${target} PRIVATE ${DEFAULT_LINKER_OPTIONS})
 
 # Project options
 set_target_properties(${target} PROPERTIES FOLDER "Libraries")
+
+if(WIN32)
+	# We have to set _WIN32_WINNT for Asio
+	if(${CMAKE_SYSTEM_VERSION} EQUAL 10) # Windows 10
+		target_compile_definitions(${target} PRIVATE _WIN32_WINNT=0x0A00)
+	elseif(${CMAKE_SYSTEM_VERSION} EQUAL 6.3 OR ${CMAKE_SYSTEM_VERSION} EQUAL 8.1) # Windows 8.1
+		target_compile_definitions(${target} PRIVATE _WIN32_WINNT=0x0603)
+	elseif(${CMAKE_SYSTEM_VERSION} EQUAL 6.2) # Windows 8
+		target_compile_definitions(${target} PRIVATE _WIN32_WINNT=0x0602)
+	elseif(${CMAKE_SYSTEM_VERSION} EQUAL 6.1) # Windows 7
+		target_compile_definitions(${target} PRIVATE _WIN32_WINNT=0x0601)
+	elseif(${CMAKE_SYSTEM_VERSION} EQUAL 6.0) # Windows Vista
+		target_compile_definitions(${target} PRIVATE _WIN32_WINNT=0x0600)
+	else() # Windows XP (5.1)
+		target_compile_definitions(${target} PRIVATE _WIN32_WINNT=0x0501)
+	endif()
+endif()
 
 # 
 # Deployment
