@@ -28,25 +28,19 @@ namespace emdl
 	namespace dul
 	{
 		StateMachine::StateMachine()
-			: m_state(State::Sta1)
-			, m_timeout(boost::posix_time::pos_infin)
-			, m_artim_timer(m_transport.get_service())
-			, m_association_acceptor(odil::default_association_acceptor)
+			: m_artimTimer(m_transport.service())
+			, m_associationAcceptor(odil::default_association_acceptor)
 		{
 		}
 
-		void StateMachine::transition(Event const& event, EventData& data)
+		void StateMachine::transition(Event event, EventData& data)
 		{
-			const auto guard_iterator = StateMachine::m_guards.find(
-				{m_state, event});
+			const auto guard_iterator = StateMachine::m_guards.find({m_state, event});
 			const auto guard_value = (guard_iterator != StateMachine::m_guards.end()) ? guard_iterator->second(*this, data) : true;
 
-			const auto transition_iterator = StateMachine::m_transitions.find(
-				std::make_tuple(m_state, event, guard_value));
+			const auto transition_iterator = StateMachine::m_transitions.find(std::make_tuple(m_state, event, guard_value));
 			if (transition_iterator == StateMachine::m_transitions.end())
-			{
 				throw Exception("No such transition");
-			}
 
 			const auto& action = transition_iterator->second.first;
 			const auto& next_state = transition_iterator->second.second;
@@ -54,35 +48,33 @@ namespace emdl
 			// Do action
 			const auto action_index = static_cast<size_t>(action);
 			if (action_index > m_actions.size())
-			{
 				throw Exception("Unknown action");
-			}
 			(this->*m_actions[action_index])(data);
 
 			m_state = next_state;
 		}
 
-		StateMachine::State StateMachine::get_state() const
+		StateMachine::State StateMachine::state() const
 		{
 			return m_state;
 		}
 
-		const Transport& StateMachine::get_transport() const
+		const Transport& StateMachine::transport() const
 		{
 			return m_transport;
 		}
 
-		Transport& StateMachine::get_transport()
+		Transport& StateMachine::transport()
 		{
 			return m_transport;
 		}
 
-		StateMachine::duration_type StateMachine::get_timeout() const
+		StateMachine::duration_type StateMachine::timeout() const
 		{
 			return m_timeout;
 		}
 
-		void StateMachine::set_timeout(duration_type timeout)
+		void StateMachine::setTimeout(duration_type timeout)
 		{
 			m_timeout = timeout;
 		}
@@ -93,12 +85,11 @@ namespace emdl
 			transition(Event::TransportConnectionIndication, data);
 		}
 
-		void StateMachine::send_pdu(EventData& data)
+		void StateMachine::sendPdu(EventData& data)
 		{
-			if (data.pdu == nullptr)
-			{
+			if (!data.pdu)
 				throw Exception("No PDU");
-			}
+
 			const auto& item = data.pdu->get_item();
 			const auto type = item.as_unsigned_int_8("PDU-type");
 
@@ -131,7 +122,7 @@ namespace emdl
 			}
 		}
 
-		void StateMachine::receive_pdu(EventData& data)
+		void StateMachine::receivePdu(EventData& data)
 		{
 			const auto header = m_transport.read(6);
 
@@ -182,17 +173,17 @@ namespace emdl
 			transition(event, data);
 		}
 
-		void StateMachine::start_timer(EventData& data)
+		void StateMachine::startTimer(EventData& data)
 		{
 			return;
 
-			const auto canceled = m_artim_timer.expires_from_now(m_timeout);
+			const auto canceled = m_artimTimer.expires_from_now(m_timeout);
 			if (canceled != 0)
 			{
 				throw Exception("ARTIM timer started with pending operations");
 			}
 
-			m_artim_timer.async_wait(
+			m_artimTimer.async_wait(
 				[this, &data](const boost::system::error_code& e) {
 					//source = Source::TIMER;
 					//error = e;
@@ -212,12 +203,12 @@ namespace emdl
 				});
 		}
 
-		void StateMachine::stop_timer()
+		void StateMachine::stopTimer()
 		{
 			return;
 
-			m_artim_timer.expires_at(boost::posix_time::pos_infin);
-			m_transport.get_service().poll();
+			m_artimTimer.expires_at(boost::posix_time::pos_infin);
+			m_transport.service().poll();
 			// FIXME: check that the timer was aborted
 			/*
 		if(source != Source::TIMER)
@@ -229,17 +220,17 @@ namespace emdl
 			throw Exception("TCP timer error: "+error.message());
 		}
 	*/
-			m_transport.get_service().reset();
+			m_transport.service().reset();
 		}
 
-		const odil::AssociationAcceptor& StateMachine::get_association_acceptor() const
+		const odil::AssociationAcceptor& StateMachine::associationAcceptor() const
 		{
-			return m_association_acceptor;
+			return m_associationAcceptor;
 		}
 
-		void StateMachine::set_association_acceptor(const odil::AssociationAcceptor& acceptor)
+		void StateMachine::setAssociationAcceptor(const odil::AssociationAcceptor& acceptor)
 		{
-			m_association_acceptor = acceptor;
+			m_associationAcceptor = acceptor;
 		}
 
 #define transition_full(start, event, guard, action, end)                               \
@@ -314,7 +305,7 @@ namespace emdl
 			transition_s(Sta7, AAssociateRJRemote, AA_8, Sta13),
 			transition_s(Sta7, AAssociateRQRemote, AA_8, Sta13),
 			transition_s(Sta7, PDataTFRemote, AR_6, Sta7),
-			//transition(Sta7, AReleaseRQRemote, AR_8, Sta9Or10),
+			//transition_s(Sta7, AReleaseRQRemote, AR_8, Sta9Or10),
 			transition_s(Sta7, AReleaseRPRemote, AR_3, Sta1),
 			transition_s(Sta7, AAbortLocal, AA_1, Sta13),
 			transition_s(Sta7, AAbortRemote, AA_3, Sta1),
@@ -402,7 +393,7 @@ namespace emdl
 				 {
 					 const odil::AssociationParameters input_parameters(
 						 *std::dynamic_pointer_cast<odil::pdu::AAssociateRQ>(data.pdu));
-					 data.association_parameters = state_machine.get_association_acceptor()(input_parameters);
+					 data.association_parameters = state_machine.associationAcceptor()(input_parameters);
 				 }
 				 catch (const odil::AssociationRejected& reject)
 				 {
@@ -446,18 +437,15 @@ namespace emdl
 			&StateMachine::AA_7,
 			&StateMachine::AA_8};
 
-		void StateMachine::send_pdu(EventData& data, uint8_t pdu_type)
+		void StateMachine::sendPdu(EventData& data, uint8_t pdu_type)
 		{
-			if (data.pdu == nullptr)
-			{
+			if (!data.pdu)
 				throw Exception("No PDU");
-			}
+
 			const auto& item = data.pdu->get_item();
 
 			if (item.as_unsigned_int_8("PDU-type") != pdu_type)
-			{
 				throw Exception("Invalid PDU");
-			}
 
 			std::ostringstream stream;
 			stream << item;
@@ -471,164 +459,153 @@ namespace emdl
 
 		void StateMachine::AE_2(EventData& data)
 		{
-			send_pdu(data, 0x01);
+			sendPdu(data, 0x01);
 		}
 
 		void StateMachine::AE_3(EventData&)
 		{
-			// Do nothing: notification is implicit since this function is only called
-			// by receive_pdu
+			// Do nothing: notification is implicit since this function is only called by receivePdu
 		}
 
 		void StateMachine::AE_4(EventData&)
 		{
-			// Notification is implicit since this function is only called by
-			// receive_pdu
+			// Notification is implicit since this function is only called by receivePdu
 			m_transport.close();
 		}
 
 		void StateMachine::AE_5(EventData& data)
 		{
 			// Connection response has already been sent.
-			start_timer(data);
+			startTimer(data);
 		}
 
 		void StateMachine::AE_6(EventData& data)
 		{
-			stop_timer();
+			stopTimer();
 
 			if (data.reject)
 			{
 				data.pdu = std::make_shared<odil::pdu::AAssociateRJ>(
 					data.reject->get_result(), data.reject->get_source(),
 					data.reject->get_reason());
-				send_pdu(data, 0x03);
+				sendPdu(data, 0x03);
 				data.pdu = NULL;
 			}
 			else
 			{
 				// Issue A-ASSOCIATE indication
-				// Do nothing: notification is implicit since this function is only
-				// called by receive_pdu
+				// Do nothing: notification is implicit since this function is only called by receivePdu
 			}
 		}
 
 		void StateMachine::AE_7(EventData& data)
 		{
-			send_pdu(data, 0x02);
+			sendPdu(data, 0x02);
 		}
 
 		void StateMachine::AE_8(EventData& data)
 		{
-			send_pdu(data, 0x03);
-			start_timer(data);
+			sendPdu(data, 0x03);
+			startTimer(data);
 		}
 
 		void StateMachine::DT_1(EventData& data)
 		{
-			send_pdu(data, 0x04);
+			sendPdu(data, 0x04);
 		}
 
 		void StateMachine::DT_2(EventData&)
 		{
-			// Do nothing: notification is implicit since this function is only called
-			// by receive_pdu
+			// Do nothing: notification is implicit since this function is only called by receivePdu
 		}
 
 		void StateMachine::AR_1(EventData& data)
 		{
-			send_pdu(data, 0x05);
+			sendPdu(data, 0x05);
 		}
 
 		void StateMachine::AR_2(EventData&)
 		{
-			// Do nothing: notification is implicit since this function is only called
-			// by receive_pdu
+			// Do nothing: notification is implicit since this function is only called by receivePdu
 		}
 
 		void StateMachine::AR_3(EventData&)
 		{
-			// Notification is implicit since this function is only called by
-			// receive_pdu
+			// Notification is implicit since this function is only called by receivePdu
 			m_transport.close();
 		}
 
 		void StateMachine::AR_4(EventData& data)
 		{
-			send_pdu(data, 0x06);
-			start_timer(data);
+			sendPdu(data, 0x06);
+			startTimer(data);
 		}
 
 		void StateMachine::AR_5(EventData&)
 		{
-			stop_timer();
+			stopTimer();
 		}
 
 		void StateMachine::AR_6(EventData&)
 		{
-			// Do nothing: notification is implicit since this function is only called
-			// by receive_pdu
+			// Do nothing: notification is implicit since this function is only called by receivePdu
 		}
 
 		void StateMachine::AR_7(EventData& data)
 		{
-			send_pdu(data, 0x04);
+			sendPdu(data, 0x04);
 		}
 
 		void StateMachine::AR_8(EventData&)
 		{
-			// Do nothing: notification is implicit since this function is only called
-			// by receive_pdu
+			// Do nothing: notification is implicit since this function is only called by receivePdu
 		}
 
 		void StateMachine::AR_9(EventData& data)
 		{
-			send_pdu(data, 0x06);
+			sendPdu(data, 0x06);
 		}
 
 		void StateMachine::AR_10(EventData&)
 		{
-			// Do nothing: notification is implicit since this function is only called
-			// by receive_pdu
+			// Do nothing: notification is implicit since this function is only called by receivePdu
 		}
 
 		void StateMachine::AA_1(EventData& data)
 		{
 			if (std::dynamic_pointer_cast<odil::pdu::AAbort>(data.pdu))
 			{
-				send_pdu(data, 0x07);
+				sendPdu(data, 0x07);
 			}
 			else
 			{
 				data.pdu = std::make_shared<odil::pdu::AAbort>(1, 2);
-				send_pdu(data);
+				sendPdu(data);
 			}
 
-			start_timer(data);
+			startTimer(data);
 		}
 
 		void StateMachine::AA_2(EventData&)
 		{
-			stop_timer();
+			stopTimer();
 			m_transport.close();
 		}
 
 		void StateMachine::AA_3(EventData&)
 		{
-			// Notification is implicit since this function is only called
-			// by receive_pdu
+			// Notification is implicit since this function is only called by receivePdu
 			m_transport.close();
 		}
 
 		void StateMachine::AA_4(EventData&)
 		{
-			// Do nothing: notification is implicit since this function is only called
-			// by receive_pdu
+			// Do nothing: notification is implicit since this function is only called by receivePdu
 		}
 
 		void StateMachine::AA_5(EventData&)
 		{
-			stop_timer();
+			stopTimer();
 		}
 
 		void StateMachine::AA_6(EventData&)
@@ -638,15 +615,15 @@ namespace emdl
 
 		void StateMachine::AA_7(EventData& data)
 		{
-			send_pdu(data, 0x07);
+			sendPdu(data, 0x07);
 		}
 
 		void StateMachine::AA_8(EventData& data)
 		{
 			data.pdu = std::make_shared<odil::pdu::AAbort>(2, 2);
-			send_pdu(data, 0x07);
+			sendPdu(data, 0x07);
 			// Notification is implicit
-			start_timer(data);
+			startTimer(data);
 		}
 	}
 }

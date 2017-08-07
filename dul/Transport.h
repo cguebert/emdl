@@ -13,72 +13,41 @@ namespace emdl
 {
 	namespace dul
 	{
-		/**
-		 * @brief TCP transport for the DICOM Upper Layer.
-		 *
-		 * The behavior of connect, receive, read and write is governed by the timeout
-		 * value: if the timeout expires before the operation is completed, an exception
-		 * will be raised.
-		 */
+		/// TCP transport for the DICOM Upper Layer.
 		class EMDL_API Transport
 		{
 		public:
-			/// @brief Socket type.
 			typedef boost::asio::ip::tcp::socket Socket;
-
-			/// @brief Duration of the timeout.
 			typedef boost::asio::deadline_timer::duration_type duration_type;
 
-			/// @brief Constructor.
-			Transport();
-
-			/// @brief Destructor.
+			/// Destructor.
 			~Transport();
 
-			/// @brief Return the io_service.
-			const boost::asio::io_service& get_service() const;
+			const boost::asio::io_service& service() const; /// Return the io_service.
+			boost::asio::io_service& service();             /// Return the io_service.
 
-			/// @brief Return the io_service.
-			boost::asio::io_service& get_service();
+			std::shared_ptr<const Socket> socket() const; /// Return the socket.
+			std::shared_ptr<Socket> socket();             /// Return the socket.
 
-			/// @brief Return the socket.
-			std::shared_ptr<const Socket> get_socket() const;
+			bool isOpen() const; /// Test whether the transport is open.
 
-			/// @brief Return the socket.
-			std::shared_ptr<Socket> get_socket();
-
-			/// @brief Return the timeout, default to infinity.
-			duration_type get_timeout() const;
-
-			/// @brief Set the timeout.
-			void set_timeout(duration_type timeout);
-
-			/// @brief Test whether the transport is open.
-			bool is_open() const;
-
-			/// @brief Connect to the specified endpoint, raise an exception upon error.
+			/// Connect to the specified endpoint, raise an exception upon error.
 			void connect(const Socket::endpoint_type& peer_endpoint);
 
-			/**
-			 * @brief Receive a connection on the specified socket, raise an
-			 * exception upon error.
-			 */
+			/// Receive a connection on the specified socket, raise an exception upon error.
 			void receive(std::shared_ptr<Socket> socket);
 
-			/// @brief Close the connection.
-			void close();
+			void close(); /// Close the connection.
 
-			/// @brief Read data, raise an exception on error.
+			/// Read data, raise an exception on error.
 			std::string read(std::size_t length);
 
-			/// @brief Write data, raise an exception on error.
+			/// Write data, raise an exception on error.
 			void write(const std::string& data);
 
 		private:
 			boost::asio::io_service m_service;
 			std::shared_ptr<Socket> m_socket;
-			duration_type m_timeout;
-			boost::asio::deadline_timer m_deadline;
 
 			enum class Source
 			{
@@ -86,11 +55,6 @@ namespace emdl
 				TIMER,
 				OPERATION,
 			};
-
-			void start_deadline(Source& source, boost::system::error_code& error);
-			void stop_deadline();
-
-			void run(Source& source, boost::system::error_code& error);
 		};
 
 		/// Exception reported when the socket is closed without releasing the association.
