@@ -35,6 +35,14 @@ namespace emdl
 			return m_socket;
 		}
 
+		void Transport::setSocket(std::shared_ptr<Socket> socket)
+		{
+			if (isOpen())
+				throw Exception("Already connected");
+
+			m_socket = std::move(socket);
+		}
+
 		bool Transport::isOpen() const
 		{
 			return (m_socket && m_socket->is_open());
@@ -53,14 +61,6 @@ namespace emdl
 				throw SocketClosed("Connect error: " + error.message());
 		}
 
-		void Transport::receive(std::shared_ptr<Socket> socket)
-		{
-			if (isOpen())
-				throw Exception("Already connected");
-
-			m_socket = std::move(socket);
-		}
-
 		void Transport::close()
 		{
 			if (isOpen())
@@ -74,9 +74,7 @@ namespace emdl
 
 			std::string data(length, 'a');
 
-			auto source = Source::NONE;
 			boost::system::error_code error;
-
 			boost::asio::read(*m_socket,
 							  boost::asio::buffer(&data[0], data.size()),
 							  error);
@@ -91,9 +89,7 @@ namespace emdl
 			if (!isOpen())
 				throw SocketClosed("Not connected");
 
-			auto source = Source::NONE;
 			boost::system::error_code error;
-
 			boost::asio::write(*m_socket, boost::asio::buffer(data), error);
 			if (error)
 				throw SocketClosed("Operation error: " + error.message());

@@ -31,32 +31,28 @@ namespace emdl
 			: m_artimTimer(m_transport.service())
 			, m_associationAcceptor(odil::default_association_acceptor)
 		{
+			setState(StateId::Sta1);
 		}
 
 		void StateMachine::transition(Event event, EventData& data)
 		{
-			const auto guard_iterator = StateMachine::m_guards.find({m_state, event});
-			const auto guard_value = (guard_iterator != StateMachine::m_guards.end()) ? guard_iterator->second(*this, data) : true;
-
-			const auto transition_iterator = StateMachine::m_transitions.find(std::make_tuple(m_state, event, guard_value));
-			if (transition_iterator == StateMachine::m_transitions.end())
+			const auto& transitions = m_currentState->transitions;
+			const auto it = std::find_if(transitions.begin(), transitions.end(), [event](const Transition t) {
+				return t.event == event;
+			});
+			if (it == transitions.end())
 				throw Exception("No such transition");
 
-			const auto& action = transition_iterator->second.first;
-			const auto& next_state = transition_iterator->second.second;
+			setState(it->nextState); // Set it before launching the action so some actions can change it again
 
 			// Do action
-			const auto action_index = static_cast<size_t>(action);
-			if (action_index > m_actions.size())
-				throw Exception("Unknown action");
-			(this->*m_actions[action_index])(data);
-
-			m_state = next_state;
+			const auto actionIndex = static_cast<size_t>(it->action);
+			(this->*m_actions[actionIndex])(data);
 		}
 
-		StateMachine::State StateMachine::state() const
+		StateMachine::StateId StateMachine::state() const
 		{
-			return m_state;
+			return m_currentState->id;
 		}
 
 		const Transport& StateMachine::transport() const
@@ -79,9 +75,10 @@ namespace emdl
 			m_timeout = timeout;
 		}
 
-		void StateMachine::receive(EventData& data)
+		void StateMachine::setSocket(std::shared_ptr<Transport::Socket> socket)
 		{
-			m_transport.receive(data.socket);
+			m_transport.setSocket(socket);
+			EventData data;
 			transition(Event::TransportConnectionIndication, data);
 		}
 
@@ -177,29 +174,15 @@ namespace emdl
 		{
 			return;
 
-			const auto canceled = m_artimTimer.expires_from_now(m_timeout);
-			if (canceled != 0)
-			{
+			if (m_artimTimer.expires_from_now(m_timeout))
 				throw Exception("ARTIM timer started with pending operations");
-			}
 
 			m_artimTimer.async_wait(
 				[this, &data](const boost::system::error_code& e) {
-					//source = Source::TIMER;
-					//error = e;
-
 					if (!e)
-					{
 						transition(Event::ARTIMTimerExpired, data);
-					}
-					else if (e == boost::asio::error::operation_aborted)
-					{
-						// Do nothing
-					}
-					else
-					{
+					else if (e != boost::asio::error::operation_aborted)
 						throw boost::system::system_error(e);
-					}
 				});
 		}
 
@@ -233,176 +216,164 @@ namespace emdl
 			m_associationAcceptor = acceptor;
 		}
 
-#define transition_full(start, event, guard, action, end)                               \
-	{                                                                                   \
-		std::make_tuple(StateMachine::State::start, StateMachine::Event::event, guard), \
-		{                                                                               \
-			StateMachine::Action::action, StateMachine::State::end                      \
-		}                                                                               \
+#define tr_def(event, action, end)                                                           \
+	{                                                                                        \
+		StateMachine::Event::event, StateMachine::Action::action, StateMachine::StateId::end \
 	}
 
-#define transition_s(start, event, action, end) \
-	transition_full(start, event, true, action, end)
-
-		const StateMachine::TransitionMap StateMachine::m_transitions = {
-			transition_s(Sta1, AAssociateRQLocal, AE_1, Sta4),
-			transition_s(Sta1, TransportConnectionIndication, AE_5, Sta2),
-
-			transition_s(Sta2, AAssociateACRemote, AA_1, Sta13),
-			transition_s(Sta2, AAssociateRJRemote, AA_1, Sta13),
-			transition_full(Sta2, AAssociateRQRemote, true, AE_6, Sta3),
-			transition_full(Sta2, AAssociateRQRemote, false, AE_6, Sta13),
-			transition_s(Sta2, PDataTFRemote, AA_1, Sta13),
-			transition_s(Sta2, AReleaseRQRemote, AA_1, Sta13),
-			transition_s(Sta2, AReleaseRPRemote, AA_1, Sta13),
-			transition_s(Sta2, AAbortRemote, AA_2, Sta1),
-			transition_s(Sta2, TransportConnectionClosedIndication, AA_5, Sta1),
-			transition_s(Sta2, ARTIMTimerExpired, AA_2, Sta1),
-			transition_s(Sta2, InvalidPDU, AA_1, Sta13),
-
-			transition_s(Sta3, AAssociateACRemote, AA_8, Sta13),
-			transition_s(Sta3, AAssociateRJRemote, AA_8, Sta13),
-			transition_s(Sta3, AAssociateRQRemote, AA_8, Sta13),
-			transition_s(Sta3, AAssociateACLocal, AE_7, Sta6),
-			transition_s(Sta3, AAssociateRJLocal, AE_8, Sta13),
-			transition_s(Sta3, PDataTFRemote, AA_8, Sta13),
-			transition_s(Sta3, AReleaseRQRemote, AA_8, Sta13),
-			transition_s(Sta3, AReleaseRPRemote, AA_8, Sta13),
-			transition_s(Sta3, AAbortLocal, AA_1, Sta13),
-			transition_s(Sta3, AAbortRemote, AA_3, Sta1),
-			transition_s(Sta3, TransportConnectionClosedIndication, AA_4, Sta1),
-			transition_s(Sta3, InvalidPDU, AA_8, Sta13),
-
-			transition_s(Sta4, TransportConnectionConfirmation, AE_2, Sta5),
-			transition_s(Sta4, AAbortLocal, AA_2, Sta1),
-			transition_s(Sta4, TransportConnectionClosedIndication, AA_4, Sta1),
-
-			transition_s(Sta5, AAssociateACRemote, AE_3, Sta6),
-			transition_s(Sta5, AAssociateRJRemote, AE_4, Sta1),
-			transition_s(Sta5, AAssociateRQRemote, AA_8, Sta13),
-			transition_s(Sta5, PDataTFRemote, AA_8, Sta13),
-			transition_s(Sta5, AReleaseRQRemote, AA_8, Sta13),
-			transition_s(Sta5, AReleaseRPRemote, AA_8, Sta13),
-			transition_s(Sta5, AAbortLocal, AA_1, Sta13),
-			transition_s(Sta5, AAbortRemote, AA_3, Sta1),
-			transition_s(Sta5, TransportConnectionClosedIndication, AA_4, Sta1),
-			transition_s(Sta5, InvalidPDU, AA_8, Sta13),
-
-			transition_s(Sta6, AAssociateACRemote, AA_8, Sta13),
-			transition_s(Sta6, AAssociateRJRemote, AA_8, Sta13),
-			transition_s(Sta6, AAssociateRQRemote, AA_8, Sta13),
-			transition_s(Sta6, PDataTFLocal, DT_1, Sta6),
-			transition_s(Sta6, PDataTFRemote, DT_2, Sta6),
-			transition_s(Sta6, AReleaseRQLocal, AR_1, Sta7),
-			transition_s(Sta6, AReleaseRQRemote, AR_2, Sta8),
-			transition_s(Sta6, AReleaseRPRemote, AA_8, Sta13),
-			transition_s(Sta6, AAbortLocal, AA_1, Sta13),
-			transition_s(Sta6, AAbortRemote, AA_3, Sta1),
-			transition_s(Sta6, TransportConnectionClosedIndication, AA_4, Sta1),
-			transition_s(Sta6, InvalidPDU, AA_8, Sta13),
-
-			transition_s(Sta7, AAssociateACRemote, AA_8, Sta13),
-			transition_s(Sta7, AAssociateRJRemote, AA_8, Sta13),
-			transition_s(Sta7, AAssociateRQRemote, AA_8, Sta13),
-			transition_s(Sta7, PDataTFRemote, AR_6, Sta7),
-			//transition_s(Sta7, AReleaseRQRemote, AR_8, Sta9Or10),
-			transition_s(Sta7, AReleaseRPRemote, AR_3, Sta1),
-			transition_s(Sta7, AAbortLocal, AA_1, Sta13),
-			transition_s(Sta7, AAbortRemote, AA_3, Sta1),
-			transition_s(Sta7, TransportConnectionClosedIndication, AA_4, Sta1),
-			transition_s(Sta7, InvalidPDU, AA_8, Sta13),
-
-			transition_s(Sta8, AAssociateACRemote, AA_8, Sta13),
-			transition_s(Sta8, AAssociateRJRemote, AA_8, Sta13),
-			transition_s(Sta8, AAssociateRQRemote, AA_8, Sta13),
-			transition_s(Sta8, PDataTFLocal, AR_7, Sta8),
-			transition_s(Sta8, PDataTFRemote, AA_8, Sta13),
-			transition_s(Sta8, AReleaseRQRemote, AA_8, Sta13),
-			transition_s(Sta8, AReleaseRPRemote, AA_8, Sta13),
-			transition_s(Sta8, AReleaseRPLocal, AR_4, Sta13),
-			transition_s(Sta8, AAbortLocal, AA_1, Sta13),
-			transition_s(Sta8, AAbortRemote, AA_3, Sta1),
-			transition_s(Sta8, TransportConnectionClosedIndication, AA_4, Sta1),
-			transition_s(Sta8, InvalidPDU, AA_8, Sta13),
-
-			transition_s(Sta9, AAssociateACRemote, AA_8, Sta13),
-			transition_s(Sta9, AAssociateRJRemote, AA_8, Sta13),
-			transition_s(Sta9, AAssociateRQRemote, AA_8, Sta13),
-			transition_s(Sta9, PDataTFRemote, AA_8, Sta13),
-			transition_s(Sta9, AReleaseRQRemote, AA_8, Sta13),
-			transition_s(Sta9, AReleaseRPRemote, AA_8, Sta13),
-			transition_s(Sta9, AReleaseRPLocal, AR_9, Sta11),
-			transition_s(Sta9, AAbortLocal, AA_1, Sta13),
-			transition_s(Sta9, AAbortRemote, AA_3, Sta1),
-			transition_s(Sta9, TransportConnectionClosedIndication, AA_4, Sta1),
-			transition_s(Sta9, InvalidPDU, AA_8, Sta13),
-
-			transition_s(Sta10, AAssociateACRemote, AA_8, Sta13),
-			transition_s(Sta10, AAssociateRJRemote, AA_8, Sta13),
-			transition_s(Sta10, AAssociateRQRemote, AA_8, Sta13),
-			transition_s(Sta10, PDataTFRemote, AA_8, Sta13),
-			transition_s(Sta10, AReleaseRQRemote, AA_8, Sta13),
-			transition_s(Sta10, AReleaseRPRemote, AR_10, Sta12),
-			transition_s(Sta10, AAbortLocal, AA_1, Sta13),
-			transition_s(Sta10, AAbortRemote, AA_3, Sta1),
-			transition_s(Sta10, TransportConnectionClosedIndication, AA_4, Sta1),
-			transition_s(Sta10, InvalidPDU, AA_8, Sta13),
-
-			transition_s(Sta11, AAssociateACRemote, AA_8, Sta13),
-			transition_s(Sta11, AAssociateRJRemote, AA_8, Sta13),
-			transition_s(Sta11, AAssociateRQRemote, AA_8, Sta13),
-			transition_s(Sta11, PDataTFRemote, AA_8, Sta13),
-			transition_s(Sta11, AReleaseRQRemote, AA_8, Sta13),
-			transition_s(Sta11, AReleaseRPRemote, AR_3, Sta1),
-			transition_s(Sta11, AAbortLocal, AA_1, Sta13),
-			transition_s(Sta11, AAbortRemote, AA_3, Sta1),
-			transition_s(Sta11, TransportConnectionClosedIndication, AA_4, Sta1),
-			transition_s(Sta11, InvalidPDU, AA_8, Sta13),
-
-			transition_s(Sta12, AAssociateACRemote, AA_8, Sta13),
-			transition_s(Sta12, AAssociateRJRemote, AA_8, Sta13),
-			transition_s(Sta12, AAssociateRQRemote, AA_8, Sta13),
-			transition_s(Sta12, PDataTFRemote, AA_8, Sta13),
-			transition_s(Sta12, AReleaseRQRemote, AA_8, Sta13),
-			transition_s(Sta12, AReleaseRPRemote, AA_8, Sta13),
-			transition_s(Sta12, AReleaseRPLocal, AR_4, Sta13),
-			transition_s(Sta12, AAbortLocal, AA_1, Sta13),
-			transition_s(Sta12, AAbortRemote, AA_3, Sta1),
-			transition_s(Sta12, TransportConnectionClosedIndication, AA_4, Sta1),
-			transition_s(Sta12, InvalidPDU, AA_8, Sta13),
-
-			transition_s(Sta13, AAssociateACRemote, AA_6, Sta13),
-			transition_s(Sta13, AAssociateRJRemote, AA_6, Sta13),
-			transition_s(Sta13, AAssociateRQRemote, AA_7, Sta13),
-			transition_s(Sta13, PDataTFRemote, AA_6, Sta13),
-			transition_s(Sta13, AReleaseRQRemote, AA_6, Sta13),
-			transition_s(Sta13, AReleaseRPRemote, AA_6, Sta13),
-			transition_s(Sta13, AAbortRemote, AA_2, Sta1),
-			transition_s(Sta13, TransportConnectionClosedIndication, AR_5, Sta1),
-			transition_s(Sta13, ARTIMTimerExpired, AA_2, Sta1),
-			transition_s(Sta13, InvalidPDU, AA_7, Sta13),
-		};
-
-#undef transition
-#undef transition_full
-
-		const StateMachine::GuardMap StateMachine::m_guards = {
-			{{StateMachine::State::Sta2, StateMachine::Event::AAssociateRQRemote},
-			 [](const StateMachine& state_machine, EventData& data) {
-				 try
-				 {
-					 const odil::AssociationParameters input_parameters(
-						 *std::dynamic_pointer_cast<odil::pdu::AAssociateRQ>(data.pdu));
-					 data.association_parameters = state_machine.associationAcceptor()(input_parameters);
-				 }
-				 catch (const odil::AssociationRejected& reject)
-				 {
-					 data.reject = std::make_shared<odil::AssociationRejected>(reject);
-					 return false;
-				 }
-				 return true;
-			 }},
-		};
+		// clang-format off
+		const StateMachine::States StateMachine::m_states = {
+			{ StateId::Sta1, {
+				tr_def(AAssociateRQLocal, AE_1, Sta4),
+				tr_def(TransportConnectionIndication, AE_5, Sta2)
+			} },
+			{ StateId::Sta2, {
+				tr_def(AAssociateACRemote, AA_1, Sta13),
+				tr_def(AAssociateRJRemote, AA_1, Sta13),
+				tr_def(AAssociateRQRemote, AE_6, Sta3), // Inside AE_6 we can choose to go to Sta13
+				tr_def(PDataTFRemote, AA_1, Sta13),
+				tr_def(AReleaseRQRemote, AA_1, Sta13),
+				tr_def(AReleaseRPRemote, AA_1, Sta13),
+				tr_def(AAbortRemote, AA_2, Sta1),
+				tr_def(TransportConnectionClosedIndication, AA_5, Sta1),
+				tr_def(ARTIMTimerExpired, AA_2, Sta1),
+				tr_def(InvalidPDU, AA_1, Sta13)
+			} },
+			{ StateId::Sta3, {
+				tr_def(AAssociateACRemote, AA_8, Sta13),
+				tr_def(AAssociateRJRemote, AA_8, Sta13),
+				tr_def(AAssociateRQRemote, AA_8, Sta13),
+				tr_def(AAssociateACLocal, AE_7, Sta6),
+				tr_def(AAssociateRJLocal, AE_8, Sta13),
+				tr_def(PDataTFRemote, AA_8, Sta13),
+				tr_def(AReleaseRQRemote, AA_8, Sta13),
+				tr_def(AReleaseRPRemote, AA_8, Sta13),
+				tr_def(AAbortLocal, AA_1, Sta13),
+				tr_def(AAbortRemote, AA_3, Sta1),
+				tr_def(TransportConnectionClosedIndication, AA_4, Sta1),
+				tr_def(InvalidPDU, AA_8, Sta13)
+			} },
+			{ StateId::Sta4, {
+				tr_def(TransportConnectionConfirmation, AE_2, Sta5),
+				tr_def(AAbortLocal, AA_2, Sta1),
+				tr_def(TransportConnectionClosedIndication, AA_4, Sta1)
+			} },
+			{ StateId::Sta5, {
+				tr_def(AAssociateACRemote, AE_3, Sta6),
+				tr_def(AAssociateRJRemote, AE_4, Sta1),
+				tr_def(AAssociateRQRemote, AA_8, Sta13),
+				tr_def(PDataTFRemote, AA_8, Sta13),
+				tr_def(AReleaseRQRemote, AA_8, Sta13),
+				tr_def(AReleaseRPRemote, AA_8, Sta13),
+				tr_def(AAbortLocal, AA_1, Sta13),
+				tr_def(AAbortRemote, AA_3, Sta1),
+				tr_def(TransportConnectionClosedIndication, AA_4, Sta1),
+				tr_def(InvalidPDU, AA_8, Sta13)
+			} },
+			{ StateId::Sta6, {
+				tr_def(AAssociateACRemote, AA_8, Sta13),
+				tr_def(AAssociateRJRemote, AA_8, Sta13),
+				tr_def(AAssociateRQRemote, AA_8, Sta13),
+				tr_def(PDataTFLocal, DT_1, Sta6),
+				tr_def(PDataTFRemote, DT_2, Sta6),
+				tr_def(AReleaseRQLocal, AR_1, Sta7),
+				tr_def(AReleaseRQRemote, AR_2, Sta8),
+				tr_def(AReleaseRPRemote, AA_8, Sta13),
+				tr_def(AAbortLocal, AA_1, Sta13),
+				tr_def(AAbortRemote, AA_3, Sta1),
+				tr_def(TransportConnectionClosedIndication, AA_4, Sta1),
+				tr_def(InvalidPDU, AA_8, Sta13)
+			} },
+			{ StateId::Sta7, {
+				tr_def(AAssociateACRemote, AA_8, Sta13),
+				tr_def(AAssociateRJRemote, AA_8, Sta13),
+				tr_def(AAssociateRQRemote, AA_8, Sta13),
+				tr_def(PDataTFRemote, AR_6, Sta7),
+			//	tr_def(AReleaseRQRemote, AR_8, Sta9Or10),
+				tr_def(AReleaseRPRemote, AR_3, Sta1),
+				tr_def(AAbortLocal, AA_1, Sta13),
+				tr_def(AAbortRemote, AA_3, Sta1),
+				tr_def(TransportConnectionClosedIndication, AA_4, Sta1),
+				tr_def(InvalidPDU, AA_8, Sta13)
+			} },
+			{ StateId::Sta8, {
+				tr_def(AAssociateACRemote, AA_8, Sta13),
+				tr_def(AAssociateRJRemote, AA_8, Sta13),
+				tr_def(AAssociateRQRemote, AA_8, Sta13),
+				tr_def(PDataTFLocal, AR_7, Sta8),
+				tr_def(PDataTFRemote, AA_8, Sta13),
+				tr_def(AReleaseRQRemote, AA_8, Sta13),
+				tr_def(AReleaseRPRemote, AA_8, Sta13),
+				tr_def(AReleaseRPLocal, AR_4, Sta13),
+				tr_def(AAbortLocal, AA_1, Sta13),
+				tr_def(AAbortRemote, AA_3, Sta1),
+				tr_def(TransportConnectionClosedIndication, AA_4, Sta1),
+				tr_def(InvalidPDU, AA_8, Sta13)
+			} },
+			{ StateId::Sta9, {
+				tr_def(AAssociateACRemote, AA_8, Sta13),
+				tr_def(AAssociateRJRemote, AA_8, Sta13),
+				tr_def(AAssociateRQRemote, AA_8, Sta13),
+				tr_def(PDataTFRemote, AA_8, Sta13),
+				tr_def(AReleaseRQRemote, AA_8, Sta13),
+				tr_def(AReleaseRPRemote, AA_8, Sta13),
+				tr_def(AReleaseRPLocal, AR_9, Sta11),
+				tr_def(AAbortLocal, AA_1, Sta13),
+				tr_def(AAbortRemote, AA_3, Sta1),
+				tr_def(TransportConnectionClosedIndication, AA_4, Sta1),
+				tr_def(InvalidPDU, AA_8, Sta13)
+			} },
+			{ StateId::Sta10, {
+				tr_def(AAssociateACRemote, AA_8, Sta13),
+				tr_def(AAssociateRJRemote, AA_8, Sta13),
+				tr_def(AAssociateRQRemote, AA_8, Sta13),
+				tr_def(PDataTFRemote, AA_8, Sta13),
+				tr_def(AReleaseRQRemote, AA_8, Sta13),
+				tr_def(AReleaseRPRemote, AR_10, Sta12),
+				tr_def(AAbortLocal, AA_1, Sta13),
+				tr_def(AAbortRemote, AA_3, Sta1),
+				tr_def(TransportConnectionClosedIndication, AA_4, Sta1),
+				tr_def(InvalidPDU, AA_8, Sta13)
+			} },
+			{ StateId::Sta11, {
+				tr_def(AAssociateACRemote, AA_8, Sta13),
+				tr_def(AAssociateRJRemote, AA_8, Sta13),
+				tr_def(AAssociateRQRemote, AA_8, Sta13),
+				tr_def(PDataTFRemote, AA_8, Sta13),
+				tr_def(AReleaseRQRemote, AA_8, Sta13),
+				tr_def(AReleaseRPRemote, AR_3, Sta1),
+				tr_def(AAbortLocal, AA_1, Sta13),
+				tr_def(AAbortRemote, AA_3, Sta1),
+				tr_def(TransportConnectionClosedIndication, AA_4, Sta1),
+				tr_def(InvalidPDU, AA_8, Sta13)
+			} },
+			{ StateId::Sta12, {
+				tr_def(AAssociateACRemote, AA_8, Sta13),
+				tr_def(AAssociateRJRemote, AA_8, Sta13),
+				tr_def(AAssociateRQRemote, AA_8, Sta13),
+				tr_def(PDataTFRemote, AA_8, Sta13),
+				tr_def(AReleaseRQRemote, AA_8, Sta13),
+				tr_def(AReleaseRPRemote, AA_8, Sta13),
+				tr_def(AReleaseRPLocal, AR_4, Sta13),
+				tr_def(AAbortLocal, AA_1, Sta13),
+				tr_def(AAbortRemote, AA_3, Sta1),
+				tr_def(TransportConnectionClosedIndication, AA_4, Sta1),
+				tr_def(InvalidPDU, AA_8, Sta13)
+			} },
+			{ StateId::Sta13, {
+				tr_def(AAssociateACRemote, AA_6, Sta13),
+				tr_def(AAssociateRJRemote, AA_6, Sta13),
+				tr_def(AAssociateRQRemote, AA_7, Sta13),
+				tr_def(PDataTFRemote, AA_6, Sta13),
+				tr_def(AReleaseRQRemote, AA_6, Sta13),
+				tr_def(AReleaseRPRemote, AA_6, Sta13),
+				tr_def(AAbortRemote, AA_2, Sta1),
+				tr_def(TransportConnectionClosedIndication, AR_5, Sta1),
+				tr_def(ARTIMTimerExpired, AA_2, Sta1),
+				tr_def(InvalidPDU, AA_7, Sta13)
+			} },
+		}; // clang-format on
+#undef tr_def
 
 		const StateMachine::ActionList StateMachine::m_actions = {
 			&StateMachine::AE_1,
@@ -436,6 +407,11 @@ namespace emdl
 			&StateMachine::AA_6,
 			&StateMachine::AA_7,
 			&StateMachine::AA_8};
+
+		void StateMachine::setState(StateId state)
+		{
+			m_currentState = &m_states[static_cast<size_t>(state)];
+		}
 
 		void StateMachine::sendPdu(EventData& data, uint8_t pdu_type)
 		{
@@ -483,18 +459,22 @@ namespace emdl
 		{
 			stopTimer();
 
-			if (data.reject)
+			try
 			{
-				data.pdu = std::make_shared<odil::pdu::AAssociateRJ>(
-					data.reject->get_result(), data.reject->get_source(),
-					data.reject->get_reason());
-				sendPdu(data, 0x03);
-				data.pdu = NULL;
-			}
-			else
-			{
+				const odil::AssociationParameters input_parameters(
+					*std::dynamic_pointer_cast<odil::pdu::AAssociateRQ>(data.pdu));
+				data.association_parameters = associationAcceptor()(input_parameters);
 				// Issue A-ASSOCIATE indication
 				// Do nothing: notification is implicit since this function is only called by receivePdu
+				setState(StateId::Sta3);
+			}
+			catch (const odil::AssociationRejected& reject)
+			{
+				data.pdu = std::make_shared<odil::pdu::AAssociateRJ>(reject.get_result(), reject.get_source(), reject.get_reason());
+				startTimer(data);
+				sendPdu(data, 0x03);
+				data.pdu = nullptr;
+				setState(StateId::Sta13);
 			}
 		}
 

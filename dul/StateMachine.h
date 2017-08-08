@@ -22,7 +22,7 @@ namespace emdl
 		{
 		public:
 			/// States of the state machine.
-			enum class State
+			enum class StateId
 			{
 				Sta1,
 				Sta2,
@@ -70,14 +70,14 @@ namespace emdl
 			};
 
 			/// Duration of the timeout.
-			typedef boost::asio::deadline_timer::duration_type duration_type;
+			using duration_type = boost::asio::deadline_timer::duration_type;
 
 			StateMachine(); /// Constructor, initializing to Sta1.
 
 			/// Perform the transition related to the event and current state. Raise an exception if no such transition exists.
 			void transition(Event event, EventData& data);
 
-			State state() const; /// Return the current state.
+			StateId state() const; /// Return the current state.
 
 			const Transport& transport() const; /// Return the TCP transport.
 			Transport& transport();             /// Return the TCP transport.
@@ -85,7 +85,8 @@ namespace emdl
 			duration_type timeout() const;          /// Return the timeout, default to infinity.
 			void setTimeout(duration_type timeout); /// Set the timeout.
 
-			void receive(EventData& data);    /// Receive a connection on the TCP transport, perform the corresponding transition.
+			void setSocket(std::shared_ptr<Transport::Socket> socket); /// Set the socket for the transport and perform the corresponding transition.
+
 			void sendPdu(EventData& data);    /// Send a PDU to the transport, perform the corresponding transition.
 			void receivePdu(EventData& data); /// Receive a PDU on the transport, perform the corresponding transition.
 			void startTimer(EventData& data); /// Start (or re-start if already started) the ARTIM timer.
@@ -95,63 +96,46 @@ namespace emdl
 			void setAssociationAcceptor(const odil::AssociationAcceptor& acceptor); /// Set the callback checking whether the association request is acceptable.
 
 		private:
+			// clang-format off
 			enum class Action
 			{
-				AE_1,
-				AE_2,
-				AE_3,
-				AE_4,
-				AE_5,
-				AE_6,
-				AE_7,
-				AE_8,
-				DT_1,
-				DT_2,
-				AR_1,
-				AR_2,
-				AR_3,
-				AR_4,
-				AR_5,
-				AR_6,
-				AR_7,
-				AR_8,
-				AR_9,
-				AR_10,
-				AA_1,
-				AA_2,
-				AA_3,
-				AA_4,
-				AA_5,
-				AA_6,
-				AA_7,
-				AA_8
+				AE_1, AE_2, AE_3, AE_4, AE_5, AE_6, AE_7, AE_8, 
+				DT_1, DT_2, 
+				AR_1, AR_2, AR_3, AR_4, AR_5, AR_6, AR_7, AR_8, AR_9, AR_10,
+				AA_1, AA_2, AA_3, AA_4, AA_5, AA_6, AA_7, AA_8
 			};
+			// clang-format on
 
-			typedef std::map<
-				std::tuple<State, Event, bool>,
-				std::pair<Action, State>>
-				TransitionMap;
+			struct Transition
+			{
+				Event event;
+				Action action;
+				StateId nextState;
+			};
+			using Transitions = std::vector<Transition>;
 
-			typedef std::map<
-				std::pair<State, Event>,
-				std::function<bool(const StateMachine&, EventData&)>>
-				GuardMap;
+			struct State
+			{
+				StateId id;
+				Transitions transitions;
+			};
+			using States = std::vector<State>;
 
-			typedef void (StateMachine::*ActionFunction)(EventData&);
-			typedef std::vector<ActionFunction> ActionList;
+			using ActionFunction = void (StateMachine::*)(EventData&);
+			using ActionList = std::vector<ActionFunction>;
 
-			static const TransitionMap m_transitions;
-			static const GuardMap m_guards;
+			static const States m_states;
 			static const ActionList m_actions;
 
-			State m_state = State::Sta1;                            /// Current state.
+			const State* m_currentState = nullptr;                  /// Current state.
 			Transport m_transport;                                  /// TCP transport.
 			duration_type m_timeout = boost::posix_time::pos_infin; /// Timeout of the ARTIM timer.
 			boost::asio::deadline_timer m_artimTimer;               /// Association Request/Reject/Release Timer.
 			odil::AssociationAcceptor m_associationAcceptor;        /// Callback checking whether an association request is acceptable.
 
-			/// Check the PDU type in data and send it.
-			void sendPdu(EventData& data, uint8_t pdu_type);
+			void setState(StateId state); /// Change the current state
+
+			void sendPdu(EventData& data, uint8_t pdu_type); /// Check the PDU type in data and send it.
 
 			// Association establishment
 			void AE_1(EventData& data); /// Issue TRANSPORT CONNECT request primitive to local transport service.

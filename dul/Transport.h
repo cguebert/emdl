@@ -17,8 +17,8 @@ namespace emdl
 		class EMDL_API Transport
 		{
 		public:
-			typedef boost::asio::ip::tcp::socket Socket;
-			typedef boost::asio::deadline_timer::duration_type duration_type;
+			using Socket = boost::asio::ip::tcp::socket;
+			using duration_type = boost::asio::deadline_timer::duration_type;
 
 			/// Destructor.
 			~Transport();
@@ -29,32 +29,18 @@ namespace emdl
 			std::shared_ptr<const Socket> socket() const; /// Return the socket.
 			std::shared_ptr<Socket> socket();             /// Return the socket.
 
-			bool isOpen() const; /// Test whether the transport is open.
+			void setSocket(std::shared_ptr<Socket> socket); /// Set the socket, raise an exception if already set.
 
-			/// Connect to the specified endpoint, raise an exception upon error.
-			void connect(const Socket::endpoint_type& peer_endpoint);
+			void connect(const Socket::endpoint_type& peer_endpoint); /// Connect to the specified endpoint, raise an exception upon error.
+			bool isOpen() const;                                      /// Test whether the transport is open.
+			void close();                                             /// Close the connection.
 
-			/// Receive a connection on the specified socket, raise an exception upon error.
-			void receive(std::shared_ptr<Socket> socket);
-
-			void close(); /// Close the connection.
-
-			/// Read data, raise an exception on error.
-			std::string read(std::size_t length);
-
-			/// Write data, raise an exception on error.
-			void write(const std::string& data);
+			std::string read(std::size_t length); /// Read data, raise an exception on error.
+			void write(const std::string& data);  /// Write data, raise an exception on error.
 
 		private:
 			boost::asio::io_service m_service;
 			std::shared_ptr<Socket> m_socket;
-
-			enum class Source
-			{
-				NONE,
-				TIMER,
-				OPERATION,
-			};
 		};
 
 		/// Exception reported when the socket is closed without releasing the association.

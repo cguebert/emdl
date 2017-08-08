@@ -17,7 +17,6 @@ namespace emdl
 		class EMDL_API EventData
 		{
 		public:
-			std::shared_ptr<Transport::Socket> socket;
 			Transport::Socket::endpoint_type peer_endpoint;
 			std::shared_ptr<odil::pdu::Object> pdu;
 			odil::AssociationParameters association_parameters;

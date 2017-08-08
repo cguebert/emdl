@@ -125,7 +125,7 @@ namespace emdl
 
 	bool Association::isAssociated() const
 	{
-		return m_stateMachine.transport().isOpen() && m_stateMachine.state() == dul::StateMachine::State::Sta6;
+		return m_stateMachine.transport().isOpen() && m_stateMachine.state() == dul::StateMachine::StateId::Sta6;
 	}
 
 	void Association::associate()
@@ -183,12 +183,11 @@ namespace emdl
 
 	void Association::receiveAssociation(std::shared_ptr<dul::Transport::Socket> socket, odil::AssociationAcceptor acceptor)
 	{
-		dul::EventData data;
-		data.socket = std::move(socket);
-
 		m_stateMachine.setAssociationAcceptor(acceptor);
 
-		m_stateMachine.receive(data);
+		m_stateMachine.setSocket(std::move(socket));
+
+		dul::EventData data;
 		m_stateMachine.receivePdu(data);
 
 		if (!data.pdu)
