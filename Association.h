@@ -102,7 +102,7 @@ namespace emdl
 		void associate();          /// Request an association with the peer.
 
 		/// Receive an association from a peer using an opened socket.
-		void receiveAssociation(std::shared_ptr<dul::Transport::Socket> open_socket,
+		void receiveAssociation(dul::Transport::Socket open_socket,
 								odil::AssociationAcceptor acceptor = odil::default_association_acceptor);
 
 		/// Receive an association from a peer.

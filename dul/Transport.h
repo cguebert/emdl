@@ -5,6 +5,7 @@
 
 #include <boost/asio.hpp>
 #include <boost/date_time.hpp>
+#include <boost/optional.hpp>
 
 #include <emdl/emdl_api.h>
 #include <emdl/Exception.h>
@@ -28,10 +29,9 @@ namespace emdl
 			const boost::asio::io_service& service() const; /// Return the io_service.
 			boost::asio::io_service& service();             /// Return the io_service.
 
-			std::shared_ptr<const Socket> socket() const; /// Return the socket.
-			std::shared_ptr<Socket> socket();             /// Return the socket.
+			Socket::endpoint_type remoteEndpoint() const; /// Return the remote endpoint of the socket, raise an exception if not connected.
 
-			void setSocket(std::shared_ptr<Socket> socket); /// Set the socket, raise an exception if already set.
+			void setSocket(Socket socket); /// Set the socket, raise an exception if already set.
 
 			void connect(const Socket::endpoint_type& endpoint); /// Connect to the specified endpoint, raise an exception upon error.
 			bool isOpen() const;                                 /// Test whether the transport is open.
@@ -43,7 +43,7 @@ namespace emdl
 		private:
 			StateMachine& m_stateMachine;
 			boost::asio::io_service m_service;
-			std::shared_ptr<Socket> m_socket;
+			boost::optional<Socket> m_socket;
 		};
 
 		/// Exception reported when the socket is closed without releasing the association.

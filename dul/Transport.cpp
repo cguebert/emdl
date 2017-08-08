@@ -30,17 +30,14 @@ namespace emdl
 			return m_service;
 		}
 
-		std::shared_ptr<const Transport::Socket> Transport::socket() const
+		Transport::Socket::endpoint_type Transport::remoteEndpoint() const
 		{
-			return m_socket;
+			if (!m_socket)
+				throw Exception("Not connected");
+			return m_socket->remote_endpoint();
 		}
 
-		std::shared_ptr<Transport::Socket> Transport::socket()
-		{
-			return m_socket;
-		}
-
-		void Transport::setSocket(std::shared_ptr<Socket> socket)
+		void Transport::setSocket(Socket socket)
 		{
 			if (isOpen())
 				throw Exception("Already connected");
@@ -58,7 +55,7 @@ namespace emdl
 			if (isOpen())
 				throw Exception("Already connected");
 
-			m_socket = std::make_shared<Socket>(m_service);
+			m_socket = Socket{m_service};
 			boost::system::error_code error;
 			m_socket->connect(endpoint, error);
 

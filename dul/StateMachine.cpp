@@ -76,7 +76,7 @@ namespace emdl
 			m_timeout = timeout;
 		}
 
-		void StateMachine::setTransportConnection(std::shared_ptr<Transport::Socket> socket)
+		void StateMachine::setTransportConnection(Transport::Socket socket)
 		{
 			m_transport.setSocket(std::move(socket));
 			EventData data;

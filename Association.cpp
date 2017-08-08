@@ -184,7 +184,7 @@ namespace emdl
 		}
 	}
 
-	void Association::receiveAssociation(std::shared_ptr<dul::Transport::Socket> socket, odil::AssociationAcceptor acceptor)
+	void Association::receiveAssociation(dul::Transport::Socket socket, odil::AssociationAcceptor acceptor)
 	{
 		m_stateMachine.setAssociationAcceptor(acceptor);
 		m_stateMachine.setTransportConnection(std::move(socket));
@@ -196,14 +196,14 @@ namespace emdl
 	void Association::receiveAssociation(const boost::asio::ip::tcp& protocol, unsigned short port, odil::AssociationAcceptor acceptorFunc)
 	{
 		auto& service = transport().service();
-		auto socket = std::make_shared<dul::Transport::Socket>(service);
+		auto socket = dul::Transport::Socket{service};
 
 		dul::Transport::Socket::endpoint_type endpoint{protocol, port};
 		boost::asio::ip::tcp::acceptor acceptor{service, endpoint};
 		boost::system::error_code ec;
-		acceptor.accept(*socket, ec);
+		acceptor.accept(socket, ec);
 
-		receiveAssociation(socket, acceptorFunc);
+		receiveAssociation(std::move(socket), acceptorFunc);
 	}
 
 	void Association::release()
@@ -262,7 +262,7 @@ namespace emdl
 			if (!request)
 				throw Exception("Invalid response");
 
-			const auto endpoint = m_stateMachine.transport().socket()->remote_endpoint();
+			const auto endpoint = m_stateMachine.transport().remoteEndpoint();
 			m_peerHost = endpoint.address().to_string();
 			m_peerPort = endpoint.port();
 
