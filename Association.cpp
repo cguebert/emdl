@@ -187,52 +187,10 @@ namespace emdl
 	void Association::receiveAssociation(std::shared_ptr<dul::Transport::Socket> socket, odil::AssociationAcceptor acceptor)
 	{
 		m_stateMachine.setAssociationAcceptor(acceptor);
+		m_stateMachine.setTransportConnection(std::move(socket));
 
-		m_stateMachine.setSocket(std::move(socket));
-
-		dul::EventData data;
-		m_stateMachine.receivePdu(data);
-
-		if (!data.pdu)
-		{
-			// We have rejected the request
-			if (data.reject)
-			{
-				throw(*data.reject);
-			}
-			else
-			{
-				throw odil::AssociationRejected(Association::RejectedTransient,
-												Association::ULServiceProvderPresentationRelatedFunction,
-												Association::NoReasonGiven,
-												"No reject information");
-			}
-		}
-		else
-		{
-			const auto& request = std::dynamic_pointer_cast<odil::pdu::AAssociateRQ>(data.pdu);
-			if (!request)
-				throw Exception("Invalid response");
-
-			const auto endpoint = m_stateMachine.transport().socket()->remote_endpoint();
-			m_peerHost = endpoint.address().to_string();
-			m_peerPort = endpoint.port();
-
-			if (!data.associationParameters)
-				throw Exception("Association parameters not set");
-			m_negotiatedParameters = *data.associationParameters;
-
-			m_transferSyntaxesById.clear();
-
-			for (const auto& pc : m_negotiatedParameters.get_presentation_contexts())
-			{
-				if (pc.result == odil::AssociationParameters::PresentationContext::Result::Acceptance)
-					m_transferSyntaxesById[pc.id] = pc.transfer_syntaxes[0];
-			}
-
-			data.pdu = std::make_shared<odil::pdu::AAssociateAC>(m_negotiatedParameters.as_a_associate_ac());
-			m_stateMachine.sendPdu(data);
-		}
+		auto associationRequestFuture = m_associationRequestPromise.get_future();
+		associationRequestFuture.get(); // Waits for association, rethrows if there was an exception
 	}
 
 	void Association::receiveAssociation(const boost::asio::ip::tcp& protocol, unsigned short port, odil::AssociationAcceptor acceptorFunc)
@@ -294,5 +252,53 @@ namespace emdl
 	dul::StateMachine& Association::stateMachine()
 	{
 		return m_stateMachine;
+	}
+
+	void Association::onAssociationRequest(dul::EventData& data)
+	{
+		try
+		{
+			const auto& request = std::dynamic_pointer_cast<odil::pdu::AAssociateRQ>(data.pdu);
+			if (!request)
+				throw Exception("Invalid response");
+
+			const auto endpoint = m_stateMachine.transport().socket()->remote_endpoint();
+			m_peerHost = endpoint.address().to_string();
+			m_peerPort = endpoint.port();
+
+			if (!data.associationParameters)
+				throw Exception("Association parameters not set");
+			m_negotiatedParameters = *data.associationParameters;
+
+			m_transferSyntaxesById.clear();
+
+			for (const auto& pc : m_negotiatedParameters.get_presentation_contexts())
+			{
+				if (pc.result == odil::AssociationParameters::PresentationContext::Result::Acceptance)
+					m_transferSyntaxesById[pc.id] = pc.transfer_syntaxes[0];
+			}
+
+			data.pdu = std::make_shared<odil::pdu::AAssociateAC>(m_negotiatedParameters.as_a_associate_ac());
+			m_stateMachine.sendPdu(data);
+
+			m_associationRequestPromise.set_value();
+		}
+		catch (...)
+		{
+			m_associationRequestPromise.set_exception(std::current_exception());
+		}
+	}
+
+	void Association::onAssociationRejected(dul::EventData& data)
+	{
+		// We have rejected the request
+		if (data.reject)
+			m_associationRequestPromise.set_exception(std::make_exception_ptr(*data.reject));
+		else
+			m_associationRequestPromise.set_exception(std::make_exception_ptr(
+				odil::AssociationRejected(Association::RejectedTransient,
+										  Association::ULServiceProvderPresentationRelatedFunction,
+										  Association::NoReasonGiven,
+										  "No reject information")));
 	}
 }

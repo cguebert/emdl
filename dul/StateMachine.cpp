@@ -1,5 +1,6 @@
 #include <emdl/dul/StateMachine.h>
 #include <emdl/dul/EventData.h>
+#include <emdl/Association.h>
 
 #include <cstdint>
 #include <functional>
@@ -75,11 +76,13 @@ namespace emdl
 			m_timeout = timeout;
 		}
 
-		void StateMachine::setSocket(std::shared_ptr<Transport::Socket> socket)
+		void StateMachine::setTransportConnection(std::shared_ptr<Transport::Socket> socket)
 		{
-			m_transport.setSocket(socket);
+			m_transport.setSocket(std::move(socket));
 			EventData data;
 			transition(Event::TransportConnectionIndication, data);
+
+			receivePdu(data); // TODO: remove this when reading is asynchronous
 		}
 
 		void StateMachine::sendPdu(EventData& data)
@@ -466,9 +469,9 @@ namespace emdl
 				const odil::AssociationParameters input_parameters(
 					*std::dynamic_pointer_cast<odil::pdu::AAssociateRQ>(data.pdu));
 				data.associationParameters = associationAcceptor()(input_parameters);
-				// Issue A-ASSOCIATE indication
-				// Do nothing: notification is implicit since this function is only called by receivePdu
 				setState(StateId::Sta3);
+
+				m_association.onAssociationRequest(data); // Issue A-ASSOCIATE indication
 			}
 			catch (const odil::AssociationRejected& reject)
 			{
@@ -478,6 +481,8 @@ namespace emdl
 				sendPdu(data, 0x03);
 				data.pdu = nullptr;
 				setState(StateId::Sta13);
+
+				m_association.onAssociationRejected(data);
 			}
 		}
 

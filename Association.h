@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <functional>
+#include <future>
 #include <map>
 #include <string>
 #include <vector>
@@ -120,18 +121,21 @@ namespace emdl
 
 		/// @}
 
+		void onAssociationRequest(dul::EventData& data);
+		void onAssociationRejected(dul::EventData& data);
+
 	private:
+		uint16_t m_nextMessageId = 1;
 		dul::StateMachine m_stateMachine;
 
 		std::string m_peerHost;
 		uint16_t m_peerPort = 104;
 
-		odil::AssociationParameters m_associationParameters;
-		odil::AssociationParameters m_negotiatedParameters;
-
 		std::map<uint8_t, std::string> m_transferSyntaxesById;
 
-		uint16_t m_nextMessageId = 1;
+		odil::AssociationParameters m_associationParameters, m_negotiatedParameters;
+
+		std::promise<void> m_associationRequestPromise;
 	};
 
 	/// Exception reported when receiving a message after the association was released.

@@ -88,7 +88,7 @@ namespace emdl
 			duration_type timeout() const;          /// Return the timeout, default to infinity.
 			void setTimeout(duration_type timeout); /// Set the timeout.
 
-			void setSocket(std::shared_ptr<Transport::Socket> socket); /// Set the socket for the transport and perform the corresponding transition.
+			void setTransportConnection(std::shared_ptr<Transport::Socket> socket); /// Set the socket for the transport and perform the corresponding transition.
 
 			void sendPdu(EventData& data);    /// Send a PDU to the transport, perform the corresponding transition.
 			void receivePdu(EventData& data); /// Receive a PDU on the transport, perform the corresponding transition.
