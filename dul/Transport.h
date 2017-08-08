@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string>
+#include <thread>
 
 #include <boost/asio.hpp>
 #include <boost/date_time.hpp>
@@ -15,6 +16,13 @@ namespace emdl
 	namespace dul
 	{
 		class StateMachine;
+
+		struct PDUHeader
+		{
+			uint8_t type;
+			uint8_t reserved;
+			uint32_t size; // In Big-Endian
+		};
 
 		/// TCP transport for the DICOM Upper Layer.
 		class EMDL_API Transport
@@ -37,13 +45,23 @@ namespace emdl
 			bool isOpen() const;                                 /// Test whether the transport is open.
 			void close();                                        /// Close the connection.
 
-			std::string read(std::size_t length); /// Read data, raise an exception on error.
-			void write(const std::string& data);  /// Write data, raise an exception on error.
+			void write(const std::string& data); /// Write data, raise an exception on error.
 
 		private:
+			void start();
+			void stop();
+
+			void readHeader();
+			void readBody();
+			void onError(boost::system::error_code ec);
+
 			StateMachine& m_stateMachine;
 			boost::asio::io_service m_service;
 			boost::optional<Socket> m_socket;
+			std::unique_ptr<std::thread> m_thread;
+
+			PDUHeader m_readHeader;
+			std::string m_readBody;
 		};
 
 		/// Exception reported when the socket is closed without releasing the association.

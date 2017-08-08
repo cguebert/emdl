@@ -1,13 +1,17 @@
 #pragma once
 
-#include <cstdint>
+#include <deque>
 #include <functional>
 #include <future>
 #include <map>
+#include <mutex>
 #include <string>
 #include <vector>
 
+#include <emdl/TransferSyntaxes.h>
+#include <emdl/dataset/SparseDataSet.h>
 #include <emdl/dul/StateMachine.h>
+#include <emdl/message/Message.h>
 
 #include "odil/AssociationAcceptor.h"
 #include "odil/AssociationParameters.h"
@@ -15,6 +19,8 @@
 
 namespace emdl
 {
+	using MessageSPtr = std::shared_ptr<emdl::message::Message>;
+
 	class EMDL_API Association
 	{
 	public:
@@ -63,8 +69,20 @@ namespace emdl
 			NoPresentationServiceAccessPointAvailable = 7,
 		};
 
+		enum class Status
+		{
+			Idle,
+			Connected,
+			Associated,
+			Rejected,
+			Ready, // Can send data
+			Released,
+			Aborted,
+			Closed
+		};
+
 		/// Duration of the timeout.
-		typedef dul::StateMachine::duration_type duration_type;
+		using duration_type = dul::StateMachine::duration_type;
 
 		Association();                         /// Create a default, un-associated, association.
 		Association(const Association& other); /// Create an un-associated association.
@@ -108,21 +126,27 @@ namespace emdl
 		/// Receive an association from a peer.
 		void receiveAssociation(const boost::asio::ip::tcp& protocol, unsigned short port,
 								odil::AssociationAcceptor acceptor = odil::default_association_acceptor);
-
-		void release();                     /// Gracefully release the association. Throws an exception if not associated.
-		void abort(int source, int reason); /// Forcefully release the association. Throws an exception if not associated.
+		void waitForReleaseResponse(); /// Blocks until a release response has been received
 		/// @}
 
 		/// @name DIMSE messages sending and reception.
 		/// @{
-		uint16_t nextMessageId();                                    /// Return the next available message id.
-		std::string transferSyntaxById(int presentation_context_id); /// Return the transfer syntax corresponding to this context id
-		dul::StateMachine& stateMachine();                           /// Return the state machine used by this association
+		uint16_t nextMessageId();                                       /// Return the next available message id.
+		TransferSyntax transferSyntaxById(int presentation_context_id); /// Return the transfer syntax corresponding to this context id
+		dul::StateMachine& stateMachine();                              /// Return the state machine used by this association
 
 		/// @}
 
+		MessageSPtr popMessage(); /// Block and return the next message. Raise an exception if the association has been released, aborted or closed.
+
+		/// @name Called by the state machin
+		/// @{
+		void setStatus(Status status);
+
 		void onAssociationRequest(dul::EventData& data);
 		void onAssociationRejected(dul::EventData& data);
+		void onPDataTF(dul::EventData& data);
+		/// @}
 
 	private:
 		uint16_t m_nextMessageId = 1;
@@ -130,12 +154,28 @@ namespace emdl
 
 		std::string m_peerHost;
 		uint16_t m_peerPort = 104;
+		Status m_status;
 
-		std::map<uint8_t, std::string> m_transferSyntaxesById;
+		std::map<uint8_t, TransferSyntax> m_transferSyntaxesById;
 
 		odil::AssociationParameters m_associationParameters, m_negotiatedParameters;
 
-		std::promise<void> m_associationRequestPromise;
+		std::promise<void> m_associationRequestPromise, m_associationReleasedPromise;
+
+		struct MessageConstruction
+		{
+			int presentationContextId = 0;
+			bool commandSetReceived = false;
+			bool hasDataSet = true;
+			bool receivedDataSet = false;
+			SparseDataSet commandSet;
+			std::stringstream commandStream, dataStream;
+		};
+		MessageConstruction m_readMessage;
+
+		std::deque<MessageSPtr> m_messagesQueue;
+		std::mutex m_messagesMutex;
+		std::condition_variable m_messagesCondition;
 	};
 
 	/// Exception reported when receiving a message after the association was released.

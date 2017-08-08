@@ -90,13 +90,16 @@ namespace emdl
 
 			void setTransportConnection(Transport::Socket socket); /// Set the socket for the transport and perform the corresponding transition.
 
-			void sendPdu(EventData& data);    /// Send a PDU to the transport, perform the corresponding transition.
-			void receivePdu(EventData& data); /// Receive a PDU on the transport, perform the corresponding transition.
-			void startTimer(EventData& data); /// Start (or re-start if already started) the ARTIM timer.
-			void stopTimer();                 /// Stop the ARTIM timer.
+			void sendPdu(EventData& data);      /// Send a PDU to the transport, perform the corresponding transition.
+			void release();                     /// Gracefully release the association. Throws an exception if not associated.
+			void abort(int source, int reason); /// Forcefully release the association. Throws an exception if not associated.
 
 			const odil::AssociationAcceptor& associationAcceptor() const;           /// Return the callback checking whether the association request is acceptable.
 			void setAssociationAcceptor(const odil::AssociationAcceptor& acceptor); /// Set the callback checking whether the association request is acceptable.
+
+			void onReceivedPDU(PDUHeader header, std::string body); /// Called by the Transport when a PDU has been received
+
+			std::pair<unsigned char, unsigned char> abortParameters() const; /// Return the source and the reason of the abort
 
 		private:
 			// clang-format off
@@ -131,15 +134,19 @@ namespace emdl
 			static const ActionList m_actions;
 
 			Association& m_association;
-			const State* m_currentState = nullptr;                  /// Current state.
-			Transport m_transport;                                  /// TCP transport.
-			duration_type m_timeout = boost::posix_time::pos_infin; /// Timeout of the ARTIM timer.
-			boost::asio::deadline_timer m_artimTimer;               /// Association Request/Reject/Release Timer.
-			odil::AssociationAcceptor m_associationAcceptor;        /// Callback checking whether an association request is acceptable.
+			const State* m_currentState = nullptr;                     /// Current state.
+			Transport m_transport;                                     /// TCP transport.
+			duration_type m_timeout = boost::posix_time::pos_infin;    /// Timeout of the ARTIM timer.
+			boost::asio::deadline_timer m_artimTimer;                  /// Association Request/Reject/Release Timer.
+			odil::AssociationAcceptor m_associationAcceptor;           /// Callback checking whether an association request is acceptable.
+			std::pair<unsigned char, unsigned char> m_abortParameters; /// Source and reason of the abort
 
 			void setState(StateId state); /// Change the current state
 
 			void sendPdu(EventData& data, uint8_t pdu_type); /// Check the PDU type in data and send it.
+
+			void startTimer(EventData& data); /// Start (or re-start if already started) the ARTIM timer.
+			void stopTimer();                 /// Stop the ARTIM timer.
 
 			// Association establishment
 			void AE_1(EventData& data); /// Issue TRANSPORT CONNECT request primitive to local transport service.

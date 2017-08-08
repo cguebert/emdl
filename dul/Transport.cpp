@@ -1,4 +1,5 @@
 #include <emdl/dul/Transport.h>
+#include <emdl/dul/StateMachine.h>
 
 #include <memory>
 #include <string>
@@ -43,6 +44,8 @@ namespace emdl
 				throw Exception("Already connected");
 
 			m_socket = std::move(socket);
+
+			start();
 		}
 
 		bool Transport::isOpen() const
@@ -61,29 +64,15 @@ namespace emdl
 
 			if (error)
 				throw SocketClosed("Connect error: " + error.message());
+
+			start();
 		}
 
 		void Transport::close()
 		{
 			if (isOpen())
 				m_socket.reset(); // The destructor of the socket object takes care of everything
-		}
-
-		std::string Transport::read(std::size_t length)
-		{
-			if (!isOpen())
-				throw SocketClosed("Not connected");
-
-			std::string data(length, 'a');
-
-			boost::system::error_code error;
-			boost::asio::read(*m_socket,
-							  boost::asio::buffer(&data[0], data.size()),
-							  error);
-			if (error)
-				throw SocketClosed("Operation error: " + error.message());
-
-			return data;
+			stop();
 		}
 
 		void Transport::write(const std::string& data)
@@ -95,6 +84,68 @@ namespace emdl
 			boost::asio::write(*m_socket, boost::asio::buffer(data), error);
 			if (error)
 				throw SocketClosed("Operation error: " + error.message());
+		}
+
+		void Transport::start()
+		{
+			m_thread = std::make_unique<std::thread>([this]() {
+				while (!m_service.stopped())
+				{
+					try
+					{
+						m_service.run();
+					}
+					catch (const std::exception&)
+					{
+						// TODO: add logs!
+					}
+				}
+			});
+
+			readHeader();
+		}
+
+		void Transport::stop()
+		{
+			if (m_thread)
+			{
+				m_service.stop();
+				m_thread->join();
+				m_thread.reset();
+			}
+		}
+
+		void Transport::readHeader()
+		{
+			const auto buf = boost::asio::buffer(&m_readHeader, 6);
+			boost::asio::async_read(*m_socket, buf, [this](boost::system::error_code ec, std::size_t /*length*/) {
+				if (!ec)
+					readBody();
+				else
+					onError(ec);
+			});
+		}
+
+		void Transport::readBody()
+		{
+			const size_t size = ntohl(m_readHeader.size); // Big endian to little endian
+			m_readBody = std::string(size, '\0');
+
+			const auto buf = boost::asio::buffer(&m_readBody[0], size);
+			boost::asio::async_read(*m_socket, buf, [this](boost::system::error_code ec, std::size_t /*length*/) {
+				if (!ec)
+				{
+					m_stateMachine.onReceivedPDU(m_readHeader, std::move(m_readBody));
+					readHeader();
+				}
+				else
+					onError(ec);
+			});
+		}
+
+		void Transport::onError(boost::system::error_code ec)
+		{
+			// TODO: add logs!
 		}
 	}
 }
