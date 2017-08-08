@@ -13,6 +13,8 @@ namespace emdl
 {
 	namespace dul
 	{
+		class StateMachine;
+
 		/// TCP transport for the DICOM Upper Layer.
 		class EMDL_API Transport
 		{
@@ -20,7 +22,7 @@ namespace emdl
 			using Socket = boost::asio::ip::tcp::socket;
 			using duration_type = boost::asio::deadline_timer::duration_type;
 
-			/// Destructor.
+			Transport(StateMachine& stateMachine);
 			~Transport();
 
 			const boost::asio::io_service& service() const; /// Return the io_service.
@@ -39,6 +41,7 @@ namespace emdl
 			void write(const std::string& data);  /// Write data, raise an exception on error.
 
 		private:
+			StateMachine& m_stateMachine;
 			boost::asio::io_service m_service;
 			std::shared_ptr<Socket> m_socket;
 		};

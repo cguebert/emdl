@@ -32,12 +32,14 @@
 namespace emdl
 {
 	Association::Association()
+		: m_stateMachine(*this)
 	{
 		setMessageTimeout(boost::posix_time::seconds(30));
 	}
 
 	Association::Association(const Association& other)
-		: m_peerHost(other.m_peerHost)
+		: m_stateMachine(*this)
+		, m_peerHost(other.m_peerHost)
 		, m_peerPort(other.m_peerPort)
 		, m_associationParameters(other.m_associationParameters)
 		, m_nextMessageId(other.m_nextMessageId)

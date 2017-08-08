@@ -25,8 +25,10 @@ namespace emdl
 {
 	namespace dul
 	{
-		StateMachine::StateMachine()
-			: m_artimTimer(m_transport.service())
+		StateMachine::StateMachine(Association& association)
+			: m_association(association)
+			, m_transport(*this)
+			, m_artimTimer(m_transport.service())
 			, m_associationAcceptor(odil::default_association_acceptor)
 		{
 			setState(StateId::Sta1);

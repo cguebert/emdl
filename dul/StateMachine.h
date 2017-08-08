@@ -14,6 +14,8 @@
 
 namespace emdl
 {
+	class Association;
+
 	namespace dul
 	{
 		class EventData;
@@ -73,7 +75,7 @@ namespace emdl
 			/// Duration of the timeout.
 			using duration_type = boost::asio::deadline_timer::duration_type;
 
-			StateMachine(); /// Constructor, initializing to Sta1.
+			StateMachine(Association& association); /// Constructor, initializing to Sta1.
 
 			/// Perform the transition related to the event and current state. Raise an exception if no such transition exists.
 			void transition(Event event, EventData& data);
@@ -128,6 +130,7 @@ namespace emdl
 			static const States m_states;
 			static const ActionList m_actions;
 
+			Association& m_association;
 			const State* m_currentState = nullptr;                  /// Current state.
 			Transport m_transport;                                  /// TCP transport.
 			duration_type m_timeout = boost::posix_time::pos_infin; /// Timeout of the ARTIM timer.

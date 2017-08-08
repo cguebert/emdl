@@ -10,6 +10,11 @@ namespace emdl
 {
 	namespace dul
 	{
+		Transport::Transport(StateMachine& stateMachine)
+			: m_stateMachine(stateMachine)
+		{
+		}
+
 		Transport::~Transport()
 		{
 			close();
