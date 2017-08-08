@@ -48,14 +48,14 @@ namespace emdl
 			return (m_socket && m_socket->is_open());
 		}
 
-		void Transport::connect(const Socket::endpoint_type& peer_endpoint)
+		void Transport::connect(const Socket::endpoint_type& endpoint)
 		{
 			if (isOpen())
 				throw Exception("Already connected");
 
 			m_socket = std::make_shared<Socket>(m_service);
 			boost::system::error_code error;
-			m_socket->connect(peer_endpoint, error);
+			m_socket->connect(endpoint, error);
 
 			if (error)
 				throw SocketClosed("Connect error: " + error.message());

@@ -8,7 +8,6 @@
 
 #include <boost/asio.hpp>
 
-#include <emdl/dul/EventData.h>
 #include <emdl/dul/Transport.h>
 
 #include "odil/AssociationAcceptor.h"
@@ -17,6 +16,8 @@ namespace emdl
 {
 	namespace dul
 	{
+		class EventData;
+
 		/// State machine for the DICOM upper layer.
 		class EMDL_API StateMachine
 		{

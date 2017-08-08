@@ -1,4 +1,5 @@
 #include <emdl/Association.h>
+#include <emdl/dul/EventData.h>
 
 #include <algorithm>
 #include <functional>
@@ -135,8 +136,8 @@ namespace emdl
 		const auto endpoint_it = resolver.resolve(query);
 
 		dul::EventData data;
-		data.peer_endpoint = *endpoint_it;
-		data.peer_endpoint.port(m_peerPort);
+		data.endpoint = *endpoint_it;
+		data.endpoint->port(m_peerPort);
 
 		const auto request = std::make_shared<odil::pdu::AAssociateRQ>(m_associationParameters.as_a_associate_rq());
 
@@ -215,7 +216,9 @@ namespace emdl
 			m_peerHost = endpoint.address().to_string();
 			m_peerPort = endpoint.port();
 
-			m_negotiatedParameters = data.association_parameters;
+			if (!data.associationParameters)
+				throw Exception("Association parameters not set");
+			m_negotiatedParameters = *data.associationParameters;
 
 			m_transferSyntaxesById.clear();
 

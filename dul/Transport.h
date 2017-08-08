@@ -31,9 +31,9 @@ namespace emdl
 
 			void setSocket(std::shared_ptr<Socket> socket); /// Set the socket, raise an exception if already set.
 
-			void connect(const Socket::endpoint_type& peer_endpoint); /// Connect to the specified endpoint, raise an exception upon error.
-			bool isOpen() const;                                      /// Test whether the transport is open.
-			void close();                                             /// Close the connection.
+			void connect(const Socket::endpoint_type& endpoint); /// Connect to the specified endpoint, raise an exception upon error.
+			bool isOpen() const;                                 /// Test whether the transport is open.
+			void close();                                        /// Close the connection.
 
 			std::string read(std::size_t length); /// Read data, raise an exception on error.
 			void write(const std::string& data);  /// Write data, raise an exception on error.

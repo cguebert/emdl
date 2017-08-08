@@ -1,4 +1,5 @@
 #include <emdl/dul/StateMachine.h>
+#include <emdl/dul/EventData.h>
 
 #include <cstdint>
 #include <functional>
@@ -9,9 +10,6 @@
 
 #include <boost/asio.hpp>
 #include <boost/system/system_error.hpp>
-
-#include <emdl/dul/EventData.h>
-#include <emdl/dul/Transport.h>
 
 #include "odil/AssociationParameters.h"
 #include "odil/endian.h"
@@ -430,7 +428,9 @@ namespace emdl
 
 		void StateMachine::AE_1(EventData& data)
 		{
-			m_transport.connect(data.peer_endpoint);
+			if (!data.endpoint)
+				throw Exception("Peer endpoint not set");
+			m_transport.connect(*data.endpoint);
 		}
 
 		void StateMachine::AE_2(EventData& data)
@@ -463,13 +463,14 @@ namespace emdl
 			{
 				const odil::AssociationParameters input_parameters(
 					*std::dynamic_pointer_cast<odil::pdu::AAssociateRQ>(data.pdu));
-				data.association_parameters = associationAcceptor()(input_parameters);
+				data.associationParameters = associationAcceptor()(input_parameters);
 				// Issue A-ASSOCIATE indication
 				// Do nothing: notification is implicit since this function is only called by receivePdu
 				setState(StateId::Sta3);
 			}
 			catch (const odil::AssociationRejected& reject)
 			{
+				data.reject = reject;
 				data.pdu = std::make_shared<odil::pdu::AAssociateRJ>(reject.get_result(), reject.get_source(), reject.get_reason());
 				startTimer(data);
 				sendPdu(data, 0x03);
