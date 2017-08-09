@@ -2,19 +2,9 @@
 #include <emdl/dul/EventData.h>
 #include <emdl/Association.h>
 
-#include <cstdint>
-#include <functional>
-#include <map>
 #include <sstream>
-#include <tuple>
-#include <utility>
-
-#include <boost/asio.hpp>
-#include <boost/system/system_error.hpp>
 
 #include "odil/AssociationParameters.h"
-#include "odil/endian.h"
-#include "odil/Exception.h"
 #include "odil/pdu/AAbort.h"
 #include "odil/pdu/AAssociate.h"
 #include "odil/pdu/AAssociateRJ.h"
@@ -29,7 +19,7 @@ namespace emdl
 		StateMachine::StateMachine(Association& association, boost::asio::io_service& service)
 			: m_association(association)
 			, m_transport(*this, service)
-			, m_artimTimer(m_transport.service())
+			, m_artimTimer(service)
 			, m_associationAcceptor(odil::default_association_acceptor)
 		{
 			setState(StateId::Sta1);
@@ -78,9 +68,9 @@ namespace emdl
 
 		void StateMachine::setTransportConnection(Transport::Socket socket)
 		{
-			m_transport.setSocket(std::move(socket));
 			EventData data;
 			transition(Event::TransportConnectionIndication, data);
+			m_transport.setSocket(std::move(socket));
 		}
 
 		void StateMachine::onTransportClose()

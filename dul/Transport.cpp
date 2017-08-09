@@ -1,11 +1,11 @@
 #include <emdl/dul/Transport.h>
 #include <emdl/dul/StateMachine.h>
 
+#include <boost/asio/read.hpp>
+#include <boost/asio/write.hpp>
+
 #include <memory>
 #include <string>
-
-#include <boost/asio.hpp>
-#include <boost/date_time.hpp>
 
 #include <iostream>
 
@@ -24,14 +24,11 @@ namespace emdl
 			close();
 		}
 
-		const boost::asio::io_service& Transport::service() const
-		{
-			return m_service;
-		}
-
 		boost::asio::io_service& Transport::service()
 		{
-			return m_service;
+			if (!m_socket)
+				throw Exception("Not connected");
+			return m_socket->get_io_service();
 		}
 
 		Transport::Socket::endpoint_type Transport::remoteEndpoint() const
@@ -48,7 +45,7 @@ namespace emdl
 
 			m_socket = std::move(socket);
 
-			start();
+			readHeader();
 		}
 
 		bool Transport::isOpen() const
@@ -68,14 +65,13 @@ namespace emdl
 			if (error)
 				throw SocketClosed("Connect error: " + error.message());
 
-			start();
+			readHeader();
 		}
 
 		void Transport::close()
 		{
 			if (isOpen())
 				m_socket.reset(); // The destructor of the socket object takes care of everything
-			stop();
 		}
 
 		void Transport::write(const std::string& data)
@@ -89,41 +85,12 @@ namespace emdl
 				throw SocketClosed("Operation error: " + error.message());
 		}
 
-		void Transport::start()
-		{
-			readHeader();
-
-			m_thread = std::make_unique<std::thread>([this]() {
-				while (!m_service.stopped())
-				{
-					try
-					{
-						m_service.run();
-					}
-					catch (const std::exception& e)
-					{
-						std::cerr << "Exception in Transport thread: " << e.what() << "\n";
-						// TODO: add logs!
-					}
-				}
-				std::cout << "Transport thread stopped\n";
-			});
-		}
-
-		void Transport::stop()
-		{
-			if (m_thread)
-			{
-				m_service.stop();
-				m_thread->join();
-				m_thread.reset();
-			}
-		}
-
 		void Transport::readHeader()
 		{
 			const auto buf = boost::asio::buffer(&m_readHeader, 6);
-			boost::asio::async_read(*m_socket, buf, [this](boost::system::error_code ec, std::size_t /*length*/) {
+			//boost::asio::read(*m_socket, buf);
+			//	readBody();
+			boost::asio::async_read(*m_socket, buf, [this](boost::system::error_code ec, std::size_t) {
 				if (!ec)
 					readBody();
 				else
@@ -137,7 +104,9 @@ namespace emdl
 			m_readBody = std::string(size, '\0');
 
 			const auto buf = boost::asio::buffer(&m_readBody[0], size);
-			boost::asio::async_read(*m_socket, buf, [this](boost::system::error_code ec, std::size_t /*length*/) {
+			//	boost::asio::read(*m_socket, buf);
+			//	m_stateMachine.onReceivedPDU(m_readHeader, std::move(m_readBody));
+			boost::asio::async_read(*m_socket, buf, [this](boost::system::error_code ec, std::size_t) {
 				if (!ec)
 				{
 					m_stateMachine.onReceivedPDU(m_readHeader, std::move(m_readBody));
@@ -150,6 +119,8 @@ namespace emdl
 
 		void Transport::onError(boost::system::error_code ec)
 		{
+			std::cerr << "Socket error\n";
+			m_socket.reset();
 			// TODO: add logs!
 		}
 	}

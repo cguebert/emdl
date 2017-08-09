@@ -2,9 +2,10 @@
 
 #include <memory>
 #include <string>
-#include <thread>
 
-#include <boost/asio.hpp>
+#include <boost/asio/deadline_timer.hpp>
+#include <boost/asio/io_service.hpp>
+#include <boost/asio/ip/tcp.hpp>
 #include <boost/date_time.hpp>
 #include <boost/optional.hpp>
 
@@ -17,12 +18,14 @@ namespace emdl
 	{
 		class StateMachine;
 
+#pragma pack(push, 1) // Remove internal padding
 		struct PDUHeader
 		{
 			uint8_t type;
 			uint8_t reserved;
 			uint32_t size; // In Big-Endian
 		};
+#pragma pack(pop)
 
 		/// TCP transport for the DICOM Upper Layer.
 		class EMDL_API Transport
@@ -32,10 +35,10 @@ namespace emdl
 			using duration_type = boost::asio::deadline_timer::duration_type;
 
 			Transport(StateMachine& stateMachine, boost::asio::io_service& service);
+			Transport(const Transport&) = delete; // The copy constructor is removed as the socket can not be copied
 			~Transport();
 
-			const boost::asio::io_service& service() const; /// Return the io_service.
-			boost::asio::io_service& service();             /// Return the io_service.
+			boost::asio::io_service& service(); /// Return the io_service.
 
 			Socket::endpoint_type remoteEndpoint() const; /// Return the remote endpoint of the socket, raise an exception if not connected.
 
@@ -48,9 +51,6 @@ namespace emdl
 			void write(const std::string& data); /// Write data, raise an exception on error.
 
 		private:
-			void start();
-			void stop();
-
 			void readHeader();
 			void readBody();
 			void onError(boost::system::error_code ec);
@@ -58,7 +58,6 @@ namespace emdl
 			StateMachine& m_stateMachine;
 			boost::asio::io_service& m_service;
 			boost::optional<Socket> m_socket;
-			std::unique_ptr<std::thread> m_thread;
 
 			PDUHeader m_readHeader;
 			std::string m_readBody;

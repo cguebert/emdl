@@ -1,12 +1,6 @@
 #pragma once
 
-#include <functional>
-#include <map>
-#include <tuple>
-#include <utility>
 #include <vector>
-
-#include <boost/asio.hpp>
 
 #include <emdl/dul/Transport.h>
 
