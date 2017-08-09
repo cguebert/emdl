@@ -26,9 +26,9 @@ namespace emdl
 {
 	namespace dul
 	{
-		StateMachine::StateMachine(Association& association)
+		StateMachine::StateMachine(Association& association, boost::asio::io_service& service)
 			: m_association(association)
-			, m_transport(*this)
+			, m_transport(*this, service)
 			, m_artimTimer(m_transport.service())
 			, m_associationAcceptor(odil::default_association_acceptor)
 		{
@@ -81,6 +81,13 @@ namespace emdl
 			m_transport.setSocket(std::move(socket));
 			EventData data;
 			transition(Event::TransportConnectionIndication, data);
+		}
+
+		void StateMachine::onTransportClose()
+		{
+			m_association.setStatus(Association::Status::Closed);
+			EventData data;
+			transition(Event::TransportConnectionClosedIndication, data);
 		}
 
 		void StateMachine::sendPdu(EventData& data)

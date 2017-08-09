@@ -75,7 +75,7 @@ namespace emdl
 			/// Duration of the timeout.
 			using duration_type = boost::asio::deadline_timer::duration_type;
 
-			StateMachine(Association& association); /// Constructor, initializing to Sta1.
+			StateMachine(Association& association, boost::asio::io_service& service); /// Constructor, initializing to Sta1.
 
 			/// Perform the transition related to the event and current state. Raise an exception if no such transition exists.
 			void transition(Event event, EventData& data);
@@ -89,6 +89,7 @@ namespace emdl
 			void setTimeout(duration_type timeout); /// Set the timeout.
 
 			void setTransportConnection(Transport::Socket socket); /// Set the socket for the transport and perform the corresponding transition.
+			void onTransportClose();
 
 			void sendPdu(EventData& data);      /// Send a PDU to the transport, perform the corresponding transition.
 			void release();                     /// Gracefully release the association. Throws an exception if not associated.

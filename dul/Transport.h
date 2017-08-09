@@ -31,7 +31,7 @@ namespace emdl
 			using Socket = boost::asio::ip::tcp::socket;
 			using duration_type = boost::asio::deadline_timer::duration_type;
 
-			Transport(StateMachine& stateMachine);
+			Transport(StateMachine& stateMachine, boost::asio::io_service& service);
 			~Transport();
 
 			const boost::asio::io_service& service() const; /// Return the io_service.
@@ -56,7 +56,7 @@ namespace emdl
 			void onError(boost::system::error_code ec);
 
 			StateMachine& m_stateMachine;
-			boost::asio::io_service m_service;
+			boost::asio::io_service& m_service;
 			boost::optional<Socket> m_socket;
 			std::unique_ptr<std::thread> m_thread;
 

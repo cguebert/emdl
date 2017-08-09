@@ -33,20 +33,10 @@
 
 namespace emdl
 {
-	Association::Association()
-		: m_stateMachine(*this)
+	Association::Association(boost::asio::io_service& service)
+		: m_stateMachine(*this, service)
 	{
 		setMessageTimeout(boost::posix_time::seconds(30));
-	}
-
-	Association::Association(const Association& other)
-		: m_stateMachine(*this)
-		, m_peerHost(other.m_peerHost)
-		, m_peerPort(other.m_peerPort)
-		, m_associationParameters(other.m_associationParameters)
-		, m_nextMessageId(other.m_nextMessageId)
-	{
-		setMessageTimeout(other.messageTimeout());
 	}
 
 	dul::Transport& Association::transport()
@@ -353,10 +343,10 @@ namespace emdl
 	MessageSPtr Association::popMessage()
 	{
 		std::unique_lock<std::mutex> lock(m_messagesMutex);
-		if (m_status == Status::Ready && m_messagesQueue.empty()) // Wait until there is a message
+		if (m_status == Status::Associated && m_messagesQueue.empty()) // Wait until there is a message
 		{
 			m_messagesCondition.wait(lock, [this]() {
-				return !m_messagesQueue.empty() || m_status != Status::Ready;
+				return !m_messagesQueue.empty() || m_status != Status::Associated;
 			});
 		}
 

@@ -73,9 +73,8 @@ namespace emdl
 		{
 			Idle,
 			Connected,
-			Associated,
+			Associated, // Can send data
 			Rejected,
-			Ready, // Can send data
 			Released,
 			Aborted,
 			Closed
@@ -84,8 +83,7 @@ namespace emdl
 		/// Duration of the timeout.
 		using duration_type = dul::StateMachine::duration_type;
 
-		Association();                         /// Create a default, un-associated, association.
-		Association(const Association& other); /// Create an un-associated association.
+		Association(boost::asio::io_service& service); /// Create a default, un-associated association.
 
 		dul::Transport& transport(); /// Return the TCP transport.
 

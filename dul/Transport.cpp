@@ -7,12 +7,15 @@
 #include <boost/asio.hpp>
 #include <boost/date_time.hpp>
 
+#include <iostream>
+
 namespace emdl
 {
 	namespace dul
 	{
-		Transport::Transport(StateMachine& stateMachine)
+		Transport::Transport(StateMachine& stateMachine, boost::asio::io_service& service)
 			: m_stateMachine(stateMachine)
+			, m_service(service)
 		{
 		}
 
@@ -88,6 +91,8 @@ namespace emdl
 
 		void Transport::start()
 		{
+			readHeader();
+
 			m_thread = std::make_unique<std::thread>([this]() {
 				while (!m_service.stopped())
 				{
@@ -95,14 +100,14 @@ namespace emdl
 					{
 						m_service.run();
 					}
-					catch (const std::exception&)
+					catch (const std::exception& e)
 					{
+						std::cerr << "Exception in Transport thread: " << e.what() << "\n";
 						// TODO: add logs!
 					}
 				}
+				std::cout << "Transport thread stopped\n";
 			});
-
-			readHeader();
 		}
 
 		void Transport::stop()
