@@ -350,17 +350,21 @@ namespace emdl
 			wrapper->receptionStart = m_readMessage.receptionStart;
 			wrapper->receptionEnd = wrapper->processingEnd = std::chrono::high_resolution_clock::now();
 
-			std::lock_guard<std::mutex> lock(m_messagesMutex);
-			m_messagesQueue.push_back(wrapper);
+			{
+				std::lock_guard<std::mutex> lock(m_messagesQueueMutex);
+				m_messagesQueue.push_back(wrapper);
+			}
+
 			m_messagesCondition.notify_one();
 
+			supportCancellation(wrapper);
 			m_readMessage = {}; // Reset
 		}
 	}
 
 	MessageWrapperSPtr Association::popMessage()
 	{
-		std::unique_lock<std::mutex> lock(m_messagesMutex);
+		std::unique_lock<std::mutex> lock(m_messagesQueueMutex);
 		if (m_status == Status::Associated && m_messagesQueue.empty()) // Wait until there is a message
 		{
 			m_messagesCondition.wait(lock, [this]() {
@@ -453,6 +457,37 @@ namespace emdl
 			emdl::dul::EventData data;
 			data.pdu = std::make_shared<odil::pdu::PDataTF>(pdv_items);
 			m_stateMachine->sendPdu(data);
+		}
+	}
+
+	void Association::supportCancellation(const MessageWrapperSPtr& wrapper)
+	{
+		using Cmd = message::Message::Command;
+		const auto commandField = wrapper->message->commandField.get();
+		if (commandField == Cmd::C_FIND_RQ || commandField == Cmd::C_GET_RQ || commandField == Cmd::C_MOVE_RQ)
+		{
+			std::lock_guard<std::mutex> lock(m_cancelableWrappersMutex);
+
+			// First remove old messages
+			const auto last = std::remove_if(m_cancelableWrappers.begin(), m_cancelableWrappers.end(), [](const WrapperPair& p) {
+				return p.second.expired();
+			});
+			m_cancelableWrappers.erase(last, m_cancelableWrappers.end());
+
+			// Add this message
+			const auto msgId = *firstInt(wrapper->message->commandSet(), odil::registry::MessageID);
+			m_cancelableWrappers.emplace_back(msgId, wrapper);
+		}
+		else if (commandField == Cmd::C_CANCEL_RQ)
+		{
+			const auto msgId = *firstInt(wrapper->message->commandSet(), odil::registry::MessageIDBeingRespondedTo);
+
+			std::lock_guard<std::mutex> lock(m_cancelableWrappersMutex);
+			const auto it = std::find_if(m_cancelableWrappers.begin(), m_cancelableWrappers.end(), [msgId](const WrapperPair& p) {
+				return p.first == msgId;
+			});
+			if (it != m_cancelableWrappers.end())
+				it->second.lock()->canceled = true;
 		}
 	}
 }

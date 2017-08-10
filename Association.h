@@ -158,6 +158,8 @@ namespace emdl
 		/// @}
 
 	private:
+		void supportCancellation(const MessageWrapperSPtr& wrapper);
+
 		uint16_t m_nextMessageId = 1;
 		std::shared_ptr<dul::StateMachine> m_stateMachine;
 
@@ -186,8 +188,12 @@ namespace emdl
 		MessageConstruction m_readMessage;
 
 		std::deque<MessageWrapperSPtr> m_messagesQueue;
-		std::mutex m_messagesMutex;
+		std::mutex m_messagesQueueMutex;
 		std::condition_variable m_messagesCondition;
+
+		using WrapperPair = std::pair<Value::Integer, std::weak_ptr<MessageWrapper>>;
+		std::vector<WrapperPair> m_cancelableWrappers;
+		std::mutex m_cancelableWrappersMutex;
 	};
 
 	/// Exception reported when receiving a message after the association was released.
