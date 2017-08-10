@@ -2,6 +2,7 @@
 #include <emdl/dul/EventData.h>
 #include <emdl/dataset/DataSetAccessors.h>
 #include <emdl/dataset/DataSetReader.h>
+#include <emdl/dataset/DataSetWriter.h>
 
 #include <algorithm>
 #include <functional>
@@ -377,6 +378,69 @@ namespace emdl
 			default:
 				throw Exception("Association not yet ready");
 			}
+		}
+	}
+
+	void Association::sendMessage(const message::Message& message, uint8_t presentationContextId, TransferSyntax transferSyntax)
+	{
+		std::vector<odil::pdu::PDataTF::PresentationDataValueItem> pdv_items;
+
+		std::ostringstream commandStream;
+		DataSetWriter{commandStream, TransferSyntax::ImplicitVRLittleEndian, BaseWriter::ItemEncoding::ExplicitLength}.writeDataSet(message.commandSet());
+		const auto commandBuffer = commandStream.str();
+		const auto currentLength = commandBuffer.size() + 12; // 12 is the size of all that is added on top of the fragment
+		pdv_items.emplace_back(presentationContextId, 3, std::move(commandBuffer));
+
+		if (message.hasDataSet())
+		{
+			std::ostringstream dataStream;
+			DataSetWriter{dataStream, transferSyntax, BaseWriter::ItemEncoding::ExplicitLength}.writeDataSet(message.dataSet());
+			const auto dataBuffer = dataStream.str();
+
+			const auto maxLength = negotiatedParameters().get_maximum_length();
+			if (!maxLength || (currentLength + dataBuffer.size() + 6 < maxLength))
+			{ // Can send all the buffer in one go
+				pdv_items.emplace_back(presentationContextId, 2, std::move(dataBuffer));
+
+				emdl::dul::EventData data;
+				data.pdu = std::make_shared<odil::pdu::PDataTF>(pdv_items);
+				m_stateMachine->sendPdu(data);
+			}
+			else // We have to fragment into multiple PDUs
+			{
+				auto available = maxLength - 6 - currentLength; // Need at least 6 bytes for the headers
+				int64_t remaining = dataBuffer.size();
+				std::size_t offset = 0;
+
+				if (available > 0) // Send some data with the command set
+				{
+					remaining -= available;
+					pdv_items.emplace_back(presentationContextId, (remaining > 0 ? 0 : 2), dataBuffer.substr(0, available));
+					offset += available;
+				}
+
+				auto pdu = std::make_shared<odil::pdu::PDataTF>(pdv_items);
+				emdl::dul::EventData data;
+				data.pdu = pdu;
+				m_stateMachine->sendPdu(data);
+
+				available = maxLength - 6; // In case some software do not take into account the size of the header when allocating their buffer
+				while (remaining > 0)
+				{
+					remaining -= available;
+					pdv_items.clear();
+					pdv_items.emplace_back(presentationContextId, (remaining > 0 ? 0 : 2), dataBuffer.substr(offset, available));
+					offset += available;
+					pdu->set_pdv_items(pdv_items);
+					m_stateMachine->sendPdu(data);
+				}
+			}
+		}
+		else
+		{
+			emdl::dul::EventData data;
+			data.pdu = std::make_shared<odil::pdu::PDataTF>(pdv_items);
+			m_stateMachine->sendPdu(data);
 		}
 	}
 }

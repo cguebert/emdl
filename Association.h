@@ -131,8 +131,9 @@ namespace emdl
 		/// @}
 
 		MessageSPtr popMessage(); /// Block and return the next message. Raise an exception if the association has been released, aborted or closed.
+		void sendMessage(const message::Message& message, uint8_t presentationContextId, TransferSyntax transferSyntax);
 
-		/// @name Called by the state machin
+		/// @name Called by the state machine
 		/// @{
 		void setStatus(Status status);
 
