@@ -16,12 +16,8 @@ namespace emdl
 		Transport::Transport(StateMachine& stateMachine, boost::asio::io_service& service)
 			: m_stateMachine(stateMachine)
 			, m_service(service)
+			, m_strand(m_service)
 		{
-		}
-
-		Transport::~Transport()
-		{
-			close();
 		}
 
 		boost::asio::io_service& Transport::service()
@@ -70,8 +66,21 @@ namespace emdl
 
 		void Transport::close()
 		{
-			if (isOpen())
-				m_socket.reset(); // The destructor of the socket object takes care of everything
+			if (!m_closed)
+			{
+				m_closed = true;
+				if (m_stateMachineAvailable)
+					m_stateMachine.onTransportClose();
+
+				m_strand.post([this] {
+					m_socket.reset(); // The destructor of the socket object takes care of everything
+				});
+			}
+		}
+
+		void Transport::stateMachineDestroyed()
+		{
+			m_stateMachineAvailable = false;
 		}
 
 		void Transport::write(const std::string& data)
@@ -88,14 +97,13 @@ namespace emdl
 		void Transport::readHeader()
 		{
 			const auto buf = boost::asio::buffer(&m_readHeader, 6);
-			//boost::asio::read(*m_socket, buf);
-			//	readBody();
-			boost::asio::async_read(*m_socket, buf, [this](boost::system::error_code ec, std::size_t) {
+			auto self = shared_from_this();
+			boost::asio::async_read(*m_socket, buf, m_strand.wrap([this, self](boost::system::error_code ec, std::size_t) {
 				if (!ec)
 					readBody();
 				else
 					onError(ec);
-			});
+			}));
 		}
 
 		void Transport::readBody()
@@ -104,24 +112,33 @@ namespace emdl
 			m_readBody = std::string(size, '\0');
 
 			const auto buf = boost::asio::buffer(&m_readBody[0], size);
-			//	boost::asio::read(*m_socket, buf);
-			//	m_stateMachine.onReceivedPDU(m_readHeader, std::move(m_readBody));
-			boost::asio::async_read(*m_socket, buf, [this](boost::system::error_code ec, std::size_t) {
+			auto self = shared_from_this();
+			boost::asio::async_read(*m_socket, buf, m_strand.wrap([this, self](boost::system::error_code ec, std::size_t) {
 				if (!ec)
 				{
-					m_stateMachine.onReceivedPDU(m_readHeader, std::move(m_readBody));
+					if (m_stateMachineAvailable)
+						m_stateMachine.onReceivedPDU(m_readHeader, std::move(m_readBody));
 					readHeader();
 				}
 				else
 					onError(ec);
-			});
+			}));
 		}
 
 		void Transport::onError(boost::system::error_code ec)
 		{
-			std::cerr << "Socket error\n";
-			m_socket.reset();
 			// TODO: add logs!
+			if (!m_closed)
+			{
+				if (ec == boost::asio::error::eof)
+					std::cout << "Socket closed\n";
+				else
+					std::cerr << "Socket error\n";
+				m_closed = true;
+				m_socket.reset();
+				if (m_stateMachineAvailable)
+					m_stateMachine.onTransportClose();
+			}
 		}
 	}
 }

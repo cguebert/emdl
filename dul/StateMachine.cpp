@@ -18,11 +18,17 @@ namespace emdl
 	{
 		StateMachine::StateMachine(Association& association, boost::asio::io_service& service)
 			: m_association(association)
-			, m_transport(*this, service)
+			, m_transport(std::make_shared<Transport>(*this, service))
 			, m_artimTimer(service)
 			, m_associationAcceptor(odil::default_association_acceptor)
+			, m_abortParameters({0, 0})
 		{
 			setState(StateId::Sta1);
+		}
+
+		StateMachine::~StateMachine()
+		{
+			m_transport->stateMachineDestroyed();
 		}
 
 		void StateMachine::transition(Event event, EventData& data)
@@ -48,12 +54,12 @@ namespace emdl
 
 		const Transport& StateMachine::transport() const
 		{
-			return m_transport;
+			return *m_transport;
 		}
 
 		Transport& StateMachine::transport()
 		{
-			return m_transport;
+			return *m_transport;
 		}
 
 		StateMachine::duration_type StateMachine::timeout() const
@@ -70,7 +76,7 @@ namespace emdl
 		{
 			EventData data;
 			transition(Event::TransportConnectionIndication, data);
-			m_transport.setSocket(std::move(socket));
+			m_transport->setSocket(std::move(socket));
 		}
 
 		void StateMachine::onTransportClose()
@@ -429,14 +435,14 @@ namespace emdl
 
 			std::ostringstream stream;
 			stream << item;
-			m_transport.write(stream.str());
+			m_transport->write(stream.str());
 		}
 
 		void StateMachine::AE_1(EventData& data)
 		{
 			if (!data.endpoint)
 				throw Exception("Peer endpoint not set");
-			m_transport.connect(*data.endpoint);
+			m_transport->connect(*data.endpoint);
 		}
 
 		void StateMachine::AE_2(EventData& data)
@@ -452,7 +458,7 @@ namespace emdl
 		void StateMachine::AE_4(EventData&)
 		{
 			m_association.setStatus(Association::Status::Rejected);
-			m_transport.close();
+			m_transport->close();
 		}
 
 		void StateMachine::AE_5(EventData& data)
@@ -527,7 +533,7 @@ namespace emdl
 		void StateMachine::AR_3(EventData&)
 		{
 			m_association.setStatus(Association::Status::Released);
-			m_transport.close();
+			m_transport->close();
 		}
 
 		void StateMachine::AR_4(EventData& data)
@@ -584,13 +590,13 @@ namespace emdl
 		void StateMachine::AA_2(EventData&)
 		{
 			stopTimer();
-			m_transport.close();
+			m_transport->close();
 		}
 
 		void StateMachine::AA_3(EventData&)
 		{
 			m_association.setStatus(Association::Status::Aborted);
-			m_transport.close();
+			m_transport->close();
 		}
 
 		void StateMachine::AA_4(EventData&)

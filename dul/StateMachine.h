@@ -70,9 +70,7 @@ namespace emdl
 			using duration_type = boost::asio::deadline_timer::duration_type;
 
 			StateMachine(Association& association, boost::asio::io_service& service); /// Constructor, initializing to Sta1.
-
-			/// Perform the transition related to the event and current state. Raise an exception if no such transition exists.
-			void transition(Event event, EventData& data);
+			~StateMachine();
 
 			StateId state() const; /// Return the current state.
 
@@ -130,11 +128,14 @@ namespace emdl
 
 			Association& m_association;
 			const State* m_currentState = nullptr;                     /// Current state.
-			Transport m_transport;                                     /// TCP transport.
+			std::shared_ptr<Transport> m_transport;                    /// TCP transport.
 			duration_type m_timeout = boost::posix_time::pos_infin;    /// Timeout of the ARTIM timer.
 			boost::asio::deadline_timer m_artimTimer;                  /// Association Request/Reject/Release Timer.
 			odil::AssociationAcceptor m_associationAcceptor;           /// Callback checking whether an association request is acceptable.
 			std::pair<unsigned char, unsigned char> m_abortParameters; /// Source and reason of the abort
+
+			/// Perform the transition related to the event and current state. Raise an exception if no such transition exists.
+			void transition(Event event, EventData& data);
 
 			void setState(StateId state); /// Change the current state
 

@@ -84,6 +84,7 @@ namespace emdl
 		using duration_type = dul::StateMachine::duration_type;
 
 		Association(boost::asio::io_service& service); /// Create a default, un-associated association.
+		~Association();                                /// Ensure the connection is closed
 
 		dul::Transport& transport(); /// Return the TCP transport.
 

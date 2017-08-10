@@ -39,6 +39,17 @@ namespace emdl
 		setMessageTimeout(boost::posix_time::seconds(30));
 	}
 
+	Association::~Association()
+	{
+		if (m_status == Status::Connected)
+			m_stateMachine.transport().close();
+		else if (m_status == Status::Associated)
+		{
+			m_stateMachine.abort(0, 0);
+			m_stateMachine.transport().close();
+		}
+	}
+
 	dul::Transport& Association::transport()
 	{
 		return m_stateMachine.transport();
@@ -266,10 +277,11 @@ namespace emdl
 					m_transferSyntaxesById[pc.id] = getTransferSyntax(pc.transfer_syntaxes[0]);
 			}
 
+			setStatus(Association::Status::Associated);
+
 			data.pdu = std::make_shared<odil::pdu::AAssociateAC>(m_negotiatedParameters.as_a_associate_ac());
 			m_stateMachine.sendPdu(data);
 
-			setStatus(Association::Status::Associated);
 			m_associationRequestPromise.set_value();
 		}
 		catch (...)

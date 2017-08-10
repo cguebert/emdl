@@ -6,6 +6,7 @@
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/ip/tcp.hpp>
+#include <boost/asio/strand.hpp>
 #include <boost/date_time.hpp>
 #include <boost/optional.hpp>
 
@@ -28,7 +29,7 @@ namespace emdl
 #pragma pack(pop)
 
 		/// TCP transport for the DICOM Upper Layer.
-		class EMDL_API Transport
+		class EMDL_API Transport : public std::enable_shared_from_this<Transport>
 		{
 		public:
 			using Socket = boost::asio::ip::tcp::socket;
@@ -36,7 +37,6 @@ namespace emdl
 
 			Transport(StateMachine& stateMachine, boost::asio::io_service& service);
 			Transport(const Transport&) = delete; // The copy constructor is removed as the socket can not be copied
-			~Transport();
 
 			boost::asio::io_service& service(); /// Return the io_service.
 
@@ -47,6 +47,7 @@ namespace emdl
 			void connect(const Socket::endpoint_type& endpoint); /// Connect to the specified endpoint, raise an exception upon error.
 			bool isOpen() const;                                 /// Test whether the transport is open.
 			void close();                                        /// Close the connection.
+			void stateMachineDestroyed();                        /// Make it so PDU are not send to the state machine anymore
 
 			void write(const std::string& data); /// Write data, raise an exception on error.
 
@@ -58,9 +59,12 @@ namespace emdl
 			StateMachine& m_stateMachine;
 			boost::asio::io_service& m_service;
 			boost::optional<Socket> m_socket;
+			boost::asio::strand m_strand;
 
 			PDUHeader m_readHeader;
 			std::string m_readBody;
+
+			bool m_closed = false, m_stateMachineAvailable = true;
 		};
 
 		/// Exception reported when the socket is closed without releasing the association.
