@@ -15,7 +15,7 @@ namespace emdl
 		class EventData;
 
 		/// State machine for the DICOM upper layer.
-		class EMDL_API StateMachine
+		class EMDL_API StateMachine : public std::enable_shared_from_this<StateMachine>
 		{
 		public:
 			/// States of the state machine.

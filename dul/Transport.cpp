@@ -13,11 +13,15 @@ namespace emdl
 {
 	namespace dul
 	{
-		Transport::Transport(StateMachine& stateMachine, boost::asio::io_service& service)
-			: m_stateMachine(stateMachine)
-			, m_service(service)
+		Transport::Transport(boost::asio::io_service& service)
+			: m_service(service)
 			, m_strand(m_service)
 		{
+		}
+
+		void Transport::setStateMachine(std::shared_ptr<StateMachine> stateMachine)
+		{
+			m_stateMachine = stateMachine;
 		}
 
 		boost::asio::io_service& Transport::service()
@@ -69,18 +73,14 @@ namespace emdl
 			if (!m_closed)
 			{
 				m_closed = true;
-				if (m_stateMachineAvailable)
-					m_stateMachine.onTransportClose();
+				auto stateMachine = m_stateMachine.lock();
+				if (stateMachine)
+					stateMachine->onTransportClose();
 
 				m_strand.post([this] {
 					m_socket.reset(); // The destructor of the socket object takes care of everything
 				});
 			}
-		}
-
-		void Transport::stateMachineDestroyed()
-		{
-			m_stateMachineAvailable = false;
 		}
 
 		void Transport::write(const std::string& data)
@@ -116,8 +116,9 @@ namespace emdl
 			boost::asio::async_read(*m_socket, buf, m_strand.wrap([this, self](boost::system::error_code ec, std::size_t) {
 				if (!ec)
 				{
-					if (m_stateMachineAvailable)
-						m_stateMachine.onReceivedPDU(m_readHeader, std::move(m_readBody));
+					auto stateMachine = m_stateMachine.lock();
+					if (stateMachine)
+						stateMachine->onReceivedPDU(m_readHeader, std::move(m_readBody));
 					readHeader();
 				}
 				else
@@ -130,14 +131,14 @@ namespace emdl
 			// TODO: add logs!
 			if (!m_closed)
 			{
-				if (ec == boost::asio::error::eof)
-					std::cout << "Socket closed\n";
-				else
+				if (ec != boost::asio::error::eof)
 					std::cerr << "Socket error\n";
 				m_closed = true;
 				m_socket.reset();
-				if (m_stateMachineAvailable)
-					m_stateMachine.onTransportClose();
+
+				auto stateMachine = m_stateMachine.lock();
+				if (stateMachine)
+					stateMachine->onTransportClose();
 			}
 		}
 	}

@@ -34,7 +34,7 @@
 namespace emdl
 {
 	Association::Association(boost::asio::io_service& service)
-		: m_stateMachine(*this, service)
+		: m_stateMachine(std::make_shared<dul::StateMachine>(*this, service))
 	{
 		setMessageTimeout(boost::posix_time::seconds(30));
 	}
@@ -42,17 +42,17 @@ namespace emdl
 	Association::~Association()
 	{
 		if (m_status == Status::Connected)
-			m_stateMachine.transport().close();
+			m_stateMachine->transport().close();
 		else if (m_status == Status::Associated)
 		{
-			m_stateMachine.abort(0, 0);
-			m_stateMachine.transport().close();
+			m_stateMachine->abort(0, 0);
+			m_stateMachine->transport().close();
 		}
 	}
 
 	dul::Transport& Association::transport()
 	{
-		return m_stateMachine.transport();
+		return m_stateMachine->transport();
 	}
 
 	Association& Association::operator=(const Association& other)
@@ -121,22 +121,22 @@ namespace emdl
 
 	Association::duration_type Association::messageTimeout() const
 	{
-		return m_stateMachine.timeout();
+		return m_stateMachine->timeout();
 	}
 
 	void Association::setMessageTimeout(const duration_type& duration)
 	{
-		m_stateMachine.setTimeout(duration);
+		m_stateMachine->setTimeout(duration);
 	}
 
 	bool Association::isAssociated() const
 	{
-		return m_stateMachine.transport().isOpen() && m_stateMachine.state() == dul::StateMachine::StateId::Sta6;
+		return m_stateMachine->transport().isOpen() && m_stateMachine->state() == dul::StateMachine::StateId::Sta6;
 	}
 
 	void Association::associate()
 	{
-		boost::asio::ip::tcp::resolver resolver(m_stateMachine.transport().service());
+		boost::asio::ip::tcp::resolver resolver(m_stateMachine->transport().service());
 		const boost::asio::ip::tcp::resolver::query query(m_peerHost, "");
 		const auto endpoint_it = resolver.resolve(query);
 
@@ -148,8 +148,8 @@ namespace emdl
 
 		data.pdu = request;
 
-		m_stateMachine.sendPdu(data);
-		/*m_stateMachine.receivePdu(data);
+		m_stateMachine->sendPdu(data);
+		/*m_stateMachine->receivePdu(data);
 
 		if (!data.pdu)
 		{
@@ -189,8 +189,8 @@ namespace emdl
 
 	void Association::receiveAssociation(dul::Transport::Socket socket, odil::AssociationAcceptor acceptor)
 	{
-		m_stateMachine.setAssociationAcceptor(acceptor);
-		m_stateMachine.setTransportConnection(std::move(socket));
+		m_stateMachine->setAssociationAcceptor(acceptor);
+		m_stateMachine->setTransportConnection(std::move(socket));
 
 		auto associationRequestFuture = m_associationRequestPromise.get_future();
 		associationRequestFuture.get(); // Waits for association, rethrows if there was an exception
@@ -231,7 +231,7 @@ namespace emdl
 
 	dul::StateMachine& Association::stateMachine()
 	{
-		return m_stateMachine;
+		return *m_stateMachine;
 	}
 
 	void Association::setStatus(Status status)
@@ -261,7 +261,7 @@ namespace emdl
 			if (!request)
 				throw Exception("Invalid response");
 
-			const auto endpoint = m_stateMachine.transport().remoteEndpoint();
+			const auto endpoint = m_stateMachine->transport().remoteEndpoint();
 			m_peerHost = endpoint.address().to_string();
 			m_peerPort = endpoint.port();
 
@@ -280,7 +280,7 @@ namespace emdl
 			setStatus(Association::Status::Associated);
 
 			data.pdu = std::make_shared<odil::pdu::AAssociateAC>(m_negotiatedParameters.as_a_associate_ac());
-			m_stateMachine.sendPdu(data);
+			m_stateMachine->sendPdu(data);
 
 			m_associationRequestPromise.set_value();
 		}
@@ -376,7 +376,7 @@ namespace emdl
 				throw emdl::AssociationReleased();
 			case Status::Aborted:
 			{
-				const auto params = m_stateMachine.abortParameters();
+				const auto params = m_stateMachine->abortParameters();
 				throw emdl::AssociationAborted(params.first, params.second);
 			}
 			case Status::Closed:

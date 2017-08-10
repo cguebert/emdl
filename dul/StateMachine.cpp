@@ -18,7 +18,7 @@ namespace emdl
 	{
 		StateMachine::StateMachine(Association& association, boost::asio::io_service& service)
 			: m_association(association)
-			, m_transport(std::make_shared<Transport>(*this, service))
+			, m_transport(std::make_shared<Transport>(service))
 			, m_artimTimer(service)
 			, m_associationAcceptor(odil::default_association_acceptor)
 			, m_abortParameters({0, 0})
@@ -28,7 +28,7 @@ namespace emdl
 
 		StateMachine::~StateMachine()
 		{
-			m_transport->stateMachineDestroyed();
+			m_transport->setStateMachine(nullptr);
 		}
 
 		void StateMachine::transition(Event event, EventData& data)
@@ -76,6 +76,7 @@ namespace emdl
 		{
 			EventData data;
 			transition(Event::TransportConnectionIndication, data);
+			m_transport->setStateMachine(shared_from_this());
 			m_transport->setSocket(std::move(socket));
 		}
 
@@ -442,6 +443,8 @@ namespace emdl
 		{
 			if (!data.endpoint)
 				throw Exception("Peer endpoint not set");
+
+			m_transport->setStateMachine(shared_from_this());
 			m_transport->connect(*data.endpoint);
 		}
 

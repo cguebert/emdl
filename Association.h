@@ -149,7 +149,7 @@ namespace emdl
 
 	private:
 		uint16_t m_nextMessageId = 1;
-		dul::StateMachine m_stateMachine;
+		std::shared_ptr<dul::StateMachine> m_stateMachine;
 
 		std::string m_peerHost;
 		uint16_t m_peerPort = 104;
