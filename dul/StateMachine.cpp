@@ -517,6 +517,11 @@ namespace emdl
 		void StateMachine::AR_2(EventData&)
 		{
 			m_association.setStatus(Association::Status::Released);
+
+			// Respond immediately
+			EventData data;
+			data.pdu = std::make_shared<odil::pdu::AReleaseRP>();
+			sendPdu(data);
 		}
 
 		void StateMachine::AR_3(EventData&)
