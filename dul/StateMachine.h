@@ -77,8 +77,8 @@ namespace emdl
 			const Transport& transport() const; /// Return the TCP transport.
 			Transport& transport();             /// Return the TCP transport.
 
-			duration_type timeout() const;          /// Return the timeout, default to infinity.
-			void setTimeout(duration_type timeout); /// Set the timeout.
+			duration_type artimTimeout() const;          /// Return the timeout, default to infinity.
+			void setArtimTimeout(duration_type timeout); /// Set the timeout.
 
 			void setTransportConnection(Transport::Socket socket); /// Set the socket for the transport and perform the corresponding transition.
 			void onTransportClose();
@@ -129,7 +129,7 @@ namespace emdl
 			Association& m_association;
 			const State* m_currentState = nullptr;                     /// Current state.
 			std::shared_ptr<Transport> m_transport;                    /// TCP transport.
-			duration_type m_timeout = boost::posix_time::pos_infin;    /// Timeout of the ARTIM timer.
+			duration_type m_timeout = boost::posix_time::seconds(30);  /// Timeout of the ARTIM timer.
 			boost::asio::deadline_timer m_artimTimer;                  /// Association Request/Reject/Release Timer.
 			odil::AssociationAcceptor m_associationAcceptor;           /// Callback checking whether an association request is acceptable.
 			std::pair<unsigned char, unsigned char> m_abortParameters; /// Source and reason of the abort

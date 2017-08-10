@@ -107,12 +107,6 @@ namespace emdl
 		const odil::AssociationParameters& negotiatedParameters() const; /// Return the negotiated association parameters.
 		/// @}
 
-		/// @name Timeouts
-		/// @{
-		duration_type messageTimeout() const;                  /// Return the DIMSE timeout, default to 30s.
-		void setMessageTimeout(const duration_type& duration); /// Set the DIMSE timeout.
-		/// @}
-
 		/// @name Association
 		/// @{
 		bool isAssociated() const; /// Test whether the object is currently associated to its peer.
@@ -144,6 +138,7 @@ namespace emdl
 
 		void onAssociationRequest(dul::EventData& data);
 		void onAssociationRejected(dul::EventData& data);
+		void onAssociationResponse(dul::EventData& data);
 		void onPDataTF(dul::EventData& data);
 		/// @}
 
@@ -160,6 +155,7 @@ namespace emdl
 		odil::AssociationParameters m_associationParameters, m_negotiatedParameters;
 
 		std::promise<void> m_associationRequestPromise, m_associationReleasedPromise;
+		std::promise<dul::EventData> m_associationResponsePromise;
 
 		struct MessageConstruction
 		{

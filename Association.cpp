@@ -36,7 +36,6 @@ namespace emdl
 	Association::Association(boost::asio::io_service& service)
 		: m_stateMachine(std::make_shared<dul::StateMachine>(*this, service))
 	{
-		setMessageTimeout(boost::posix_time::seconds(30));
 	}
 
 	Association::~Association()
@@ -119,16 +118,6 @@ namespace emdl
 		return m_negotiatedParameters;
 	}
 
-	Association::duration_type Association::messageTimeout() const
-	{
-		return m_stateMachine->timeout();
-	}
-
-	void Association::setMessageTimeout(const duration_type& duration)
-	{
-		m_stateMachine->setTimeout(duration);
-	}
-
 	bool Association::isAssociated() const
 	{
 		return m_stateMachine->transport().isOpen() && m_stateMachine->state() == dul::StateMachine::StateId::Sta6;
@@ -145,20 +134,21 @@ namespace emdl
 		data.endpoint->port(m_peerPort);
 
 		const auto request = std::make_shared<odil::pdu::AAssociateRQ>(m_associationParameters.as_a_associate_rq());
-
 		data.pdu = request;
 
 		m_stateMachine->sendPdu(data);
-		/*m_stateMachine->receivePdu(data);
 
-		if (!data.pdu)
+		auto responseFuture = m_associationResponsePromise.get_future();
+		const auto response = responseFuture.get();
+
+		if (!response.pdu)
 		{
 			throw Exception("No response received");
 		}
 		else
 		{
-			const auto acceptation = std::dynamic_pointer_cast<odil::pdu::AAssociateAC>(data.pdu);
-			const auto rejection = std::dynamic_pointer_cast<odil::pdu::AAssociateRJ>(data.pdu);
+			const auto acceptation = std::dynamic_pointer_cast<odil::pdu::AAssociateAC>(response.pdu);
+			const auto rejection = std::dynamic_pointer_cast<odil::pdu::AAssociateRJ>(response.pdu);
 			if (acceptation)
 			{
 				m_negotiatedParameters = odil::AssociationParameters{*acceptation, m_associationParameters};
@@ -168,9 +158,7 @@ namespace emdl
 				for (const auto& pc : m_negotiatedParameters.get_presentation_contexts())
 				{
 					if (pc.result == odil::AssociationParameters::PresentationContext::Result::Acceptance)
-					{
-						m_transferSyntaxesById[pc.id] = pc.transfer_syntaxes[0];
-					}
+						m_transferSyntaxesById[pc.id] = getTransferSyntax(pc.transfer_syntaxes[0]);
 				}
 			}
 			else if (rejection)
@@ -184,7 +172,7 @@ namespace emdl
 			{
 				throw Exception("Invalid response");
 			}
-		} */
+		}
 	}
 
 	void Association::receiveAssociation(dul::Transport::Socket socket, odil::AssociationAcceptor acceptor)
@@ -303,6 +291,11 @@ namespace emdl
 										  Association::ULServiceProvderPresentationRelatedFunction,
 										  Association::NoReasonGiven,
 										  "No reject information")));
+	}
+
+	void Association::onAssociationResponse(dul::EventData& data)
+	{
+		m_associationResponsePromise.set_value(data);
 	}
 
 	void Association::onPDataTF(dul::EventData& data)

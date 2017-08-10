@@ -62,12 +62,12 @@ namespace emdl
 			return *m_transport;
 		}
 
-		StateMachine::duration_type StateMachine::timeout() const
+		StateMachine::duration_type StateMachine::artimTimeout() const
 		{
 			return m_timeout;
 		}
 
-		void StateMachine::setTimeout(duration_type timeout)
+		void StateMachine::setArtimTimeout(duration_type timeout)
 		{
 			m_timeout = timeout;
 		}
@@ -453,14 +453,16 @@ namespace emdl
 			sendPdu(data, 0x01);
 		}
 
-		void StateMachine::AE_3(EventData&)
+		void StateMachine::AE_3(EventData& data)
 		{
 			m_association.setStatus(Association::Status::Associated);
+			m_association.onAssociationResponse(data);
 		}
 
-		void StateMachine::AE_4(EventData&)
+		void StateMachine::AE_4(EventData& data)
 		{
 			m_association.setStatus(Association::Status::Rejected);
+			m_association.onAssociationResponse(data);
 			m_transport->close();
 		}
 
