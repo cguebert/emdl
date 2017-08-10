@@ -301,21 +301,28 @@ namespace emdl
 
 	void Association::onPDataTF(dul::EventData& data)
 	{
+		sizeof(MessageConstruction);
 		const auto pData = std::dynamic_pointer_cast<odil::pdu::PDataTF>(data.pdu);
 		if (!pData)
 			throw Exception("Invalid PDU received");
 
+		if (!m_readMessage.started)
+		{
+			m_readMessage.started = true;
+			m_readMessage.receptionStart = std::chrono::high_resolution_clock::now();
+		}
+
 		for (const auto& pdv : pData->get_pdv_items())
 		{
 			m_readMessage.presentationContextId = pdv.get_presentation_context_id();
-			bool& received = pdv.is_command() ? m_readMessage.commandSetReceived : m_readMessage.receivedDataSet;
+			bool& received = pdv.is_command() ? m_readMessage.receivedCommandSet : m_readMessage.receivedDataSet;
 			received |= pdv.is_last_fragment();
 
 			std::stringstream& stream = pdv.is_command() ? m_readMessage.commandStream : m_readMessage.dataStream;
 			const auto& fragment_data = pdv.get_fragment();
 			stream.write(&fragment_data[0], fragment_data.size());
 
-			if (m_readMessage.commandSetReceived && m_readMessage.commandSet.empty())
+			if (m_readMessage.receivedCommandSet && m_readMessage.commandSet.empty())
 			{
 				auto buffer = createBufferFromStream(m_readMessage.commandStream);
 				m_readMessage.commandSet = DataSetReader{buffer, TransferSyntax::ImplicitVRLittleEndian}.readDataSet();
@@ -326,27 +333,32 @@ namespace emdl
 			}
 		}
 
-		if (m_readMessage.commandSetReceived && (!m_readMessage.hasDataSet || m_readMessage.receivedDataSet))
+		if (m_readMessage.receivedCommandSet && (!m_readMessage.hasDataSet || m_readMessage.receivedDataSet))
 		{
-			MessageSPtr message;
+			auto wrapper = std::make_shared<MessageWrapper>();
 			if (m_readMessage.hasDataSet)
 			{
 				const auto transferSyntax = transferSyntaxById(m_readMessage.presentationContextId);
 				auto buffer = createBufferFromStream(m_readMessage.dataStream);
-				message = std::make_shared<message::Message>(std::move(m_readMessage.commandSet),
-															 std::move(buffer),
-															 transferSyntax);
+				wrapper->message = std::make_shared<message::Message>(std::move(m_readMessage.commandSet),
+																	  std::move(buffer),
+																	  transferSyntax);
 			}
 			else
-				message = std::make_shared<message::Message>(std::move(m_readMessage.commandSet));
+				wrapper->message = std::make_shared<message::Message>(std::move(m_readMessage.commandSet));
+
+			wrapper->receptionStart = m_readMessage.receptionStart;
+			wrapper->receptionEnd = wrapper->processingEnd = std::chrono::high_resolution_clock::now();
 
 			std::lock_guard<std::mutex> lock(m_messagesMutex);
-			m_messagesQueue.push_back(message);
+			m_messagesQueue.push_back(wrapper);
 			m_messagesCondition.notify_one();
+
+			m_readMessage = {}; // Reset
 		}
 	}
 
-	MessageSPtr Association::popMessage()
+	MessageWrapperSPtr Association::popMessage()
 	{
 		std::unique_lock<std::mutex> lock(m_messagesMutex);
 		if (m_status == Status::Associated && m_messagesQueue.empty()) // Wait until there is a message

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <atomic>
 #include <deque>
 #include <functional>
 #include <future>
@@ -19,7 +20,20 @@
 
 namespace emdl
 {
-	using MessageSPtr = std::shared_ptr<emdl::message::Message>;
+	class MessageWrapper
+	{
+	public:
+		MessageWrapper()
+		{
+			canceled = false;
+		}
+
+		std::atomic_bool canceled;                       /// Can be set to true later for Store, Get and Move operations
+		std::shared_ptr<emdl::message::Message> message; /// The message itself
+
+		std::chrono::high_resolution_clock::time_point receptionStart, receptionEnd, processingEnd; // Mostly for debug
+	};
+	using MessageWrapperSPtr = std::shared_ptr<MessageWrapper>;
 
 	class EMDL_API Association
 	{
@@ -130,7 +144,7 @@ namespace emdl
 
 		/// @}
 
-		MessageSPtr popMessage(); /// Block and return the next message. Raise an exception if the association has been released, aborted or closed.
+		MessageWrapperSPtr popMessage(); /// Block and return the next message. Raise an exception if the association has been released, aborted or closed.
 		void sendMessage(const message::Message& message, uint8_t presentationContextId, TransferSyntax transferSyntax);
 
 		/// @name Called by the state machine
@@ -161,15 +175,17 @@ namespace emdl
 		struct MessageConstruction
 		{
 			int presentationContextId = 0;
-			bool commandSetReceived = false;
-			bool hasDataSet = true;
+			bool started = false; // Set to true when we have received something
+			bool receivedCommandSet = false;
 			bool receivedDataSet = false;
+			bool hasDataSet = true;
 			SparseDataSet commandSet;
 			std::stringstream commandStream, dataStream;
+			std::chrono::high_resolution_clock::time_point receptionStart;
 		};
 		MessageConstruction m_readMessage;
 
-		std::deque<MessageSPtr> m_messagesQueue;
+		std::deque<MessageWrapperSPtr> m_messagesQueue;
 		std::mutex m_messagesMutex;
 		std::condition_variable m_messagesCondition;
 	};
