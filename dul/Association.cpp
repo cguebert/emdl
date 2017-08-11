@@ -1,4 +1,4 @@
-#include <emdl/Association.h>
+#include <emdl/dul/Association.h>
 #include <emdl/dul/EventData.h>
 #include <emdl/dataset/DataSetAccessors.h>
 #include <emdl/dataset/DataSetReader.h>
