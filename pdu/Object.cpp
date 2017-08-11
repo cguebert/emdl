@@ -20,9 +20,9 @@ namespace emdl
 		uint32_t Object::size() const
 		{
 			uint32_t len = 0;
-			auto it = m_fields.begin();
+			auto it = m_fields.begin(), itEnd = m_fields.end();
 			std::advance(it, 3); // Do not count the first 3 fields: type, reserved and length.
-			for (; it != m_fields.end(); ++it)
+			for (; it != itEnd; ++it)
 				len += (*it)->size();
 			return len;
 		}

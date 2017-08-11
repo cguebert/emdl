@@ -25,10 +25,6 @@ namespace emdl
 			void read(std::istream& in);
 			void save(std::ostream& out) const;
 
-		private:
-			//! Fields specific to this object
-			Fields m_fields;
-
 		protected:
 			friend class BaseField::BaseInitField;
 
@@ -44,6 +40,9 @@ namespace emdl
 			{
 				return BaseField::InitField<T>(name, value, *this);
 			}
+
+			//! Fields specific to this object
+			Fields m_fields;
 		};
 
 		EMDL_API std::ostream& operator<<(std::ostream& stream, const Object& object);
