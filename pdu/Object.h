@@ -22,8 +22,8 @@ namespace emdl
 			uint32_t size() const;                      /// Compute the size of all fields but the first 3 (type, reserved and length)
 			static uint32_t size(const Object& object); /// Compute the size of all fields
 
-			void read(std::istream& in);
-			void save(std::ostream& out) const;
+			virtual void read(std::istream& in);
+			virtual void save(std::ostream& out) const;
 
 		protected:
 			friend class BaseField::BaseInitField;

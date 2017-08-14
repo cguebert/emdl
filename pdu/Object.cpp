@@ -37,10 +37,14 @@ namespace emdl
 
 		void Object::read(std::istream& in)
 		{
+			for (auto& field : m_fields)
+				field->read(in);
 		}
 
 		void Object::save(std::ostream& out) const
 		{
+			for (const auto& field : m_fields)
+				field->save(out);
 		}
 
 		BaseField::BaseInitField Object::initField(const char* name)
@@ -52,20 +56,5 @@ namespace emdl
 		{
 			m_fields.push_back(&field);
 		}
-
-		class Test : public Object
-		{
-		public:
-			Test()
-				: text(initField("text"))
-				, objects(initField("objects"))
-			{
-				const auto len = size();
-				const auto s = objects.size();
-			}
-
-			Field<std::string> text;
-			Field<std::vector<Object>> objects;
-		};
 	}
 }

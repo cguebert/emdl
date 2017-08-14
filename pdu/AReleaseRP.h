@@ -13,7 +13,7 @@ namespace emdl
 			AReleaseRP();
 			AReleaseRP(std::istream& in);
 
-			Field<uint32_t> reserved2;
+			const Field<uint32_t> reserved2;
 		};
 	}
 }

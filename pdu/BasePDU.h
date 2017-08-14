@@ -26,11 +26,13 @@ namespace emdl
 		public:
 			BasePDU();
 
-			void read(std::istream& in);
+			void read(std::istream& in) override;
+			void save(std::ostream& out) const override;
 
+		protected:
 			Field<uint8_t> pduType;
 			Field<uint8_t> reserved1;
-			Field<uint32_t> length;
+			mutable Field<uint32_t> length;
 		};
 	}
 }

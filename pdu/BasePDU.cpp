@@ -26,5 +26,11 @@ namespace emdl
 			for (; it != itEnd; ++it)
 				(*it)->read(in);
 		}
+
+		void BasePDU::save(std::ostream& out) const
+		{
+			length.set(size());
+			Object::save(out);
+		}
 	}
 }

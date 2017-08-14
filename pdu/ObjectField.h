@@ -1,7 +1,6 @@
 #pragma once
 
-#include <emdl/emdl_api.h>
-#include <boost/variant/get.hpp>
+#include <emdl/Exception.h>
 
 #include <istream>
 #include <ostream>
@@ -14,7 +13,7 @@ namespace emdl
 	{
 		class Object;
 
-		// Base class for all message fields
+		// Base class for all object fields
 		class EMDL_API BaseField
 		{
 		public:
@@ -55,7 +54,7 @@ namespace emdl
 			virtual ~BaseField();
 			virtual uint32_t size() const = 0;
 
-			virtual void read(std::istream& in, uint32_t size = 0) = 0;
+			virtual void read(std::istream& in) = 0;
 			virtual void save(std::ostream& out) const = 0;
 
 			const char* name() const;
@@ -98,7 +97,7 @@ namespace emdl
 				return sizeof(value_type);
 			}
 
-			void read(std::istream& in, uint32_t) override
+			void read(std::istream& in) override
 			{
 				in.read(reinterpret_cast<char*>(&m_value), sizeof(m_value));
 			}
@@ -106,102 +105,6 @@ namespace emdl
 			void save(std::ostream& out) const override
 			{
 				out.write(reinterpret_cast<char const*>(&m_value), sizeof(m_value));
-			}
-
-		protected:
-			value_type m_value;
-		};
-
-		// Specialization for string
-		template <>
-		class Field<std::string> : public BaseField
-		{
-		public:
-			using value_type = std::string;
-
-			explicit Field(const BaseField::BaseInitField& init)
-				: BaseField(init)
-			{
-			}
-
-			const value_type& get() const
-			{
-				return m_value;
-			}
-
-			void set(const value_type& val)
-			{
-				m_value = val;
-			}
-
-			uint32_t size() const override
-			{
-				return static_cast<uint32_t>(m_value.size());
-			}
-
-			void read(std::istream& in, uint32_t size) override
-			{
-				m_value.resize(size);
-				in.read(reinterpret_cast<char*>(&m_value[0]), size);
-			}
-
-			void save(std::ostream& out) const override
-			{
-				out.write(reinterpret_cast<const char*>(m_value.data()), m_value.size());
-			}
-
-		protected:
-			value_type m_value;
-		};
-
-		// Specialization for list of Objects
-		template <class T>
-		class Field<std::vector<T>> : public BaseField
-		{
-		public:
-			using item_type = T;
-			using value_type = std::vector<item_type>;
-
-			explicit Field(const BaseField::BaseInitField& init)
-				: BaseField(init)
-			{
-			}
-
-			const value_type& get() const
-			{
-				return m_value;
-			}
-
-			void set(const value_type& val)
-			{
-				m_value = val;
-			}
-
-			uint32_t size() const override
-			{
-				uint32_t len = 0;
-				for (const auto& obj : m_value)
-					len += item_type::size(obj);
-				return len;
-			}
-
-			void read(std::istream& in, uint32_t size) override
-			{
-				const auto begin = in.tellg();
-
-				m_value.clear();
-				while (in.tellg() - begin < size)
-				{
-					item_type v{};
-					v.read(in);
-					m_value.push_back(std::move(v));
-				}
-			}
-
-			void save(std::ostream& out) const override
-			{
-				for (const auto& v : m_value)
-					v.save(out);
 			}
 
 		protected:

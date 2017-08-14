@@ -13,8 +13,8 @@ namespace emdl
 			AAbort(uint8_t source, uint8_t reason);
 			AAbort(std::istream& in);
 
-			Field<uint8_t> reserved2;
-			Field<uint8_t> reserved3;
+			const Field<uint8_t> reserved2;
+			const Field<uint8_t> reserved3;
 			Field<uint8_t> source;
 			Field<uint8_t> reason;
 
