@@ -20,7 +20,7 @@ namespace emdl
 		};
 
 		//! Base class for all PDU items
-		class BaseItem : public Object
+		class EMDL_API BaseItem : public Object
 		{
 		public:
 			BaseItem();

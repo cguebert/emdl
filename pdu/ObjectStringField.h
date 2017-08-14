@@ -7,7 +7,7 @@ namespace emdl
 	namespace pdu
 	{
 		// Specialization for string
-		class FixedStringField : public BaseField
+		class EMDL_API FixedStringField : public BaseField
 		{
 		public:
 			using value_type = std::string;
@@ -19,7 +19,7 @@ namespace emdl
 			{
 			}
 
-			const value_type& get() const
+			value_type get() const
 			{
 				auto const begin = m_value.find_first_not_of(' ');
 				if (begin == std::string::npos)
