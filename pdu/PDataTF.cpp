@@ -7,11 +7,13 @@ namespace emdl
 		PDataTF::PDataTF()
 			: items(initField("Presentation-data-value-Items"), length, 0)
 		{
+			pduType.set(PDUType::P_DATA_TF);
 		}
 
-		PDataTF::PDataTF(const std::vector<PresentationDataValueSPtr> pdvItems)
+		PDataTF::PDataTF(const std::vector<PresentationDataValueSPtr>& pdvItems)
 			: PDataTF()
 		{
+			items.add(pdvItems);
 		}
 
 		PDataTF::PDataTF(std::istream& in)

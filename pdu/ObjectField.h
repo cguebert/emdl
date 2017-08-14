@@ -63,6 +63,33 @@ namespace emdl
 			const char* m_name;
 		};
 
+		// Some functions to swap the order of bytes from host to network (and back)
+		template <class T>
+		inline T swapOrder(T val)
+		{
+			return val;
+		}
+
+		template <>
+		inline uint16_t swapOrder<uint16_t>(uint16_t val)
+		{
+#ifdef WIN32
+			return _byteswap_ushort(val);
+#else
+			return __bswap_16(val);
+#endif
+		}
+
+		template <>
+		inline uint32_t swapOrder<uint32_t>(uint32_t val)
+		{
+#ifdef WIN32
+			return _byteswap_ulong(val);
+#else
+			return __bswap_32(val);
+#endif
+		}
+
 		// Templated class for object fields
 		template <class T>
 		class Field : public BaseField
@@ -99,12 +126,14 @@ namespace emdl
 
 			void read(std::istream& in) override
 			{
-				in.read(reinterpret_cast<char*>(&m_value), sizeof(m_value));
+				in.read(reinterpret_cast<char*>(&m_value), sizeof(T));
+				m_value = swapOrder(m_value);
 			}
 
 			void save(std::ostream& out) const override
 			{
-				out.write(reinterpret_cast<char const*>(&m_value), sizeof(m_value));
+				T val = swapOrder(m_value);
+				out.write(reinterpret_cast<const char*>(&val), sizeof(T));
 			}
 
 		protected:

@@ -14,7 +14,7 @@ namespace emdl
 		class EMDL_API PDataTF : public BasePDU
 		{
 		public:
-			PDataTF(const std::vector<PresentationDataValueSPtr> pdvItems);
+			PDataTF(const std::vector<PresentationDataValueSPtr>& pdvItems);
 			PDataTF(std::istream& in);
 
 			const std::vector<PresentationDataValueSPtr> pdvItems() const;

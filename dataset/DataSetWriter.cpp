@@ -9,12 +9,12 @@
 #include <fstream>
 #include <sstream>
 
-#define TEST_STREAM if(!m_stream) \
+#define TEST_STREAM \
+	if (!m_stream)  \
 		throw Exception("{} Could not write to stream", LOG_POSITION);
 
 namespace emdl
 {
-
 	DataSetWriter::DataSetWriter(std::ostream& stream, TransferSyntax transferSyntax, ItemEncoding itemEncoding)
 		: BaseWriter(stream, isExplicit(transferSyntax), itemEncoding)
 	{
@@ -31,8 +31,8 @@ namespace emdl
 			throw Exception("{} Cannot save a data set with no transfer syntax", LOG_POSITION);
 
 		// Build file meta information
-		Value::Binaries::value_type::vector_type version = { 0x00, 0x01 };
-		metaInformation.set(odil::registry::FileMetaInformationVersion, Value::Binaries({ version }));
+		Value::Binaries::value_type::vector_type version = {0x00, 0x01};
+		metaInformation.set(odil::registry::FileMetaInformationVersion, Value::Binaries({version}));
 
 		const auto& sopClassUID = dataSet[odil::registry::SOPClassUID];
 		if (!sopClassUID)
@@ -52,9 +52,9 @@ namespace emdl
 			throw Exception("{} Empty SOP Instance UID", LOG_POSITION);
 		metaInformation.set(odil::registry::MediaStorageSOPInstanceUID, *sopInstanceUID);
 
-		metaInformation.set(odil::registry::TransferSyntaxUID, { getTransferSyntaxUID(dataSet.transferSyntax()) });
-		metaInformation.set(odil::registry::ImplementationClassUID, { odil::implementation_class_uid });
-		metaInformation.set(odil::registry::ImplementationVersionName, { odil::implementation_version_name });
+		metaInformation.set(odil::registry::TransferSyntaxUID, {getTransferSyntaxUID(dataSet.transferSyntax())});
+		metaInformation.set(odil::registry::ImplementationClassUID, {odil::implementation_class_uid});
+		metaInformation.set(odil::registry::ImplementationVersionName, {odil::implementation_version_name});
 
 		static const auto preamble = std::vector<char>(128, 0);
 		out.write(preamble.data(), 128);
@@ -63,7 +63,7 @@ namespace emdl
 		out.write(prefix.data(), 4);
 
 		// Always use explicit VR little endian for the meta information
-		DataSetWriter { out, TransferSyntax::ExplicitVRLittleEndian, itemEncoding }.writeDataSet(metaInformation);
+		DataSetWriter{out, TransferSyntax::ExplicitVRLittleEndian, itemEncoding}.writeDataSet(metaInformation);
 
 		// Data set
 		DataSetWriter::writeDataSet(out, dataSet, itemEncoding);
@@ -71,9 +71,9 @@ namespace emdl
 
 	void DataSetWriter::writeDataSet(std::ostream& out, const SparseDataSet& dataSet, ItemEncoding itemEncoding)
 	{
-		DataSetWriter { out, dataSet.transferSyntax(), itemEncoding }.writeDataSet(dataSet);
+		DataSetWriter{out, dataSet.transferSyntax(), itemEncoding}.writeDataSet(dataSet);
 	}
-	
+
 	void DataSetWriter::writeDataSet(const SparseDataSet& dataSet)
 	{
 		bool fastWrite = (isExplicit(dataSet.transferSyntax()) == isExplicitTS());
@@ -88,13 +88,13 @@ namespace emdl
 
 				// Write a dummy value
 				const auto lenPos = m_stream.tellp();
-				writeElement(Element(Value::Integers({ 0 }), odil::VR::UL));
+				writeElement(Element(Value::Integers({0}), odil::VR::UL));
 
 				// Write the entire group
 				const auto startPos = m_stream.tellp();
 				for (const auto& tes : group.elements)
 				{
-					if(tes.tag.element != 0) //do not write group length twice if already present in dataset
+					if (tes.tag.element != 0) //do not write group length twice if already present in dataset
 						writeElementStruct(dataSet, tes, fastWrite);
 				}
 				const auto endPos = m_stream.tellp();
@@ -102,7 +102,7 @@ namespace emdl
 				// Update the length
 				const auto groupLength = endPos - startPos; // Compute the length of the group
 				m_stream.seekp(lenPos); // Go back to the length tag
-				writeElement(Element(Value::Integers({ groupLength }), odil::VR::UL)); // Overwrite the length tag
+				writeElement(Element(Value::Integers({groupLength}), odil::VR::UL)); // Overwrite the length tag
 				m_stream.seekp(endPos); // Go back to the end position (could also do a seekp(0, std::ios_bacse::end);)
 
 				TEST_STREAM
@@ -137,7 +137,7 @@ namespace emdl
 			else // Or directly copy from the raw view
 			{
 				const auto view = dataSet.getView(tes);
-				m_stream.write(reinterpret_cast<char const*>(view.data()), view.size());
+				m_stream.write(reinterpret_cast<const char*>(view.data()), view.size());
 			}
 		}
 
