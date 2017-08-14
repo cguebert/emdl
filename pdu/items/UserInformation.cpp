@@ -7,6 +7,7 @@ namespace emdl
 		UserInformation::UserInformation()
 			: subItems(initField("User-data"), length, 0)
 		{
+			itemType.set(ItemType::UserInformation);
 		}
 
 		UserInformation::UserInformation(std::istream& in)

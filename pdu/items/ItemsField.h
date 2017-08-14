@@ -12,7 +12,7 @@ namespace emdl
 {
 	namespace pdu
 	{
-		// Specialization for list of Objects
+		// Specialization for list of BaseItem smart pointers
 		template <class S>
 		class ItemsField : public BaseField
 		{

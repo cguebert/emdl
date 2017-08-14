@@ -2,6 +2,8 @@
 
 #include <emdl/pdu/ObjectField.h>
 
+#include <functional>
+
 namespace emdl
 {
 	namespace pdu
@@ -60,12 +62,12 @@ namespace emdl
 		};
 
 		// Specialization for string where the size is held by another field
-		template <class T>
+		template <class SizeType>
 		class StringField : public BaseField
 		{
 		public:
 			using value_type = std::string;
-			using size_field_type = T;
+			using size_field_type = SizeType;
 
 			explicit StringField(const BaseField::BaseInitField& init, Field<size_field_type>& sizeField, int8_t sizeDelta)
 				: BaseField(init)
@@ -106,6 +108,55 @@ namespace emdl
 			value_type m_value;
 			Field<size_field_type>& m_sizeField;
 			int8_t m_sizeDelta = 0;
+		};
+
+		// Specialization for string where the size must be computed by a function
+		class DynamicStringField : public BaseField
+		{
+		public:
+			using value_type = std::string;
+			using GetSizeFunc = std::function<size_t()>;
+			using SetSizeFunc = std::function<void(size_t)>;
+
+			explicit DynamicStringField(const BaseField::BaseInitField& init, GetSizeFunc getSize, SetSizeFunc setSize)
+				: BaseField(init)
+				, m_getSizeFunc(getSize)
+				, m_setSizeFunc(setSize)
+			{
+			}
+
+			const value_type& get() const
+			{
+				return m_value;
+			}
+
+			void set(const value_type& val)
+			{
+				m_value = val;
+				m_setSizeFunc(val.size());
+			}
+
+			uint32_t size() const override
+			{
+				return static_cast<uint32_t>(m_value.size());
+			}
+
+			void read(std::istream& in) override
+			{
+				const size_t size = m_getSizeFunc();
+				m_value.resize(size);
+				in.read(reinterpret_cast<char*>(&m_value[0]), size);
+			}
+
+			void save(std::ostream& out) const override
+			{
+				out.write(reinterpret_cast<const char*>(m_value.data()), m_value.size());
+			}
+
+		protected:
+			value_type m_value;
+			GetSizeFunc m_getSizeFunc;
+			SetSizeFunc m_setSizeFunc;
 		};
 	}
 }
