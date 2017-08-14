@@ -6,7 +6,7 @@ namespace emdl
 	namespace pdu
 	{
 		AbstractSyntaxSubItem::AbstractSyntaxSubItem()
-			: name(initField("Abstract-syntax-name"), length)
+			: name(initField("Abstract-syntax-name"), length, 0)
 		{
 			itemType.set(ItemType::AbstractSyntax);
 		}

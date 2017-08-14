@@ -5,7 +5,7 @@ namespace emdl
 	namespace pdu
 	{
 		UserInformation::UserInformation()
-			: subItems(initField("User-data"), length, 4)
+			: subItems(initField("User-data"), length, 0)
 		{
 		}
 

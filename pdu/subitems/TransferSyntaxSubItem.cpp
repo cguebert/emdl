@@ -6,7 +6,7 @@ namespace emdl
 	namespace pdu
 	{
 		TransferSyntaxSubItem::TransferSyntaxSubItem()
-			: name(initField("Transfer-syntax-name"), length)
+			: name(initField("Transfer-syntax-name"), length, 0)
 		{
 			itemType.set(ItemType::TransferSyntax);
 		}

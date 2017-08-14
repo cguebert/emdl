@@ -5,7 +5,7 @@ namespace emdl
 	namespace pdu
 	{
 		PDataTF::PDataTF()
-			: items(initField("Presentation-data-value-Items"), length)
+			: items(initField("Presentation-data-value-Items"), length, 0)
 		{
 		}
 

@@ -21,7 +21,7 @@ namespace emdl
 			using value_type = std::vector<item_type>;
 			using size_field_type = S;
 
-			explicit ItemsField(const BaseField::BaseInitField& init, Field<size_field_type>& sizeField, int8_t sizeDelta = 0)
+			explicit ItemsField(const BaseField::BaseInitField& init, Field<size_field_type>& sizeField, int8_t sizeDelta)
 				: BaseField(init)
 				, m_sizeField(sizeField)
 			{

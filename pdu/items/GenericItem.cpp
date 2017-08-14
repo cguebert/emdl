@@ -5,7 +5,7 @@ namespace emdl
 	namespace pdu
 	{
 		GenericItem::GenericItem()
-			: data(initField("User-data"), length)
+			: data(initField("User-data"), length, 0)
 		{
 		}
 

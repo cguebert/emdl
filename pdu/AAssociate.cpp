@@ -12,8 +12,8 @@ namespace emdl
 			, reserved2(initField("Reserved-2", 0))
 			, calledAeTitle(initField("Called-AE-title"), 16)
 			, callingAeTitle(initField("Calling-AE-title"), 16)
-			, reserved3(initField("Reserved-3"), 20)
-			, items(initField("Variable-items"), length, 12)
+			, reserved3(initField("Reserved-3"), 32)
+			, items(initField("Variable-items"), length, 68)
 		{
 		}
 
