@@ -10,7 +10,7 @@ namespace emdl
 		}
 
 		AAssociateRQ::AAssociateRQ(std::istream& in)
-			: AAssociate(in)
+			: AAssociateRQ()
 		{
 			read(in);
 		}

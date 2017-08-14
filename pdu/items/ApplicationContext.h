@@ -1,6 +1,7 @@
 #pragma once
 
 #include <emdl/pdu/items/BaseItem.h>
+#include <emdl/pdu/ObjectStringField.h>
 
 namespace emdl
 {
@@ -13,7 +14,7 @@ namespace emdl
 			ApplicationContext(const std::string& name);
 			ApplicationContext(std::istream& in);
 
-			Field<std::string> name;
+			StringField<uint16_t> name;
 
 		private:
 			ApplicationContext();

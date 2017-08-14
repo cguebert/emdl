@@ -10,7 +10,7 @@ namespace emdl
 		}
 
 		AAssociateAC::AAssociateAC(std::istream& in)
-			: AAssociate(in)
+			: AAssociateAC()
 		{
 			read(in);
 		}

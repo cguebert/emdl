@@ -6,7 +6,7 @@ namespace emdl
 	namespace pdu
 	{
 		ApplicationContext::ApplicationContext()
-			: name(initField("Application-context-name"))
+			: name(initField("Application-context-name"), length, 0)
 		{
 			itemType.set(ItemType::ApplicationContext);
 		}

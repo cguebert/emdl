@@ -24,6 +24,7 @@ namespace emdl
 			explicit ItemsField(const BaseField::BaseInitField& init, Field<size_field_type>& sizeField, int8_t sizeDelta)
 				: BaseField(init)
 				, m_sizeField(sizeField)
+				, m_sizeDelta(sizeDelta)
 			{
 			}
 
