@@ -10,6 +10,9 @@
 
 namespace emdl
 {
+	extern EMDL_API std::string defaultImplementationClassUid; /// Implementation class UID used during negociation if another is not set
+	extern EMDL_API std::string defaultImplementationVersionName; /// Implementation version name used during negociation if another is not set
+
 	/// Encapsulate association parameters
 	class EMDL_API AssociationParameters
 	{
@@ -20,6 +23,8 @@ namespace emdl
 
 		std::string calledAeTitle;
 		std::string callingAeTitle;
+		std::string implementationClassUid;
+		std::string implementationVersionName;
 		std::vector<PresentationContext> presentationContexts;
 		UserIdentity userIdentity;
 		uint32_t maximumLength = 16384;

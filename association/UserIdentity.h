@@ -19,9 +19,13 @@ namespace emdl
 		};
 
 		UserIdentity() = default;
-		UserIdentity(Type type, const std::string& primaryField, const std::string& secondaryField);
+		UserIdentity(Type type,
+					 const std::string& primaryField,
+					 const std::string& secondaryField,
+					 bool positiveResponseRequested = false);
 
 		Type type = Type::None;
 		std::string primaryField, secondaryField;
+		bool positiveResponseRequested = false;
 	};
 }

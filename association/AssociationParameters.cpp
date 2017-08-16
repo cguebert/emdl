@@ -15,10 +15,11 @@
 #include <emdl/pdu/subitems/UserIdentityAC.h>
 #include <emdl/pdu/subitems/UserIdentityRQ.h>
 
-#include "odil/uid.h"
-
 namespace emdl
 {
+	std::string defaultImplementationClassUid = "1.2.250.1.119.1.1.1.1.1.1.36";
+	std::string defaultImplementationVersionName = "EMDL 1.0";
+
 	AssociationParameters::AssociationParameters(const pdu::AAssociateRQ& pdu)
 	{
 		calledAeTitle = pdu.calledAeTitle.get();
@@ -46,6 +47,33 @@ namespace emdl
 				it != rolesMap.end());
 		}
 
+		// Maximum length
+		const auto maxLenPdus = userInformation->subItems.get<pdu::MaximumLength>();
+		if (!maxLenPdus.empty())
+			maximumLength = maxLenPdus.front()->maximumLength.get();
+
+		// Implementation class UID
+		const auto implClassUid = userInformation->subItems.get<pdu::ImplementationClassUID>();
+		if (!implClassUid.empty())
+			implementationClassUid = implClassUid.front()->implementationClassUid.get();
+
+		// Maximum number of operations performed/invoked
+		const auto asyncWindowPdus = userInformation->subItems.get<pdu::AsynchronousOperationsWindow>();
+		if (!asyncWindowPdus.empty())
+		{
+			maximumNumberOperationsInvoked = asyncWindowPdus.front()->maximumNumberOperationsInvoked.get();
+			maximumNumberOperationsPerformed = asyncWindowPdus.front()->maximumNumberOperationsPerformed.get();
+		}
+
+		// Implementation version name
+		const auto implVersionName = userInformation->subItems.get<pdu::ImplementationVersionName>();
+		if (!implVersionName.empty())
+			implementationVersionName = implVersionName.front()->implementationVersionName.get();
+
+		// Extended negociation
+		sopClassExtendedNegotiation = userInformation->subItems.get<pdu::SOPClassExtendedNegotiation>();
+		sopClassCommonExtendedNegotiation = userInformation->subItems.get<pdu::SOPClassCommonExtendedNegotiation>();
+
 		// User identity
 		const auto userIdPdus = userInformation->subItems.get<pdu::UserIdentityRQ>();
 		if (!userIdPdus.empty())
@@ -67,27 +95,9 @@ namespace emdl
 				break;
 			}
 		}
-
-		// Maximum length
-		const auto maxLenPdus = userInformation->subItems.get<pdu::MaximumLength>();
-		if (!maxLenPdus.empty())
-			maximumLength = maxLenPdus.front()->maximumLength.get();
-
-		// Maximum number of operations performed/invoked
-		const auto asyncWindowPdus = userInformation->subItems.get<pdu::AsynchronousOperationsWindow>();
-		if (!asyncWindowPdus.empty())
-		{
-			maximumNumberOperationsInvoked = asyncWindowPdus.front()->maximumNumberOperationsInvoked.get();
-			maximumNumberOperationsPerformed = asyncWindowPdus.front()->maximumNumberOperationsPerformed.get();
-		}
-
-		// Extended negociation
-		sopClassExtendedNegotiation = userInformation->subItems.get<pdu::SOPClassExtendedNegotiation>();
-		sopClassCommonExtendedNegotiation = userInformation->subItems.get<pdu::SOPClassCommonExtendedNegotiation>();
 	}
 
 	AssociationParameters::AssociationParameters(const pdu::AAssociateAC& pdu, const AssociationParameters& request)
-
 	{
 		// Calling and Called AE titles are not meaningful in A-ASSOCIATE-AC
 		calledAeTitle = pdu.calledAeTitle.get();
@@ -125,6 +135,33 @@ namespace emdl
 				static_cast<PresentationContext::Result>(pdu->result.get()));
 		}
 
+		// Maximum length
+		const auto maxLenPdus = userInformation->subItems.get<pdu::MaximumLength>();
+		if (!maxLenPdus.empty())
+			maximumLength = maxLenPdus.front()->maximumLength.get();
+
+		// Implementation class UID
+		const auto implClassUid = userInformation->subItems.get<pdu::ImplementationClassUID>();
+		if (!implClassUid.empty())
+			implementationClassUid = implClassUid.front()->implementationClassUid.get();
+
+		// Maximum number of operations performed/invoked
+		const auto asyncWindowPdus = userInformation->subItems.get<pdu::AsynchronousOperationsWindow>();
+		if (!asyncWindowPdus.empty())
+		{
+			maximumNumberOperationsInvoked = asyncWindowPdus.front()->maximumNumberOperationsInvoked.get();
+			maximumNumberOperationsPerformed = asyncWindowPdus.front()->maximumNumberOperationsPerformed.get();
+		}
+
+		// Implementation version name
+		const auto implVersionName = userInformation->subItems.get<pdu::ImplementationVersionName>();
+		if (!implVersionName.empty())
+			implementationVersionName = implVersionName.front()->implementationVersionName.get();
+
+		// Extended negociation
+		sopClassExtendedNegotiation = userInformation->subItems.get<pdu::SOPClassExtendedNegotiation>();
+		// No SOPClassCommonExtendedNegotiation in AC
+
 		// User identity
 		const auto userIdPdus = userInformation->subItems.get<pdu::UserIdentityAC>();
 		if (!userIdPdus.empty())
@@ -140,23 +177,6 @@ namespace emdl
 				break;
 			}
 		}
-
-		// Maximum length
-		const auto maxLenPdus = userInformation->subItems.get<pdu::MaximumLength>();
-		if (!maxLenPdus.empty())
-			maximumLength = maxLenPdus.front()->maximumLength.get();
-
-		// Maximum number of operations performed/invoked
-		const auto asyncWindowPdus = userInformation->subItems.get<pdu::AsynchronousOperationsWindow>();
-		if (!asyncWindowPdus.empty())
-		{
-			maximumNumberOperationsInvoked = asyncWindowPdus.front()->maximumNumberOperationsInvoked.get();
-			maximumNumberOperationsPerformed = asyncWindowPdus.front()->maximumNumberOperationsPerformed.get();
-		}
-
-		// Extended negociation
-		sopClassExtendedNegotiation = userInformation->subItems.get<pdu::SOPClassExtendedNegotiation>();
-		// No SOPClassCommonExtendedNegotiation in AC
 	}
 
 	std::shared_ptr<pdu::AAssociateRQ> toAAssociateRQ(const AssociationParameters& params)
@@ -176,19 +196,18 @@ namespace emdl
 																			context.transferSyntaxes));
 		pdu->setPresentationContexts(contexts);
 
+		// User information sub items, sorted by their type
 		auto userInformation = std::make_shared<pdu::UserInformation>();
 		userInformation->subItems.add(std::make_shared<pdu::MaximumLength>(params.maximumLength));
-		userInformation->subItems.add(std::make_shared<pdu::ImplementationClassUID>(odil::implementation_class_uid));
+
+		userInformation->subItems.add(std::make_shared<pdu::ImplementationClassUID>(!params.implementationClassUid.empty()
+																						? params.implementationClassUid
+																						: defaultImplementationClassUid));
 
 		if (params.maximumNumberOperationsInvoked != 1 || params.maximumNumberOperationsPerformed != 1)
 			userInformation->subItems.add(std::make_shared<pdu::AsynchronousOperationsWindow>(
 				params.maximumNumberOperationsInvoked,
 				params.maximumNumberOperationsPerformed));
-
-		userInformation->subItems.add(params.sopClassExtendedNegotiation);
-		userInformation->subItems.add(params.sopClassCommonExtendedNegotiation);
-
-		userInformation->subItems.add(std::make_shared<pdu::ImplementationVersionName>(odil::implementation_version_name));
 
 		std::vector<std::shared_ptr<pdu::RoleSelection>> roles;
 		for (const auto& context : params.presentationContexts)
@@ -197,13 +216,20 @@ namespace emdl
 																 context.scpRoleSupport));
 		userInformation->subItems.add(roles);
 
+		userInformation->subItems.add(std::make_shared<pdu::ImplementationVersionName>(!params.implementationVersionName.empty()
+																						   ? params.implementationVersionName
+																						   : defaultImplementationVersionName));
+
+		userInformation->subItems.add(params.sopClassExtendedNegotiation);
+		userInformation->subItems.add(params.sopClassCommonExtendedNegotiation);
+
 		if (params.userIdentity.type != UserIdentity::Type::None)
 		{
 			auto userIdentity = std::make_shared<pdu::UserIdentityRQ>();
 			userIdentity->setType(static_cast<uint8_t>(params.userIdentity.type));
 			userIdentity->setPrimaryField(params.userIdentity.primaryField);
 			userIdentity->setSecondaryField(params.userIdentity.secondaryField);
-			userIdentity->setPositiveResponseRequested(true); // TODO
+			userIdentity->setPositiveResponseRequested(params.userIdentity.positiveResponseRequested);
 
 			userInformation->subItems.add(userIdentity);
 		}
@@ -231,19 +257,18 @@ namespace emdl
 
 		pdu->setPresentationContexts(contexts);
 
+		// User information sub items, sorted by their type
 		auto userInformation = std::make_shared<pdu::UserInformation>();
 		userInformation->subItems.add(std::make_shared<pdu::MaximumLength>(params.maximumLength));
-		userInformation->subItems.add(std::make_shared<pdu::ImplementationClassUID>(odil::implementation_class_uid));
+
+		userInformation->subItems.add(std::make_shared<pdu::ImplementationClassUID>(!params.implementationClassUid.empty()
+																						? params.implementationClassUid
+																						: defaultImplementationClassUid));
 
 		if (params.maximumNumberOperationsInvoked != 1 || params.maximumNumberOperationsPerformed != 1)
 			userInformation->subItems.add(std::make_shared<pdu::AsynchronousOperationsWindow>(
 				params.maximumNumberOperationsInvoked,
 				params.maximumNumberOperationsPerformed));
-
-		userInformation->subItems.add(params.sopClassExtendedNegotiation);
-		// No SOPClassCommonExtendedNegotiation in AC
-
-		userInformation->subItems.add(std::make_shared<pdu::ImplementationVersionName>(odil::implementation_version_name));
 
 		std::vector<std::shared_ptr<pdu::RoleSelection>> roles;
 		for (const auto& context : params.presentationContexts)
@@ -256,6 +281,16 @@ namespace emdl
 			}
 		}
 		userInformation->subItems.add(roles);
+
+		userInformation->subItems.add(std::make_shared<pdu::ImplementationVersionName>(!params.implementationVersionName.empty()
+																						   ? params.implementationVersionName
+																						   : defaultImplementationVersionName));
+
+		userInformation->subItems.add(params.sopClassExtendedNegotiation);
+		// No SOPClassCommonExtendedNegotiation in AC
+
+		if (params.userIdentity.type != UserIdentity::Type::None)
+			userInformation->subItems.add(std::make_shared<pdu::UserIdentityAC>(params.userIdentity.primaryField));
 
 		pdu->setUserInformation(userInformation);
 
