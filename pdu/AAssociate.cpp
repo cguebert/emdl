@@ -1,8 +1,5 @@
 #include <emdl/pdu/AAssociate.h>
 
-#include <emdl/pdu/items/ApplicationContext.h>
-#include "odil/pdu/UserInformation.h"
-
 namespace emdl
 {
 	namespace pdu

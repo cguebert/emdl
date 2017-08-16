@@ -1,30 +1,26 @@
 #pragma once
 
-#include "Request.h"
+#include <emdl/message/Request.h>
 
 namespace emdl
 {
-
-namespace message
-{
-
-	//! C-FIND-RQ message.
-	class EMDL_API CFindRequest : public Request
+	namespace message
 	{
-	public:
-		//! Create a find request with given Message ID, affected SOP class, priority, and data set.
-		CFindRequest(Value::Integer messageId, SOP_Class affectedSopClass, Value::Integer priority, const SparseDataSet& dataSet);
+		//! C-FIND-RQ message.
+		class EMDL_API CFindRequest : public Request
+		{
+		public:
+			//! Create a find request with given Message ID, affected SOP class, priority, and data set.
+			CFindRequest(Value::Integer messageId, SOP_Class affectedSopClass, Value::Integer priority, const SparseDataSet& dataSet);
 
-		//! Create a C-FIND-RQ from a generic Message.
-		CFindRequest(const Message& message);
-	
-		MandatoryField<SOP_Class> affectedSopClass;
-		MandatoryField<Value::Integer> priority;
+			//! Create a C-FIND-RQ from a generic Message.
+			CFindRequest(const Message& message);
 
-	private:
-		CFindRequest();
-	};
+			MandatoryField<SOP_Class> affectedSopClass;
+			MandatoryField<Value::Integer> priority;
 
-}
-
+		private:
+			CFindRequest();
+		};
+	}
 }

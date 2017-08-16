@@ -1,4 +1,4 @@
-#include "SOPClasses.h"
+#include <emdl/SOPClasses.h>
 
 #include <boost/container/flat_map.hpp>
 
@@ -7,7 +7,6 @@
 
 namespace
 {
-
 	struct SOPClassStruct
 	{
 		emdl::SOP_Class sopClass;
@@ -16,6 +15,7 @@ namespace
 	using SOPClassStructs = std::vector<SOPClassStruct>;
 	const SOPClassStructs& getSOPClassStructs()
 	{
+		// clang-format off
 		using SOP = emdl::SOP_Class;
 		static SOPClassStructs sops = {
 			{ SOP::Unknown,                                                            "Not supported",                    "Not supported" },
@@ -270,6 +270,7 @@ namespace
 			{ SOP::ImplantAssemblyTemplateStorage,                                     "1.2.840.10008.5.1.4.44.1",         "Implant Assembly Template Storage" },
 			{ SOP::ImplantTemplateGroupStorage,                                        "1.2.840.10008.5.1.4.45.1",         "Implant Template Group Storage" }
 		};
+		// clang-format on
 
 		return sops;
 	}
@@ -450,8 +451,7 @@ namespace
 			SOP::HangingProtocolStorage,
 			SOP::GenericImplantTemplateStorage,
 			SOP::ImplantAssemblyTemplateStorage,
-			SOP::ImplantTemplateGroupStorage
-		};
+			SOP::ImplantTemplateGroupStorage};
 
 		return storageClasses;
 	}
@@ -481,8 +481,7 @@ namespace
 			SOP::ColonCADSRStorage,
 			SOP::ImplantationPlanSRStorage,
 			SOP::AcquisitionContextSRStorage,
-			SOP::SimplifiedAdultEchoSRStorage
-		};
+			SOP::SimplifiedAdultEchoSRStorage};
 
 		return structuredReports;
 	}
@@ -498,8 +497,7 @@ namespace
 			SOP::BlendingSoftcopyPresentationStateStorage,
 			SOP::XAXRFGrayscaleSoftcopyPresentationStateStorage,
 			SOP::GrayscalePlanarMPRVolumetricPresentationStateStorage,
-			SOP::CompositingPlanarMPRVolumetricPresentationStateStorage
-		};
+			SOP::CompositingPlanarMPRVolumetricPresentationStateStorage};
 
 		return presentationStates;
 	}
@@ -559,8 +557,7 @@ namespace
 			SOP::ComprehensiveSRStorageTrial,
 			SOP::StandaloneCurveStorage,
 			SOP::WaveformStorageTrial,
-			SOP::RTBeamsDeliveryInstructionStorageTrial
-		};
+			SOP::RTBeamsDeliveryInstructionStorageTrial};
 
 		return retired;
 	}
@@ -632,12 +629,10 @@ namespace
 
 		return imagesBitSet;
 	}
-
 }
 
 namespace emdl
 {
-
 	SOP_Class getSOPClass(const std::string& uid)
 	{
 		const auto& sopMap = getSOPClassMap();
@@ -703,5 +698,4 @@ namespace emdl
 		int index = static_cast<int>(sop);
 		return getRetiredBitSet()[index];
 	}
-
 }

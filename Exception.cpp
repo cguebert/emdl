@@ -1,10 +1,9 @@
-#include "Exception.h"
+#include <emdl/Exception.h>
 
 namespace emdl
 {
-
 	Exception::Exception(const std::string& message)
-		: m_message(message) 
+		: m_message(message)
 	{
 	}
 
@@ -12,5 +11,4 @@ namespace emdl
 	{
 		return m_message.c_str();
 	}
-
 }

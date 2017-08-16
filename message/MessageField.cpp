@@ -1,28 +1,24 @@
-#include "Message.h"
+#include <emdl/message/Message.h>
 
 namespace emdl
 {
-
-namespace message
-{
-
-	BaseField::BaseField(const BaseInitField& init)
-		: m_tag(init.tag)
-		, m_dataSet(init.dataSet)
+	namespace message
 	{
-		init.registerField(*this);
+		BaseField::BaseField(const BaseInitField& init)
+			: m_tag(init.tag)
+			, m_dataSet(init.dataSet)
+		{
+			init.registerField(*this);
+		}
+
+		odil::Tag BaseField::tag() const
+		{
+			return m_tag;
+		}
+
+		void BaseField::BaseInitField::registerField(BaseField& field) const
+		{
+			owner.addField(field);
+		}
 	}
-
-	odil::Tag BaseField::tag() const
-	{
-		return m_tag;
-	}
-
-	void BaseField::BaseInitField::registerField(BaseField& field) const
-	{
-		owner.addField(field);
-	}
-
-}
-
 }

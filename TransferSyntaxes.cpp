@@ -1,4 +1,4 @@
-#include "TransferSyntaxes.h"
+#include <emdl/TransferSyntaxes.h>
 
 #include <boost/container/flat_map.hpp>
 
@@ -7,7 +7,6 @@
 
 namespace
 {
-
 	struct TransferSyntaxInfo
 	{
 		emdl::TransferSyntax code;
@@ -16,6 +15,7 @@ namespace
 	using TransferSyntaxInfos = std::vector<TransferSyntaxInfo>;
 	const TransferSyntaxInfos& getTransferSyntaxInfos()
 	{
+		// clang-format off
 		using TS = emdl::TransferSyntax;
 		static TransferSyntaxInfos transferSyntaxes = {
 			{ TS::Unknown,                              "Not supported",           "Not supported" },
@@ -46,6 +46,7 @@ namespace
 			{ TS::MPEG4StereoHighProfileLevel4_2,       "1.2.840.10008.1.2.4.106", "MPEG-4 Stereo High Profile" },
 			{ TS::RLELossless,                          "1.2.840.10008.1.2.4.5",   "RLE Lossless" }
 		};
+		// clang-format on
 
 		return transferSyntaxes;
 	}
@@ -64,12 +65,10 @@ namespace
 
 		return transferSyntaxMap;
 	}
-
 }
 
 namespace emdl
 {
-
 	TransferSyntax getTransferSyntax(const std::string& uid)
 	{
 		const auto& tsm = getTransferSyntaxMap();
@@ -153,7 +152,7 @@ namespace emdl
 			return false;
 		}
 	}
-/*
+	/*
 	bool isLossy(TransferSyntax ts)
 	{
 

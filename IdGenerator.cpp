@@ -1,4 +1,4 @@
-#include "IdGenerator.h"
+#include <emdl/IdGenerator.h>
 
 #include <atomic>
 #include <ctime>
@@ -8,7 +8,6 @@
 
 namespace
 {
-
 	class IdGenerator
 	{
 	public:
@@ -26,7 +25,7 @@ namespace
 
 	IdGenerator::IdGenerator()
 	{
-		std::tm refDate = { 0,0,0,1,0,100 }; /* January 01, 2000 */
+		std::tm refDate = {0, 0, 0, 1, 0, 100}; /* January 01, 2000 */
 		m_timeRef = std::mktime(&refDate);
 
 		std::random_device rd;
@@ -57,15 +56,12 @@ namespace
 	{
 		return std::to_string(m_atomicCounter++); // Unsigned int never overflows (i.e. MAX_INT +1 == 0)
 	}
-
 }
 
 namespace emdl
 {
-
 	std::string getUidSuffix()
 	{
 		return IdGenerator::getUid();
 	}
-
 }

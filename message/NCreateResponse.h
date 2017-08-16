@@ -1,31 +1,26 @@
 #pragma once
 
-#include "Response.h"
+#include <emdl/message/Response.h>
 
 namespace emdl
 {
-
-namespace message
-{
-
-	//! N-CREATE-RSP message.
-	class EMDL_API NCreateResponse : public Response
+	namespace message
 	{
-	public:
-		//! Create a create response with given Message ID and status.
-		NCreateResponse(Value::Integer messageIdBeingRespondedTo, Value::Integer status);
+		//! N-CREATE-RSP message.
+		class EMDL_API NCreateResponse : public Response
+		{
+		public:
+			//! Create a create response with given Message ID and status.
+			NCreateResponse(Value::Integer messageIdBeingRespondedTo, Value::Integer status);
 
-		//! Create a N-CREATE-RSP from a generic Message.
-		NCreateResponse(const Message& message);
-	
-		OptionalField<SOP_Class> affectedSopClass;
-		OptionalField<Value::String> affectedSopInstance;
+			//! Create a N-CREATE-RSP from a generic Message.
+			NCreateResponse(const Message& message);
 
-	private:
-		NCreateResponse();
-	};
+			OptionalField<SOP_Class> affectedSopClass;
+			OptionalField<Value::String> affectedSopInstance;
 
+		private:
+			NCreateResponse();
+		};
+	}
 }
-
-}
-
