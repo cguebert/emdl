@@ -1,12 +1,11 @@
 #pragma once
 
-#include "SparseDataSet.h"
+#include <emdl/dataset/SparseDataSet.h>
 
 #include <boost/optional.hpp>
 
 namespace emdl
 {
-
 	//! Test whether an existing element has integer type.
 	EMDL_API bool isInt(const SparseDataSet& dataSet, odil::Tag tag);
 
@@ -28,7 +27,7 @@ namespace emdl
 	//! Return the integers if they exist, or an empty list.
 	EMDL_API const Value::Integers& intList(const SparseDataSet& dataSet, odil::Tag tag);
 
-/*****************************************************************************/
+	/*****************************************************************************/
 
 	//! Test whether an existing element has real type.
 	EMDL_API bool isReal(const SparseDataSet& dataSet, odil::Tag tag);
@@ -51,7 +50,7 @@ namespace emdl
 	//! Return the reals if they exist, or an empty list.
 	EMDL_API const Value::Reals& realList(const SparseDataSet& dataSet, odil::Tag tag);
 
-/*****************************************************************************/
+	/*****************************************************************************/
 
 	//! Test whether an existing element has string type.
 	EMDL_API bool isString(const SparseDataSet& dataSet, odil::Tag tag);
@@ -74,7 +73,7 @@ namespace emdl
 	//! Return the strings if they exist, or an empty list.
 	EMDL_API const Value::Strings& stringList(const SparseDataSet& dataSet, odil::Tag tag);
 
-/*****************************************************************************/
+	/*****************************************************************************/
 
 	//! Test whether an existing element has data set type.
 	EMDL_API bool isDataSet(const SparseDataSet& dataSet, odil::Tag tag);
@@ -97,7 +96,7 @@ namespace emdl
 	//! Return the data sets if they exist, or an empty list.
 	EMDL_API const Value::DataSets& dataSetList(const SparseDataSet& dataSet, odil::Tag tag);
 
-/*****************************************************************************/
+	/*****************************************************************************/
 
 	//! Test whether an existing element has binary type.
 	EMDL_API bool isBinary(const SparseDataSet& dataSet, odil::Tag tag);

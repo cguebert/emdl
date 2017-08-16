@@ -1,9 +1,8 @@
-#include "Value.h"
-#include "SparseDataSet.h"
+#include <emdl/dataset/Value.h>
+#include <emdl/dataset/SparseDataSet.h>
 
 namespace emdl
 {
-
 	Value::Type Value::type() const
 	{
 		return static_cast<Type>(m_value.which());
@@ -73,5 +72,4 @@ namespace emdl
 	{
 		return m_value;
 	}
-
 }

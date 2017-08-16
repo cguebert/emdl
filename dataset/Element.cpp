@@ -1,19 +1,22 @@
-#include "Element.h"
-#include "SparseDataSet.h"
+#include <emdl/dataset/Element.h>
+#include <emdl/dataset/SparseDataSet.h>
 
 namespace
 {
-
 	struct EmptyVisitor
 	{
 		using result_type = bool;
 
 		template <class T>
 		bool operator()(const T& container) const
-		{ return container.empty(); }
+		{
+			return container.empty();
+		}
 
 		bool operator()(const boost::blank&) const
-		{ return true; }
+		{
+			return true;
+		}
 	};
 
 	struct SizeVisitor
@@ -22,29 +25,31 @@ namespace
 
 		template <class T>
 		std::size_t operator()(const T& container) const
-		{ return container.size(); }
+		{
+			return container.size();
+		}
 
 		std::size_t operator()(const boost::blank&) const
-		{ return 0; }
+		{
+			return 0;
+		}
 	};
-
 }
 
 namespace emdl
 {
-
 	Element::Element(odil::VR vr)
 		: vr(vr)
 	{
-		if(odil::is_int(vr))
+		if (odil::is_int(vr))
 			m_value = Value::Integers();
-		else if(odil::is_real(vr))
+		else if (odil::is_real(vr))
 			m_value = Value::Reals();
-		else if(odil::is_string(vr))
+		else if (odil::is_string(vr))
 			m_value = Value::Strings();
-		else if(odil::is_binary(vr))
+		else if (odil::is_binary(vr))
 			m_value = Value::Binaries();
-		else if(vr == odil::VR::SQ)
+		else if (vr == odil::VR::SQ)
 			m_value = Value::DataSets();
 	}
 
@@ -133,7 +138,7 @@ namespace emdl
 		return m_value.asDataSets();
 	}
 
-	Value::Binaries& Element::asBinary() 
+	Value::Binaries& Element::asBinary()
 	{
 		return m_value.asBinaries();
 	}
@@ -142,5 +147,4 @@ namespace emdl
 	{
 		return m_value.asBinaries();
 	}
-
 }

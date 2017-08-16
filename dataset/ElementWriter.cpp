@@ -1,22 +1,23 @@
-#include "ElementWriter.h"
-#include "DataSetWriter.h"
-
+#include <emdl/dataset/ElementWriter.h>
+#include <emdl/dataset/DataSetWriter.h>
 #include <emdl/Exception.h>
+
 #include <odil/registry.h>
 #include <odil/write_ds.h>
 
 #include <sstream>
 
-#define TEST_STREAM if(!m_stream) \
+#define TEST_STREAM \
+	if (!m_stream)  \
 		throw Exception("{} Could not write to stream", LOG_POSITION);
 
-#define TEST_STREAM_NONMEMBER if(!stream) \
+#define TEST_STREAM_NONMEMBER \
+	if (!stream)              \
 		throw emdl::Exception("{} Could not write to stream", LOG_POSITION);
 
 namespace
 {
-
-	template<typename T>
+	template <typename T>
 	void writeStrings(std::ostream& stream, const T& sequence, char padding)
 	{
 		if (sequence.empty())
@@ -47,16 +48,12 @@ namespace
 	bool needLargeLength(odil::VR vr)
 	{
 		using VR = odil::VR;
-		return vr == VR::OB || vr == VR::OD || vr == VR::OF || vr == VR::OL ||
-			vr == VR::OW || vr == VR::SQ || vr == VR::UC || vr == VR::UR ||
-			vr == VR::UT || vr == VR::UN;
+		return vr == VR::OB || vr == VR::OD || vr == VR::OF || vr == VR::OL || vr == VR::OW || vr == VR::SQ || vr == VR::UC || vr == VR::UR || vr == VR::UT || vr == VR::UN;
 	}
-
 }
 
 namespace emdl
 {
-
 	ElementWriter::ElementWriter(std::ostream& stream, bool explicitVR, ItemEncoding itemEncoding)
 		: BaseWriter(stream, explicitVR, itemEncoding)
 	{
@@ -253,7 +250,7 @@ namespace emdl
 
 			// Data set
 			const auto startPos = m_stream.tellp();
-			DataSetWriter { m_stream, isExplicitTS(), itemEncoding() }.writeDataSet(item);
+			DataSetWriter{m_stream, isExplicitTS(), itemEncoding()}.writeDataSet(item);
 			const auto endPos = m_stream.tellp();
 
 			if (undefinedlength)
@@ -318,5 +315,4 @@ namespace emdl
 		write<uint32_t>(0);
 		TEST_STREAM
 	}
-
 }

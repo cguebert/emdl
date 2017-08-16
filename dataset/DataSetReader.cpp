@@ -1,14 +1,11 @@
-#include "DataSetReader.h"
-
+#include <emdl/dataset/DataSetReader.h>
 #include <emdl/Exception.h>
-#include <odil/DataSet.h>
-#include <odil/registry.h>
 
+#include <odil/registry.h>
 #include <fstream>
 
 namespace emdl
 {
-
 	BinaryBufferSPtr createBufferFromFile(const std::string& fileName)
 	{
 		std::ifstream in(fileName, std::ios_base::binary);
@@ -44,7 +41,7 @@ namespace emdl
 	{
 		if (buffer->size() < 132)
 			return false;
-		auto reader = BaseReader { buffer, TransferSyntax::ExplicitVRLittleEndian };
+		auto reader = BaseReader{buffer, TransferSyntax::ExplicitVRLittleEndian};
 		reader.ignore(128);
 		return reader.readString(4) == "DICM";
 	}
@@ -79,7 +76,7 @@ namespace emdl
 
 		// Read meta information
 		const auto metaInfoDataSet = metaInfoReader.readDataSet([](const odil::Tag& tag) {
-			return (tag.group != 0x0002); 
+			return (tag.group != 0x0002);
 		});
 
 		const auto transferSyntaxElt = metaInfoDataSet[odil::registry::TransferSyntaxUID];
@@ -100,14 +97,14 @@ namespace emdl
 		DataSetReader dataSetReader(buffer, dataSetView, ts);
 		const auto dataSet = func ? dataSetReader.readDataSet(func) : dataSetReader.readDataSet();
 
-		return{ metaInfoDataSet, dataSet };
+		return {metaInfoDataSet, dataSet};
 	}
 
-/*****************************************************************************/
+	/*****************************************************************************/
 
 	DataSetReader::DataSetReader(const BinaryBufferSPtr& buffer, BinaryView view, TransferSyntax transferSyntax)
 		: BaseReader(buffer, view, transferSyntax)
-	{ 
+	{
 	}
 
 	DataSetReader::DataSetReader(const BinaryBufferSPtr& buffer, TransferSyntax transferSyntax)
@@ -162,7 +159,7 @@ namespace emdl
 			elt.vr = odil::as_vr(readString(2));
 
 		elt.length = readLength(elt.vr);
-		
+
 		if (elt.length == 0xFFFFFFFF)
 		{ // Parse a sequence
 			while (!eof())

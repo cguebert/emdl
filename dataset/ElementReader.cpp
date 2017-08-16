@@ -1,12 +1,11 @@
-#include "ElementReader.h"
-#include "DataSetReader.h"
-
+#include <emdl/dataset/ElementReader.h>
+#include <emdl/dataset/DataSetReader.h>
 #include <emdl/Exception.h>
+
 #include <odil/registry.h>
 
 namespace
 {
-
 	emdl::Value::Strings splitString(const std::string& str)
 	{
 		const size_t nb = 1 + std::count(str.begin(), str.end(), '\\');
@@ -35,7 +34,7 @@ namespace
 
 	void removePadding(std::string& str)
 	{
-		static const std::string padding = { '\0', ' ' };
+		static const std::string padding = {'\0', ' '};
 		const auto last = str.find_last_not_of(padding);
 		if (last + 1 == str.size()) // No padding
 			return;
@@ -44,12 +43,10 @@ namespace
 		else // Empty string
 			str.clear();
 	}
-
 }
 
 namespace emdl
 {
-
 	ElementReader::ElementReader(const BinaryBufferSPtr& buffer, BinaryView view, TransferSyntax transferSyntax)
 		: BaseReader(buffer, view, transferSyntax)
 	{
@@ -74,12 +71,12 @@ namespace emdl
 		case VR::SS:
 		case VR::UL:
 		case VR::US:
-			return { readIntegers(vr, length), vr };
+			return {readIntegers(vr, length), vr};
 
 		case VR::DS:
 		case VR::FD:
 		case VR::FL:
-			return { readReals(vr, length), vr };
+			return {readReals(vr, length), vr};
 
 		case VR::AE:
 		case VR::AS:
@@ -97,10 +94,10 @@ namespace emdl
 		case VR::UI:
 		case VR::UR:
 		case VR::UT:
-			return { readStrings(vr, length), vr };
+			return {readStrings(vr, length), vr};
 
 		case VR::SQ:
-			return { readDataSets(vr, length), vr };
+			return {readDataSets(vr, length), vr};
 
 		case VR::OB:
 		case VR::OD:
@@ -108,7 +105,7 @@ namespace emdl
 		case VR::OL:
 		case VR::OW:
 		case VR::UN:
-			return { readBinaries(vr, length), vr };
+			return {readBinaries(vr, length), vr};
 
 		case VR::UNKNOWN:
 		default:
@@ -191,7 +188,7 @@ namespace emdl
 			{
 				auto const strList = splitString(str);
 				result.resize(strList.size());
-				std::transform(strList.begin(), strList.end(), result.begin(), [](const std::string & s) {
+				std::transform(strList.begin(), strList.end(), result.begin(), [](const std::string& s) {
 					return static_cast<Value::Real>(std::stold(s));
 				});
 			}
@@ -247,7 +244,7 @@ namespace emdl
 				return {};
 
 			if (vr == VR::LT || vr == VR::ST || vr == VR::UT)
-				result = { str };
+				result = {str};
 			else
 				result = splitString(str);
 
@@ -309,7 +306,7 @@ namespace emdl
 		else
 		{ // Undefined length item
 			auto remaining = view().size() - offset();
-			auto itemView = BinaryView { view().data() + offset(), remaining };
+			auto itemView = BinaryView{view().data() + offset(), remaining};
 			auto itemReader = DataSetReader(buffer(), itemView, transferSyntax());
 			item = itemReader.readDataSet([](const odil::Tag& tag) {
 				return tag == odil::registry::ItemDelimitationItem;
@@ -334,7 +331,7 @@ namespace emdl
 			result = readEncapsulatedPixelData();
 		else
 			result.emplace_back(getView(length));
-		
+
 		return result;
 	}
 
@@ -347,7 +344,7 @@ namespace emdl
 			const auto tag = readTag();
 			const auto itemLength = read<uint32_t>();
 
-			if(tag == odil::registry::Item)
+			if (tag == odil::registry::Item)
 				result.emplace_back(getView(itemLength));
 			else if (tag == odil::registry::SequenceDelimitationItem)
 				break;
@@ -357,5 +354,4 @@ namespace emdl
 
 		return result;
 	}
-
 }

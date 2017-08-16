@@ -1,5 +1,5 @@
-#include "SparseDataSet.h"
-#include "ElementReader.h"
+#include <emdl/dataset/SparseDataSet.h>
+#include <emdl/dataset/ElementReader.h>
 
 #include <odil/registry.h>
 
@@ -40,7 +40,7 @@ namespace emdl
 		if (vr == odil::VR::UNKNOWN)
 			vr = odil::as_vr(tag);
 
-		getPreparedElement(edit(tag)) = { true, Element { vr } };
+		getPreparedElement(edit(tag)) = {true, Element{vr}};
 	}
 
 	void SparseDataSet::set(const odil::Tag& tag, BinaryView view)
@@ -52,12 +52,12 @@ namespace emdl
 
 	void SparseDataSet::set(const odil::Tag& tag, const Element& element)
 	{
-		getPreparedElement(edit(tag)) = { true, element };
+		getPreparedElement(edit(tag)) = {true, element};
 	}
 
 	void SparseDataSet::set(const odil::Tag& tag, Element&& element)
 	{
-		getPreparedElement(edit(tag)) = { true, std::move(element) };
+		getPreparedElement(edit(tag)) = {true, std::move(element)};
 	}
 
 	void SparseDataSet::remove(const odil::Tag& tag)
@@ -228,7 +228,7 @@ namespace emdl
 
 		// Or we must parse it and add it to the list
 		tes.preparedIndex = static_cast<int>(m_preparedElements.size());
-		m_preparedElements.emplace_back(modified, ElementReader { m_buffer, getView(tes), m_transferSyntax }.readElement(*this));
+		m_preparedElements.emplace_back(modified, ElementReader{m_buffer, getView(tes), m_transferSyntax}.readElement(*this));
 		return m_preparedElements.back().second;
 	}
 
@@ -246,7 +246,7 @@ namespace emdl
 
 	BinaryView SparseDataSet::getView(const TagElementStruct& tes) const
 	{
-		return { m_view.data() + tes.pos, tes.size };
+		return {m_view.data() + tes.pos, tes.size};
 	}
 
 	bool SparseDataSet::isModified(const TagElementStruct& tes) const
@@ -385,8 +385,8 @@ namespace emdl
 	bool SparseDataSet::const_iterator::operator==(const const_iterator& rhs) const
 	{
 		return m_dataSet == rhs.m_dataSet
-			&& m_groupsIterator == rhs.m_groupsIterator
-			&& m_elementsIterator == rhs.m_elementsIterator;
+			   && m_groupsIterator == rhs.m_groupsIterator
+			   && m_elementsIterator == rhs.m_elementsIterator;
 	}
 
 	bool SparseDataSet::const_iterator::operator!=(const const_iterator& rhs) const

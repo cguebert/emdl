@@ -1,7 +1,7 @@
 #pragma once
 
-#include "BaseWriter.h"
-#include "SparseDataSet.h"
+#include <emdl/dataset/BaseWriter.h>
+#include <emdl/dataset/SparseDataSet.h>
 
 #include <ostream>
 
@@ -12,7 +12,6 @@ namespace odil
 
 namespace emdl
 {
-
 	class EMDL_API DataSetWriter : public BaseWriter
 	{
 	public:
@@ -22,7 +21,7 @@ namespace emdl
 		void writeDataSet(const SparseDataSet& dataSet);
 
 		static void writeFile(std::ostream& out,
-							  const SparseDataSet& dataSet, 
+							  const SparseDataSet& dataSet,
 							  SparseDataSet metaInformation = SparseDataSet(),
 							  ItemEncoding itemEncoding = ItemEncoding::ExplicitLength);
 

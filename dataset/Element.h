@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Value.h"
+#include <emdl/dataset/Value.h>
 
 #include <odil/Tag.h>
 #include <odil/VR.h>
@@ -14,83 +14,84 @@ namespace
 
 namespace emdl
 {
+	//! Element of a DICOM data set
+	class EMDL_API Element
+	{
+	public:
+		//! Value Rrepresentation of the element
+		odil::VR vr = odil::VR::INVALID;
 
-//! Element of a DICOM data set
-class EMDL_API Element
-{
-public:
+		//! Default constructor
+		Element() = default;
 
-	//! Value Rrepresentation of the element
-	odil::VR vr = odil::VR::INVALID;
+		//! Copy an existing element
+		Element(const Element&) = default;
 
-	//! Default constructor
-	Element() = default;
+		//! Move an existing element
+		Element(Element&&) = default;
 
-	//! Copy an existing element 
-	Element(const Element&) = default;
+		//! Create an element. The type of the value created depends on the VR.
+		Element(odil::VR vr);
 
-	//! Move an existing element
-	Element(Element&&) = default;
+		//! Create an element by creating, copying or moving a value
+		template <class T, std::enable_if_t<!is_element<T>, bool> = true>
+		Element(T&& value, const odil::VR& vr = odil::VR::INVALID)
+			: m_value(std::forward<T>(value))
+			, vr(vr)
+		{
+		}
 
-	//! Create an element. The type of the value created depends on the VR.
-	Element(odil::VR vr);
+		// Assignement operators (as we declared custom constructors)
+		Element& operator=(const Element&) = default;
+		Element& operator=(Element&&) = default;
 
-	//! Create an element by creating, copying or moving a value
-	template <class T, std::enable_if_t<!is_element<T>, bool> = true>
-	Element(T&& value, const odil::VR& vr = odil::VR::INVALID)
-		: m_value(std::forward<T>(value))
-		, vr(vr)
-	{}
+		//! Test whether the element is empty
+		bool empty() const;
 
-	// Assignement operators (as we declared custom constructors)
-	Element& operator=(const Element&) = default;
-	Element& operator=(Element&&) = default;
+		//! Return the number of items in the value
+		std::size_t size() const;
 
-	//! Test whether the element is empty
-	bool empty() const;
+		// Return the value
+		Value& value();
+		const Value& value() const;
 
-	//! Return the number of items in the value
-	std::size_t size() const;
+		// Test the type of the value
+		bool isInt() const;
+		bool isReal() const;
+		bool isString() const;
+		bool isDataSet() const;
+		bool isBinary() const;
 
-	// Return the value
-	Value& value();
-	const Value& value() const;
+		// Accessors
+		Value::Integers& asInt();
+		const Value::Integers& asInt() const;
 
-	// Test the type of the value
-	bool isInt() const;
-	bool isReal() const;
-	bool isString() const;
-	bool isDataSet() const;
-	bool isBinary() const;
+		Value::Reals& asReal();
+		const Value::Reals& asReal() const;
 
-	// Accessors
-	Value::Integers& asInt();
-	const Value::Integers& asInt() const;
+		Value::Strings& asString();
+		const Value::Strings& asString() const;
 
-	Value::Reals& asReal();
-	const Value::Reals& asReal() const;
+		Value::DataSets& asDataSet();
+		const Value::DataSets& asDataSet() const;
 
-	Value::Strings& asString();
-	const Value::Strings& asString() const;
+		Value::Binaries& asBinary();
+		const Value::Binaries& asBinary() const;
 
-	Value::DataSets& asDataSet();
-	const Value::DataSets& asDataSet() const;
+		// Apply a visitor of elements
+		template <class Visitor>
+		typename Visitor::result_type applyVisitor(const Visitor& visitor) const
+		{
+			return boost::apply_visitor(visitor, m_value.value());
+		}
 
-	Value::Binaries& asBinary();
-	const Value::Binaries& asBinary() const;
+		template <class Visitor>
+		typename Visitor::result_type applyModifyingVisitor(Visitor& visitor)
+		{
+			return boost::apply_visitor(visitor, m_value.value());
+		}
 
-	// Apply a visitor of elements
-	template <class Visitor>
-	typename Visitor::result_type applyVisitor(const Visitor& visitor) const
-	{ return boost::apply_visitor(visitor, m_value.value()); }
-
-	template <class Visitor>
-	typename Visitor::result_type applyModifyingVisitor(Visitor& visitor)
-	{ return boost::apply_visitor(visitor, m_value.value()); }
-
-private:
-	Value m_value;
-};
-
+	private:
+		Value m_value;
+	};
 }
-

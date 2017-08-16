@@ -1,13 +1,12 @@
 #pragma once
 
-#include "BaseReader.h"
-#include "SparseDataSet.h"
+#include <emdl/dataset/BaseReader.h>
+#include <emdl/dataset/SparseDataSet.h>
 
 #include <functional>
 
 namespace emdl
 {
-
 	EMDL_API BinaryBufferSPtr createBufferFromFile(const std::string& fileName);
 	EMDL_API BinaryBufferSPtr createBufferFromStream(std::istream& stream);
 	EMDL_API BinaryBufferSPtr createBufferFromString(const std::string& str);
@@ -33,7 +32,7 @@ namespace emdl
 
 		SparseDataSet readDataSet();
 		SparseDataSet readDataSet(HaltConditionFunc haltFunc);
-	
+
 	private:
 		struct ElementInfo
 		{

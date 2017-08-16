@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Element.h"
-#include "VRFinder.h"
+#include <emdl/dataset/Element.h>
+#include <emdl/dataset/VRFinder.h>
 
 #include <emdl/BinaryValue.h>
 #include <emdl/TransferSyntaxes.h>
@@ -15,7 +15,6 @@
 
 namespace emdl
 {
-
 	using BinaryBuffer = std::vector<uint8_t>;
 	using BinaryBufferSPtr = std::shared_ptr<BinaryBuffer>;
 	using BinaryView = ArrayView<const uint8_t>;
@@ -98,7 +97,7 @@ namespace emdl
 		void updateViewSize(size_t size);
 
 		//! Recompute the raw content of the data set taking into account the modified elements
-	//	void update_raw_buffer();
+		//	void update_raw_buffer();
 
 		// This stores a pointer to the raw buffer, or a index into the prepard elements
 		struct TagElementStruct

@@ -1,13 +1,10 @@
-#include "BaseWriter.h"
+#include <emdl/dataset/BaseWriter.h>
 
-#include <odil/DataSet.h>
-#include <odil/registry.h>
-
+#include <odil/Tag.h>
 #include <fstream>
 
 namespace emdl
 {
-
 	BaseWriter::BaseWriter(std::ostream& stream, bool explicitTS, ItemEncoding itemEncoding)
 		: m_stream(stream)
 		, m_explicit(explicitTS)

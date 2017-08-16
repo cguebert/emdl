@@ -1,13 +1,9 @@
-#include "BaseReader.h"
-
-#include <odil/DataSet.h>
-#include <odil/registry.h>
+#include <emdl/dataset/BaseReader.h>
 
 #include <fstream>
 
 namespace emdl
 {
-
 	BaseReader::BaseReader(const BinaryBufferSPtr& buffer, BinaryView view, TransferSyntax transferSyntax)
 		: m_buffer(buffer)
 		, m_view(view)
@@ -132,7 +128,7 @@ namespace emdl
 		const auto pos = m_offset;
 		m_offset += size;
 
-		return { m_view.data() + pos, size };
+		return {m_view.data() + pos, size};
 	}
 
 } // namespace emdl

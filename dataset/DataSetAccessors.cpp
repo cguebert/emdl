@@ -1,20 +1,19 @@
-#include "DataSetAccessors.h"
+#include <emdl/dataset/DataSetAccessors.h>
 
 namespace emdl
 {
-
-	template<typename C>
+	template <typename C>
 	const typename C::value_type& atPos(const C& container, size_t position)
 	{
-		if(container.size() <= position)
+		if (container.size() <= position)
 			throw std::out_of_range("No such element");
 		return container[position];
 	}
 
-	template<typename C>
+	template <typename C>
 	typename C::value_type& atPos(C& container, size_t position)
 	{
-		if(container.size() <= position)
+		if (container.size() <= position)
 			throw std::out_of_range("No such element");
 		return container[position];
 	}
@@ -61,7 +60,7 @@ namespace emdl
 		return emptyList;
 	}
 
-/*****************************************************************************/
+	/*****************************************************************************/
 
 	bool isReal(const SparseDataSet& dataSet, odil::Tag tag)
 	{
@@ -105,7 +104,7 @@ namespace emdl
 		return emptyList;
 	}
 
-/*****************************************************************************/
+	/*****************************************************************************/
 
 	bool isString(const SparseDataSet& dataSet, odil::Tag tag)
 	{
@@ -149,7 +148,7 @@ namespace emdl
 		return emptyList;
 	}
 
-/*****************************************************************************/
+	/*****************************************************************************/
 
 	bool isDataSet(const SparseDataSet& dataSet, odil::Tag tag)
 	{
@@ -193,7 +192,7 @@ namespace emdl
 		return emptyList;
 	}
 
-/*****************************************************************************/
+	/*****************************************************************************/
 
 	bool isBinary(const SparseDataSet& dataSet, odil::Tag tag)
 	{
