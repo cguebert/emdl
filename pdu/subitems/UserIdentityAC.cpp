@@ -11,7 +11,7 @@ namespace emdl
 			itemType.set(ItemType::UserIdentityAC);
 		}
 
-		UserIdentityAC::UserIdentityAC(std::string const& serverResponse)
+		UserIdentityAC::UserIdentityAC(const std::string& serverResponse)
 			: UserIdentityAC()
 		{
 			m_serverResponse.set(serverResponse);

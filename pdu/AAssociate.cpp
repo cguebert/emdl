@@ -39,7 +39,7 @@ namespace emdl
 			items.add(std::make_shared<ApplicationContext>(value));
 		}
 
-		UserInformationSPtr AAssociate::userInformation() const
+		std::shared_ptr<UserInformation> AAssociate::userInformation() const
 		{
 			const auto userItems = items.get<UserInformation>();
 			if (userItems.empty())
@@ -49,7 +49,7 @@ namespace emdl
 			return userItems.front();
 		}
 
-		void AAssociate::setUserInformation(const UserInformationSPtr& value)
+		void AAssociate::setUserInformation(const std::shared_ptr<UserInformation>& value)
 		{
 			items.remove<UserInformation>();
 			items.add(value);

@@ -2,6 +2,7 @@
 
 #include <emdl/pdu/items/BaseItem.h>
 #include <emdl/pdu/ObjectStringField.h>
+#include <emdl/SOPClasses.h>
 
 namespace emdl
 {
@@ -11,10 +12,11 @@ namespace emdl
 		class EMDL_API RoleSelection : public BaseItem
 		{
 		public:
-			RoleSelection(const std::string& sopClassUid, bool scuRoleSupport, bool scpRoleSupport);
+			RoleSelection(SOP_Class sopClassUid, bool scuRoleSupport, bool scpRoleSupport);
 			RoleSelection(std::istream& in);
 
-			StringField<uint16_t> sopClassUid;
+			SOP_Class sopClass() const;
+			void setSopClass(SOP_Class sopClass);
 
 			bool scuRoleSupport() const;
 			void setScuRoleSupport(bool value);
@@ -23,8 +25,9 @@ namespace emdl
 			void setScpRoleSupport(bool value);
 
 		private:
-			Field<uint8_t> scuRole;
-			Field<uint8_t> scpRole;
+			StringField<uint16_t> m_sopClassUid;
+			Field<uint8_t> m_scuRole;
+			Field<uint8_t> m_scpRole;
 
 			RoleSelection();
 		};

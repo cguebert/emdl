@@ -1,6 +1,6 @@
 #pragma once
 
-#include <emdl/pdu/items/PresentationContext.h>
+#include <emdl/pdu/items/BasePresentationContext.h>
 #include <emdl/SOPClasses.h>
 #include <emdl/TransferSyntaxes.h>
 

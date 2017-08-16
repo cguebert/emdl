@@ -35,7 +35,7 @@ namespace emdl
 
 			void set(const value_type& val)
 			{
-				if (val.empty() || val.size() > 16)
+				if (val.empty() || val.size() > m_size)
 					throw Exception("Invalid string in FixedStringField::set");
 
 				m_value = val + std::string(m_size - val.size(), ' ');
