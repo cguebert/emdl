@@ -5,26 +5,21 @@ namespace emdl
 	namespace pdu
 	{
 		PDataTF::PDataTF()
-			: items(initField("Presentation-data-value-Items"), length, 0)
+			: pdvItems(initField("Presentation-data-value-Items"), length, 0)
 		{
 			pduType.set(PDUType::P_DATA_TF);
 		}
 
-		PDataTF::PDataTF(const std::vector<PresentationDataValueSPtr>& pdvItems)
+		PDataTF::PDataTF(const std::vector<PresentationDataValue>& list)
 			: PDataTF()
 		{
-			items.add(pdvItems);
+			pdvItems.set(list);
 		}
 
 		PDataTF::PDataTF(std::istream& in)
 			: PDataTF()
 		{
 			read(in);
-		}
-
-		const std::vector<PresentationDataValueSPtr> PDataTF::pdvItems() const
-		{
-			return items.get<PresentationDataValue>();
 		}
 	}
 }

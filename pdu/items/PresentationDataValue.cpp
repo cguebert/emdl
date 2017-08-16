@@ -28,6 +28,22 @@ namespace emdl
 			read(in);
 		}
 
+		PresentationDataValue::PresentationDataValue(const PresentationDataValue& other)
+			: PresentationDataValue()
+		{
+			presentationContextId.set(other.presentationContextId.get());
+			controlHeader.set(other.controlHeader.get());
+			fragment.set(other.fragment.get());
+		}
+
+		PresentationDataValue& PresentationDataValue::operator=(const PresentationDataValue& other)
+		{
+			presentationContextId.set(other.presentationContextId.get());
+			controlHeader.set(other.controlHeader.get());
+			fragment.set(other.fragment.get());
+			return *this;
+		}
+
 		bool PresentationDataValue::isCommand() const
 		{
 			return (controlHeader.get() & 0x01) != 0;

@@ -13,6 +13,9 @@ namespace emdl
 		public:
 			PresentationDataValue(uint8_t presentationContextId, uint8_t controlHeader, const std::string& fragment);
 			PresentationDataValue(std::istream& in);
+			PresentationDataValue(const PresentationDataValue& other);
+
+			PresentationDataValue& operator=(const PresentationDataValue& other);
 
 			bool isCommand() const;
 			bool isLastFragment() const;
