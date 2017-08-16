@@ -26,6 +26,8 @@ namespace emdl
 		public:
 			BasePDU();
 
+			uint8_t type() const;
+
 			void read(std::istream& in) override;
 			void save(std::ostream& out) const override;
 

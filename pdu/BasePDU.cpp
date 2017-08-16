@@ -12,6 +12,11 @@ namespace emdl
 		{
 		}
 
+		uint8_t BasePDU::type() const
+		{
+			return pduType.get();
+		}
+
 		void BasePDU::read(std::istream& in)
 		{
 			uint8_t type = 0;
