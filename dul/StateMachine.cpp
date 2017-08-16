@@ -1,6 +1,6 @@
 #include <emdl/dul/StateMachine.h>
-#include <emdl/dul/Association.h>
 #include <emdl/dul/EventData.h>
+#include <emdl/association/Association.h>
 
 #include <sstream>
 
