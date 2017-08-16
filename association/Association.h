@@ -10,13 +10,10 @@
 #include <vector>
 
 #include <emdl/TransferSyntaxes.h>
+#include <emdl/association/AssociationAcceptor.h>
 #include <emdl/dataset/SparseDataSet.h>
 #include <emdl/dul/StateMachine.h>
 #include <emdl/message/Message.h>
-
-#include "odil/AssociationAcceptor.h"
-#include "odil/AssociationParameters.h"
-#include "odil/message/Message.h"
 
 namespace emdl
 {
@@ -28,7 +25,7 @@ namespace emdl
 			canceled = false;
 		}
 
-		std::atomic_bool canceled;                       /// Can be set to true later for Store, Get and Move operations
+		std::atomic_bool canceled; /// Can be set to true later for Store, Get and Move operations
 		std::shared_ptr<emdl::message::Message> message; /// The message itself
 
 		std::chrono::high_resolution_clock::time_point receptionStart, receptionEnd, processingEnd; // Mostly for debug
@@ -98,7 +95,7 @@ namespace emdl
 		using duration_type = dul::StateMachine::duration_type;
 
 		Association(boost::asio::io_service& service); /// Create a default, un-associated association.
-		~Association();                                /// Ensure the connection is closed
+		~Association(); /// Ensure the connection is closed
 
 		dul::Transport& transport(); /// Return the TCP transport.
 
@@ -107,40 +104,40 @@ namespace emdl
 
 		/// @name Peer
 		/// @{
-		const std::string& peerHost() const;       /// Return the host name of the peer. Defaults to "".
+		const std::string& peerHost() const; /// Return the host name of the peer. Defaults to "".
 		void setPeerHost(const std::string& host); /// Set the host name of the peer.
-		uint16_t peerPort() const;                 /// Return the port of the peer. Defaults to 104.
-		void setPeerPort(uint16_t port);           /// Set the port of the peer.
+		uint16_t peerPort() const; /// Return the port of the peer. Defaults to 104.
+		void setPeerPort(uint16_t port); /// Set the port of the peer.
 		/// @}
 
 		/// @name Association parameters
 		/// @{
-		const odil::AssociationParameters& parameters() const;           /// Return the association parameters.
-		odil::AssociationParameters& updateParameters();                 /// Return the association parameters.
-		void setParameters(const odil::AssociationParameters& value);    /// Set the association parameters, throw an exception when associated.
-		const odil::AssociationParameters& negotiatedParameters() const; /// Return the negotiated association parameters.
+		const AssociationParameters& parameters() const; /// Return the association parameters.
+		AssociationParameters& updateParameters(); /// Return the association parameters.
+		void setParameters(const AssociationParameters& value); /// Set the association parameters, throw an exception when associated.
+		const AssociationParameters& negotiatedParameters() const; /// Return the negotiated association parameters.
 		/// @}
 
 		/// @name Association
 		/// @{
 		bool isAssociated() const; /// Test whether the object is currently associated to its peer.
-		void associate();          /// Request an association with the peer.
+		void associate(); /// Request an association with the peer.
 
 		/// Receive an association from a peer using an opened socket.
 		void receiveAssociation(dul::Transport::Socket open_socket,
-								odil::AssociationAcceptor acceptor = odil::default_association_acceptor);
+								AssociationAcceptor acceptor = defaultAssociationAcceptor);
 
 		/// Receive an association from a peer.
 		void receiveAssociation(const boost::asio::ip::tcp& protocol, unsigned short port,
-								odil::AssociationAcceptor acceptor = odil::default_association_acceptor);
+								AssociationAcceptor acceptor = defaultAssociationAcceptor);
 		void waitForReleaseResponse(); /// Blocks until a release response has been received
 		/// @}
 
 		/// @name DIMSE messages sending and reception.
 		/// @{
-		uint16_t nextMessageId();                                       /// Return the next available message id.
+		uint16_t nextMessageId(); /// Return the next available message id.
 		TransferSyntax transferSyntaxById(int presentation_context_id); /// Return the transfer syntax corresponding to this context id
-		dul::StateMachine& stateMachine();                              /// Return the state machine used by this association
+		dul::StateMachine& stateMachine(); /// Return the state machine used by this association
 
 		/// @}
 
@@ -169,7 +166,7 @@ namespace emdl
 
 		std::map<uint8_t, TransferSyntax> m_transferSyntaxesById;
 
-		odil::AssociationParameters m_associationParameters, m_negotiatedParameters;
+		AssociationParameters m_associationParameters, m_negotiatedParameters;
 
 		std::promise<void> m_associationRequestPromise, m_associationReleasedPromise;
 		std::promise<dul::EventData> m_associationResponsePromise;

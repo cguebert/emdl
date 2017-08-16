@@ -2,15 +2,13 @@
 #include <emdl/dul/EventData.h>
 #include <emdl/association/Association.h>
 
-#include <sstream>
+#include <emdl/pdu/AAbort.h>
+#include <emdl/pdu/AAssociateRJ.h>
+#include <emdl/pdu/AReleaseRP.h>
+#include <emdl/pdu/AReleaseRQ.h>
+#include <emdl/pdu/PDataTF.h>
 
-#include "odil/AssociationParameters.h"
-#include "odil/pdu/AAbort.h"
-#include "odil/pdu/AAssociate.h"
-#include "odil/pdu/AAssociateRJ.h"
-#include "odil/pdu/AReleaseRP.h"
-#include "odil/pdu/AReleaseRQ.h"
-#include "odil/pdu/PDataTF.h"
+#include <sstream>
 
 namespace emdl
 {
@@ -20,8 +18,6 @@ namespace emdl
 			: m_association(association)
 			, m_transport(std::make_shared<Transport>(service))
 			, m_artimTimer(service)
-			, m_associationAcceptor(odil::default_association_acceptor)
-			, m_abortParameters({0, 0})
 		{
 			setState(StateId::Sta1);
 		}
@@ -92,10 +88,7 @@ namespace emdl
 			if (!data.pdu)
 				throw Exception("No PDU");
 
-			const auto& item = data.pdu->get_item();
-			const auto type = item.as_unsigned_int_8("PDU-type");
-
-			switch (type)
+			switch (data.pdu->type())
 			{
 			case 0x01:
 				transition(Event::AAssociateRQLocal, data);
@@ -135,34 +128,34 @@ namespace emdl
 			switch (header.type)
 			{
 			case 0x01:
-				data.pdu = std::make_shared<odil::pdu::AAssociateRQ>(stream);
+				data.pdu = std::make_shared<pdu::AAssociateRQ>(stream);
 				event = Event::AAssociateRQRemote;
 				break;
 			case 0x02:
-				data.pdu = std::make_shared<odil::pdu::AAssociateAC>(stream);
+				data.pdu = std::make_shared<pdu::AAssociateAC>(stream);
 				event = Event::AAssociateACRemote;
 				break;
 			case 0x03:
-				data.pdu = std::make_shared<odil::pdu::AAssociateRJ>(stream);
+				data.pdu = std::make_shared<pdu::AAssociateRJ>(stream);
 				event = Event::AAssociateRJRemote;
 				break;
 			case 0x04:
-				data.pdu = std::make_shared<odil::pdu::PDataTF>(stream);
+				data.pdu = std::make_shared<pdu::PDataTF>(stream);
 				event = Event::PDataTFRemote;
 				break;
 			case 0x05:
-				data.pdu = std::make_shared<odil::pdu::AReleaseRQ>(stream);
+				data.pdu = std::make_shared<pdu::AReleaseRQ>(stream);
 				event = Event::AReleaseRQRemote;
 				break;
 			case 0x06:
-				data.pdu = std::make_shared<odil::pdu::AReleaseRP>(stream);
+				data.pdu = std::make_shared<pdu::AReleaseRP>(stream);
 				event = Event::AReleaseRPRemote;
 				break;
 			case 0x07:
 			{
-				auto abortPdu = std::make_shared<odil::pdu::AAbort>(stream);
-				m_abortParameters.first = abortPdu->get_source();
-				m_abortParameters.second = abortPdu->get_reason();
+				auto abortPdu = std::make_shared<pdu::AAbort>(stream);
+				m_abortParameters.first = abortPdu->source.get();
+				m_abortParameters.second = abortPdu->reason.get();
 				data.pdu = abortPdu;
 				event = Event::AAbortRemote;
 				break;
@@ -176,7 +169,7 @@ namespace emdl
 
 		void StateMachine::release()
 		{
-			auto pdu = std::make_shared<odil::pdu::AReleaseRQ>();
+			auto pdu = std::make_shared<pdu::AReleaseRQ>();
 			dul::EventData data;
 			data.pdu = pdu;
 			sendPdu(data);
@@ -187,7 +180,7 @@ namespace emdl
 			m_abortParameters.first = source;
 			m_abortParameters.second = reason;
 
-			auto pdu = std::make_shared<odil::pdu::AAbort>(source, reason);
+			auto pdu = std::make_shared<pdu::AAbort>(source, reason);
 			dul::EventData data;
 			data.pdu = pdu;
 			sendPdu(data);
@@ -212,12 +205,12 @@ namespace emdl
 			m_artimTimer.cancel();
 		}
 
-		const odil::AssociationAcceptor& StateMachine::associationAcceptor() const
+		const AssociationAcceptor& StateMachine::associationAcceptor() const
 		{
 			return m_associationAcceptor;
 		}
 
-		void StateMachine::setAssociationAcceptor(const odil::AssociationAcceptor& acceptor)
+		void StateMachine::setAssociationAcceptor(const AssociationAcceptor& acceptor)
 		{
 			m_associationAcceptor = acceptor;
 		}
@@ -424,18 +417,16 @@ namespace emdl
 			m_currentState = &m_states[static_cast<size_t>(state)];
 		}
 
-		void StateMachine::sendPdu(EventData& data, uint8_t pdu_type)
+		void StateMachine::sendPdu(EventData& data, uint8_t pduType)
 		{
 			if (!data.pdu)
 				throw Exception("No PDU");
 
-			const auto& item = data.pdu->get_item();
-
-			if (item.as_unsigned_int_8("PDU-type") != pdu_type)
+			if (data.pdu->type() != pduType)
 				throw Exception("Invalid PDU");
 
 			std::ostringstream stream;
-			stream << item;
+			data.pdu->save(stream);
 			m_transport->write(stream.str());
 		}
 
@@ -478,20 +469,20 @@ namespace emdl
 
 			try
 			{
-				const odil::AssociationParameters input_parameters{*std::dynamic_pointer_cast<odil::pdu::AAssociateRQ>(data.pdu)};
+				const AssociationParameters input_parameters{*std::dynamic_pointer_cast<pdu::AAssociateRQ>(data.pdu)};
 				data.associationParameters = m_associationAcceptor(input_parameters);
 				setState(StateId::Sta3);
 
 				m_association.onAssociationRequest(data); // Issue A-ASSOCIATE indication
 			}
-			catch (const odil::AssociationRejected& reject)
+			catch (const AssociationRejected& reject)
 			{
 				data.reject = reject;
 
 				setState(StateId::Sta13);
 				startTimer(data);
 
-				data.pdu = std::make_shared<odil::pdu::AAssociateRJ>(reject.get_result(), reject.get_source(), reject.get_reason());
+				data.pdu = std::make_shared<pdu::AAssociateRJ>(reject.result, reject.source, reject.reason);
 				sendPdu(data, 0x03);
 				data.pdu = nullptr;
 
@@ -531,7 +522,7 @@ namespace emdl
 
 			// Respond immediately
 			EventData data;
-			data.pdu = std::make_shared<odil::pdu::AReleaseRP>();
+			data.pdu = std::make_shared<pdu::AReleaseRP>();
 			sendPdu(data);
 		}
 
@@ -579,13 +570,13 @@ namespace emdl
 
 		void StateMachine::AA_1(EventData& data)
 		{
-			if (std::dynamic_pointer_cast<odil::pdu::AAbort>(data.pdu))
+			if (std::dynamic_pointer_cast<pdu::AAbort>(data.pdu))
 			{
 				sendPdu(data, 0x07);
 			}
 			else
 			{
-				data.pdu = std::make_shared<odil::pdu::AAbort>(1, 2);
+				data.pdu = std::make_shared<pdu::AAbort>(1, 2);
 				sendPdu(data);
 			}
 
@@ -626,7 +617,7 @@ namespace emdl
 
 		void StateMachine::AA_8(EventData& data)
 		{
-			data.pdu = std::make_shared<odil::pdu::AAbort>(2, 2);
+			data.pdu = std::make_shared<pdu::AAbort>(2, 2);
 			sendPdu(data, 0x07);
 			m_association.setStatus(Association::Status::Aborted);
 			startTimer(data);

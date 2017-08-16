@@ -1,10 +1,9 @@
 #pragma once
 
-#include <vector>
-
+#include <emdl/association/AssociationAcceptor.h>
 #include <emdl/dul/Transport.h>
 
-#include "odil/AssociationAcceptor.h"
+#include <vector>
 
 namespace emdl
 {
@@ -75,20 +74,20 @@ namespace emdl
 			StateId state() const; /// Return the current state.
 
 			const Transport& transport() const; /// Return the TCP transport.
-			Transport& transport();             /// Return the TCP transport.
+			Transport& transport(); /// Return the TCP transport.
 
-			duration_type artimTimeout() const;          /// Return the timeout, default to infinity.
+			duration_type artimTimeout() const; /// Return the timeout, default to infinity.
 			void setArtimTimeout(duration_type timeout); /// Set the timeout.
 
 			void setTransportConnection(Transport::Socket socket); /// Set the socket for the transport and perform the corresponding transition.
 			void onTransportClose();
 
-			void sendPdu(EventData& data);      /// Send a PDU to the transport, perform the corresponding transition.
-			void release();                     /// Gracefully release the association. Throws an exception if not associated.
+			void sendPdu(EventData& data); /// Send a PDU to the transport, perform the corresponding transition.
+			void release(); /// Gracefully release the association. Throws an exception if not associated.
 			void abort(int source, int reason); /// Forcefully release the association. Throws an exception if not associated.
 
-			const odil::AssociationAcceptor& associationAcceptor() const;           /// Return the callback checking whether the association request is acceptable.
-			void setAssociationAcceptor(const odil::AssociationAcceptor& acceptor); /// Set the callback checking whether the association request is acceptable.
+			const AssociationAcceptor& associationAcceptor() const; /// Return the callback checking whether the association request is acceptable.
+			void setAssociationAcceptor(const AssociationAcceptor& acceptor); /// Set the callback checking whether the association request is acceptable.
 
 			void onReceivedPDU(PDUHeader header, std::string body); /// Called by the Transport when a PDU has been received
 
@@ -127,12 +126,12 @@ namespace emdl
 			static const ActionList m_actions;
 
 			Association& m_association;
-			const State* m_currentState = nullptr;                     /// Current state.
-			std::shared_ptr<Transport> m_transport;                    /// TCP transport.
-			duration_type m_timeout = boost::posix_time::seconds(30);  /// Timeout of the ARTIM timer.
-			boost::asio::deadline_timer m_artimTimer;                  /// Association Request/Reject/Release Timer.
-			odil::AssociationAcceptor m_associationAcceptor;           /// Callback checking whether an association request is acceptable.
-			std::pair<unsigned char, unsigned char> m_abortParameters; /// Source and reason of the abort
+			const State* m_currentState = nullptr; /// Current state.
+			std::shared_ptr<Transport> m_transport; /// TCP transport.
+			duration_type m_timeout = boost::posix_time::seconds(30); /// Timeout of the ARTIM timer.
+			boost::asio::deadline_timer m_artimTimer; /// Association Request/Reject/Release Timer.
+			AssociationAcceptor m_associationAcceptor = defaultAssociationAcceptor; /// Callback checking whether an association request is acceptable.
+			std::pair<unsigned char, unsigned char> m_abortParameters = {0, 0}; /// Source and reason of the abort
 
 			/// Perform the transition related to the event and current state. Raise an exception if no such transition exists.
 			void transition(Event event, EventData& data);
@@ -142,7 +141,7 @@ namespace emdl
 			void sendPdu(EventData& data, uint8_t pdu_type); /// Check the PDU type in data and send it.
 
 			void startTimer(EventData& data); /// Start (or re-start if already started) the ARTIM timer.
-			void stopTimer();                 /// Stop the ARTIM timer.
+			void stopTimer(); /// Stop the ARTIM timer.
 
 			// Association establishment
 			void AE_1(EventData& data); /// Issue TRANSPORT CONNECT request primitive to local transport service.
@@ -159,15 +158,15 @@ namespace emdl
 			void DT_2(EventData& data); /// Send P-DATA indication primitive.
 
 			// Association release
-			void AR_1(EventData& data);  /// Send A-RELEASE-RQ PDU.
-			void AR_2(EventData& data);  /// Issue A-RELEASE indication primitive.
-			void AR_3(EventData& data);  /// Issue A-RELEASE confirmation primitive, and close transport connection.
-			void AR_4(EventData& data);  /// Issue A-RELEASE-RP PDU and start ARTIM timer.
-			void AR_5(EventData& data);  /// Stop ARTIM timer.
-			void AR_6(EventData& data);  /// Issue P-DATA indication.
-			void AR_7(EventData& data);  /// Issue P-DATA-TF PDU.
-			void AR_8(EventData& data);  /// Issue A-RELEASE indication (release collision).
-			void AR_9(EventData& data);  /// Send A-RELEASE-RP PDU.
+			void AR_1(EventData& data); /// Send A-RELEASE-RQ PDU.
+			void AR_2(EventData& data); /// Issue A-RELEASE indication primitive.
+			void AR_3(EventData& data); /// Issue A-RELEASE confirmation primitive, and close transport connection.
+			void AR_4(EventData& data); /// Issue A-RELEASE-RP PDU and start ARTIM timer.
+			void AR_5(EventData& data); /// Stop ARTIM timer.
+			void AR_6(EventData& data); /// Issue P-DATA indication.
+			void AR_7(EventData& data); /// Issue P-DATA-TF PDU.
+			void AR_8(EventData& data); /// Issue A-RELEASE indication (release collision).
+			void AR_9(EventData& data); /// Send A-RELEASE-RP PDU.
 			void AR_10(EventData& data); /// Issue A-RELEASE confirmation primitive.
 
 			// Association abort

@@ -10,7 +10,6 @@
 #include <boost/date_time.hpp>
 #include <boost/optional.hpp>
 
-#include <emdl/emdl_api.h>
 #include <emdl/Exception.h>
 
 namespace emdl
@@ -47,8 +46,8 @@ namespace emdl
 			void setSocket(Socket socket); /// Set the socket, raise an exception if already set.
 
 			void connect(const Socket::endpoint_type& endpoint); /// Connect to the specified endpoint, raise an exception upon error.
-			bool isOpen() const;                                 /// Test whether the transport is open.
-			void close();                                        /// Close the connection.
+			bool isOpen() const; /// Test whether the transport is open.
+			void close(); /// Close the connection.
 
 			void write(const std::string& data); /// Write data, raise an exception on error.
 

@@ -4,33 +4,16 @@
 #include <emdl/dataset/DataSetReader.h>
 #include <emdl/dataset/DataSetWriter.h>
 
-#include <algorithm>
-#include <functional>
-#include <map>
-#include <string>
-#include <vector>
+#include <emdl/pdu/AAssociateAC.h>
+#include <emdl/pdu/AAssociateRQ.h>
+#include <emdl/pdu/AAssociateRJ.h>
+#include <emdl/pdu/PDataTF.h>
+#include <emdl/pdu/items/PresentationDataValue.h>
 
-#include "odil/AssociationParameters.h"
-#include "odil/DataSet.h"
-#include "odil/Exception.h"
-#include "odil/uid.h"
-#include "odil/dul/StateMachine.h"
-#include "odil/message/Message.h"
-#include "odil/pdu/AAbort.h"
-#include "odil/pdu/AAssociate.h"
-#include "odil/pdu/AAssociateRJ.h"
-#include "odil/pdu/AReleaseRP.h"
-#include "odil/pdu/AReleaseRQ.h"
-#include "odil/pdu/ImplementationClassUID.h"
-#include "odil/pdu/ImplementationVersionName.h"
-#include "odil/pdu/PDataTF.h"
-#include "odil/pdu/PresentationContextAC.h"
-#include "odil/pdu/PresentationContextRQ.h"
-#include "odil/pdu/RoleSelection.h"
-#include "odil/pdu/UserIdentityRQ.h"
-#include "odil/pdu/UserInformation.h"
-#include "odil/Reader.h"
-#include "odil/Writer.h"
+#include <odil/registry.h>
+
+#include <algorithm>
+#include <map>
 
 namespace emdl
 {
@@ -93,12 +76,12 @@ namespace emdl
 		m_peerPort = port;
 	}
 
-	const odil::AssociationParameters& Association::parameters() const
+	const AssociationParameters& Association::parameters() const
 	{
 		return m_associationParameters;
 	}
 
-	odil::AssociationParameters& Association::updateParameters()
+	AssociationParameters& Association::updateParameters()
 	{
 		if (isAssociated())
 			throw Exception("Cannot set member while associated");
@@ -106,7 +89,7 @@ namespace emdl
 		return m_associationParameters;
 	}
 
-	void Association::setParameters(const odil::AssociationParameters& value)
+	void Association::setParameters(const AssociationParameters& value)
 	{
 		if (isAssociated())
 			throw Exception("Cannot set member while associated");
@@ -114,7 +97,7 @@ namespace emdl
 		m_associationParameters = value;
 	}
 
-	const odil::AssociationParameters& Association::negotiatedParameters() const
+	const AssociationParameters& Association::negotiatedParameters() const
 	{
 		return m_negotiatedParameters;
 	}
@@ -134,7 +117,7 @@ namespace emdl
 		data.endpoint = *endpoint_it;
 		data.endpoint->port(m_peerPort);
 
-		const auto request = std::make_shared<odil::pdu::AAssociateRQ>(m_associationParameters.as_a_associate_rq());
+		const auto request = toAAssociateRQ(m_associationParameters);
 		data.pdu = request;
 
 		m_stateMachine->sendPdu(data);
@@ -148,26 +131,26 @@ namespace emdl
 		}
 		else
 		{
-			const auto acceptation = std::dynamic_pointer_cast<odil::pdu::AAssociateAC>(response.pdu);
-			const auto rejection = std::dynamic_pointer_cast<odil::pdu::AAssociateRJ>(response.pdu);
+			const auto acceptation = std::dynamic_pointer_cast<pdu::AAssociateAC>(response.pdu);
+			const auto rejection = std::dynamic_pointer_cast<pdu::AAssociateRJ>(response.pdu);
 			if (acceptation)
 			{
-				m_negotiatedParameters = odil::AssociationParameters{*acceptation, m_associationParameters};
+				m_negotiatedParameters = AssociationParameters{*acceptation, m_associationParameters};
 
 				m_transferSyntaxesById.clear();
 
-				for (const auto& pc : m_negotiatedParameters.get_presentation_contexts())
+				for (const auto& pc : m_negotiatedParameters.presentationContexts)
 				{
-					if (pc.result == odil::AssociationParameters::PresentationContext::Result::Acceptance)
-						m_transferSyntaxesById[pc.id] = getTransferSyntax(pc.transfer_syntaxes[0]);
+					if (pc.result == PresentationContext::Result::Acceptance)
+						m_transferSyntaxesById[pc.id] = pc.transferSyntaxes.front();
 				}
 			}
 			else if (rejection)
 			{
-				throw odil::AssociationRejected(rejection->get_result(),
-												rejection->get_source(),
-												rejection->get_reason(),
-												"Association rejected");
+				throw AssociationRejected(rejection->result.get(),
+										  rejection->source.get(),
+										  rejection->reason.get(),
+										  "Association rejected");
 			}
 			else
 			{
@@ -176,16 +159,16 @@ namespace emdl
 		}
 	}
 
-	void Association::receiveAssociation(dul::Transport::Socket socket, odil::AssociationAcceptor acceptor)
+	void Association::receiveAssociation(dul::Transport::Socket socket, AssociationAcceptor acceptor)
 	{
-		m_stateMachine->setAssociationAcceptor(acceptor);
+		m_stateMachine->setAssociationAcceptor(std::move(acceptor));
 		m_stateMachine->setTransportConnection(std::move(socket));
 
 		auto associationRequestFuture = m_associationRequestPromise.get_future();
 		associationRequestFuture.get(); // Waits for association, rethrows if there was an exception
 	}
 
-	void Association::receiveAssociation(const boost::asio::ip::tcp& protocol, unsigned short port, odil::AssociationAcceptor acceptorFunc)
+	void Association::receiveAssociation(const boost::asio::ip::tcp& protocol, unsigned short port, AssociationAcceptor acceptorFunc)
 	{
 		auto& service = transport().service();
 		auto socket = dul::Transport::Socket{service};
@@ -246,7 +229,7 @@ namespace emdl
 	{
 		try
 		{
-			const auto& request = std::dynamic_pointer_cast<odil::pdu::AAssociateRQ>(data.pdu);
+			const auto& request = std::dynamic_pointer_cast<pdu::AAssociateRQ>(data.pdu);
 			if (!request)
 				throw Exception("Invalid response");
 
@@ -260,15 +243,15 @@ namespace emdl
 
 			m_transferSyntaxesById.clear();
 
-			for (const auto& pc : m_negotiatedParameters.get_presentation_contexts())
+			for (const auto& pc : m_negotiatedParameters.presentationContexts)
 			{
-				if (pc.result == odil::AssociationParameters::PresentationContext::Result::Acceptance)
-					m_transferSyntaxesById[pc.id] = getTransferSyntax(pc.transfer_syntaxes[0]);
+				if (pc.result == PresentationContext::Result::Acceptance)
+					m_transferSyntaxesById[pc.id] = pc.transferSyntaxes.front();
 			}
 
 			setStatus(Association::Status::Associated);
 
-			data.pdu = std::make_shared<odil::pdu::AAssociateAC>(m_negotiatedParameters.as_a_associate_ac());
+			data.pdu = toAAssociateAC(m_negotiatedParameters);
 			m_stateMachine->sendPdu(data);
 
 			m_associationRequestPromise.set_value();
@@ -288,10 +271,10 @@ namespace emdl
 			m_associationRequestPromise.set_exception(std::make_exception_ptr(*data.reject));
 		else
 			m_associationRequestPromise.set_exception(std::make_exception_ptr(
-				odil::AssociationRejected(Association::RejectedTransient,
-										  Association::ULServiceProvderPresentationRelatedFunction,
-										  Association::NoReasonGiven,
-										  "No reject information")));
+				AssociationRejected(Association::RejectedTransient,
+									Association::ULServiceProvderPresentationRelatedFunction,
+									Association::NoReasonGiven,
+									"No reject information")));
 	}
 
 	void Association::onAssociationResponse(dul::EventData& data)
@@ -302,7 +285,7 @@ namespace emdl
 	void Association::onPDataTF(dul::EventData& data)
 	{
 		sizeof(MessageConstruction);
-		const auto pData = std::dynamic_pointer_cast<odil::pdu::PDataTF>(data.pdu);
+		const auto pData = std::dynamic_pointer_cast<pdu::PDataTF>(data.pdu);
 		if (!pData)
 			throw Exception("Invalid PDU received");
 
@@ -312,15 +295,15 @@ namespace emdl
 			m_readMessage.receptionStart = std::chrono::high_resolution_clock::now();
 		}
 
-		for (const auto& pdv : pData->get_pdv_items())
+		for (const auto& pdv : pData->pdvItems.get())
 		{
-			m_readMessage.presentationContextId = pdv.get_presentation_context_id();
-			bool& received = pdv.is_command() ? m_readMessage.receivedCommandSet : m_readMessage.receivedDataSet;
-			received |= pdv.is_last_fragment();
+			m_readMessage.presentationContextId = pdv.presentationContextId();
+			bool& received = pdv.isCommand() ? m_readMessage.receivedCommandSet : m_readMessage.receivedDataSet;
+			received |= pdv.isLastFragment();
 
-			std::stringstream& stream = pdv.is_command() ? m_readMessage.commandStream : m_readMessage.dataStream;
-			const auto& fragment_data = pdv.get_fragment();
-			stream.write(&fragment_data[0], fragment_data.size());
+			std::stringstream& stream = pdv.isCommand() ? m_readMessage.commandStream : m_readMessage.dataStream;
+			const auto& fragmentData = pdv.fragment();
+			stream.write(&fragmentData[0], fragmentData.size());
 
 			if (m_readMessage.receivedCommandSet && m_readMessage.commandSet.empty())
 			{
@@ -399,13 +382,13 @@ namespace emdl
 
 	void Association::sendMessage(const message::Message& message, uint8_t presentationContextId, TransferSyntax transferSyntax)
 	{
-		std::vector<odil::pdu::PDataTF::PresentationDataValueItem> pdv_items;
+		std::vector<pdu::PresentationDataValue> pdvItems;
 
 		std::ostringstream commandStream;
 		DataSetWriter{commandStream, TransferSyntax::ImplicitVRLittleEndian, BaseWriter::ItemEncoding::ExplicitLength}.writeDataSet(message.commandSet());
 		const auto commandBuffer = commandStream.str();
 		const auto currentLength = commandBuffer.size() + 12; // 12 is the size of all that is added on top of the fragment
-		pdv_items.emplace_back(presentationContextId, 3, std::move(commandBuffer));
+		pdvItems.emplace_back(presentationContextId, 3, std::move(commandBuffer));
 
 		if (message.hasDataSet())
 		{
@@ -413,13 +396,13 @@ namespace emdl
 			DataSetWriter{dataStream, transferSyntax, BaseWriter::ItemEncoding::ExplicitLength}.writeDataSet(message.dataSet());
 			const auto dataBuffer = dataStream.str();
 
-			const auto maxLength = negotiatedParameters().get_maximum_length();
+			const auto maxLength = m_negotiatedParameters.maximumLength;
 			if (!maxLength || (currentLength + dataBuffer.size() + 6 < maxLength))
 			{ // Can send all the buffer in one go
-				pdv_items.emplace_back(presentationContextId, 2, std::move(dataBuffer));
+				pdvItems.emplace_back(presentationContextId, 2, std::move(dataBuffer));
 
 				emdl::dul::EventData data;
-				data.pdu = std::make_shared<odil::pdu::PDataTF>(pdv_items);
+				data.pdu = std::make_shared<pdu::PDataTF>(pdvItems);
 				m_stateMachine->sendPdu(data);
 			}
 			else // We have to fragment into multiple PDUs
@@ -431,11 +414,11 @@ namespace emdl
 				if (available > 0) // Send some data with the command set
 				{
 					remaining -= available;
-					pdv_items.emplace_back(presentationContextId, (remaining > 0 ? 0 : 2), dataBuffer.substr(0, available));
+					pdvItems.emplace_back(presentationContextId, (remaining > 0 ? 0 : 2), dataBuffer.substr(0, available));
 					offset += available;
 				}
 
-				auto pdu = std::make_shared<odil::pdu::PDataTF>(pdv_items);
+				auto pdu = std::make_shared<pdu::PDataTF>(pdvItems);
 				emdl::dul::EventData data;
 				data.pdu = pdu;
 				m_stateMachine->sendPdu(data);
@@ -444,10 +427,10 @@ namespace emdl
 				while (remaining > 0)
 				{
 					remaining -= available;
-					pdv_items.clear();
-					pdv_items.emplace_back(presentationContextId, (remaining > 0 ? 0 : 2), dataBuffer.substr(offset, available));
+					pdvItems.clear();
+					pdvItems.emplace_back(presentationContextId, (remaining > 0 ? 0 : 2), dataBuffer.substr(offset, available));
 					offset += available;
-					pdu->set_pdv_items(pdv_items);
+					pdu->pdvItems.set(pdvItems);
 					m_stateMachine->sendPdu(data);
 				}
 			}
@@ -455,7 +438,7 @@ namespace emdl
 		else
 		{
 			emdl::dul::EventData data;
-			data.pdu = std::make_shared<odil::pdu::PDataTF>(pdv_items);
+			data.pdu = std::make_shared<pdu::PDataTF>(pdvItems);
 			m_stateMachine->sendPdu(data);
 		}
 	}
