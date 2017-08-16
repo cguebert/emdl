@@ -5,21 +5,22 @@ namespace emdl
 	namespace pdu
 	{
 		PresentationDataValue::PresentationDataValue()
-			: presentationContextId(initField("Presentation-Context-ID", 0))
-			, controlHeader(initField("Control-header", 0))
-			, fragment(initField("Fragment"), length, 2)
+			: m_itemLength(initField("Item-length", 0))
+			, m_presentationContextId(initField("Presentation-Context-ID", 0))
+			, m_controlHeader(initField("Control-header", 0))
+			, m_fragment(initField("Fragment"), m_itemLength, 2)
 		{
 		}
 
-		PresentationDataValue::PresentationDataValue(uint8_t pcId, uint8_t header, const std::string& frag)
+		PresentationDataValue::PresentationDataValue(uint8_t presentationContextId, uint8_t controlHeader, const std::string& fragment)
 			: PresentationDataValue()
 		{
-			if (pcId % 2 == 0)
+			if (presentationContextId % 2 == 0)
 				throw Exception("Invalid Presentation Context ID");
 
-			presentationContextId.set(pcId);
-			controlHeader.set(header);
-			fragment.set(frag);
+			m_presentationContextId.set(presentationContextId);
+			m_controlHeader.set(controlHeader);
+			m_fragment.set(fragment);
 		}
 
 		PresentationDataValue::PresentationDataValue(std::istream& in)
@@ -31,27 +32,37 @@ namespace emdl
 		PresentationDataValue::PresentationDataValue(const PresentationDataValue& other)
 			: PresentationDataValue()
 		{
-			presentationContextId.set(other.presentationContextId.get());
-			controlHeader.set(other.controlHeader.get());
-			fragment.set(other.fragment.get());
+			m_presentationContextId.set(other.m_presentationContextId.get());
+			m_controlHeader.set(other.m_controlHeader.get());
+			m_fragment.set(other.m_fragment.get());
 		}
 
 		PresentationDataValue& PresentationDataValue::operator=(const PresentationDataValue& other)
 		{
-			presentationContextId.set(other.presentationContextId.get());
-			controlHeader.set(other.controlHeader.get());
-			fragment.set(other.fragment.get());
+			m_presentationContextId.set(other.m_presentationContextId.get());
+			m_controlHeader.set(other.m_controlHeader.get());
+			m_fragment.set(other.m_fragment.get());
 			return *this;
+		}
+
+		uint8_t PresentationDataValue::presentationContextId() const
+		{
+			return m_presentationContextId.get();
 		}
 
 		bool PresentationDataValue::isCommand() const
 		{
-			return (controlHeader.get() & 0x01) != 0;
+			return (m_controlHeader.get() & 0x01) != 0;
 		}
 
 		bool PresentationDataValue::isLastFragment() const
 		{
-			return (controlHeader.get() & 0x02) != 0;
+			return (m_controlHeader.get() & 0x02) != 0;
+		}
+
+		const std::string& PresentationDataValue::fragment() const
+		{
+			return m_fragment.get();
 		}
 	}
 }

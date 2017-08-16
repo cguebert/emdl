@@ -6,7 +6,8 @@ namespace emdl
 	namespace pdu
 	{
 		RoleSelection::RoleSelection()
-			: m_sopClassUid(initField("SOP-class-uid"), length, 0)
+			: m_uidLength(initField("UID-length", 0))
+			, m_sopClassUid(initField("SOP-class-uid"), m_uidLength, 0)
 			, m_scuRole(initField("SCU-role", 0))
 			, m_scpRole(initField("SCP-role", 0))
 		{

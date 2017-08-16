@@ -25,6 +25,7 @@ namespace emdl
 			void setScpRoleSupport(bool value);
 
 		private:
+			Field<uint16_t> m_uidLength;
 			StringField<uint16_t> m_sopClassUid;
 			Field<uint8_t> m_scuRole;
 			Field<uint8_t> m_scpRole;
