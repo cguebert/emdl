@@ -1,9 +1,9 @@
 #include <emdl/dataset/DataSetWriter.h>
 #include <emdl/dataset/ElementWriter.h>
 #include <emdl/Exception.h>
+#include <emdl/association/AssociationParameters.h>
 
 #include <odil/registry.h>
-#include <odil/uid.h>
 
 #include <fstream>
 #include <sstream>
@@ -52,8 +52,8 @@ namespace emdl
 		metaInformation.set(odil::registry::MediaStorageSOPInstanceUID, *sopInstanceUID);
 
 		metaInformation.set(odil::registry::TransferSyntaxUID, {getTransferSyntaxUID(dataSet.transferSyntax())});
-		metaInformation.set(odil::registry::ImplementationClassUID, {odil::implementation_class_uid});
-		metaInformation.set(odil::registry::ImplementationVersionName, {odil::implementation_version_name});
+		metaInformation.set(odil::registry::ImplementationClassUID, {emdl::defaultImplementationClassUid});
+		metaInformation.set(odil::registry::ImplementationVersionName, {emdl::defaultImplementationVersionName});
 
 		static const auto preamble = std::vector<char>(128, 0);
 		out.write(preamble.data(), 128);
