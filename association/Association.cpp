@@ -333,14 +333,14 @@ namespace emdl
 			wrapper->receptionStart = m_readMessage.receptionStart;
 			wrapper->receptionEnd = wrapper->processingEnd = std::chrono::high_resolution_clock::now();
 
+			supportCancellation(wrapper); // For now, do this here so we are sure we are still single threaded
+
 			{
 				std::lock_guard<std::mutex> lock(m_messagesQueueMutex);
 				m_messagesQueue.push_back(wrapper);
 			}
 
 			m_messagesCondition.notify_one();
-
-			supportCancellation(wrapper);
 			m_readMessage = {}; // Reset
 		}
 	}
