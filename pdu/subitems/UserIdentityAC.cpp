@@ -1,4 +1,5 @@
 #include <emdl/pdu/subitems/UserIdentityAC.h>
+#include <emdl/pdu/items/ItemFactory.h>
 
 namespace emdl
 {
@@ -32,5 +33,7 @@ namespace emdl
 		{
 			m_serverResponse.set(value);
 		}
+
+		RegisterItem<UserIdentityAC> userIdentityACSubItem{ItemType::UserIdentityAC};
 	}
 }

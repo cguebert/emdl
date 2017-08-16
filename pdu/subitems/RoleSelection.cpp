@@ -1,4 +1,5 @@
 #include <emdl/pdu/subitems/RoleSelection.h>
+#include <emdl/pdu/items/ItemFactory.h>
 
 namespace emdl
 {
@@ -55,5 +56,7 @@ namespace emdl
 		{
 			m_scpRole.set(value ? 1 : 0);
 		}
+
+		RegisterItem<RoleSelection> roleSelectionSubItem{ItemType::RoleSelection};
 	}
 }

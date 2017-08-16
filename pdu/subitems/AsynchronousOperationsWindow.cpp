@@ -1,4 +1,5 @@
 #include <emdl/pdu/subitems/AsynchronousOperationsWindow.h>
+#include <emdl/pdu/items/ItemFactory.h>
 
 namespace emdl
 {
@@ -24,5 +25,7 @@ namespace emdl
 		{
 			read(in);
 		}
+
+		RegisterItem<AsynchronousOperationsWindow> asynchronousOperationsWindowSubItem{ItemType::AsynchronousOperationsWindow};
 	}
 }

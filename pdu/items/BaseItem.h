@@ -10,15 +10,12 @@ namespace emdl
 		{
 			enum Type
 			{
-				// Items
 				ApplicationContext = 0x10,
 				PresentationContextRQ = 0x20,
 				PresentationContextAC = 0x21,
 				AbstractSyntax = 0x30,
 				TransferSyntax = 0x40,
 				UserInformation = 0x50,
-
-				// Sub items
 				MaximumLength = 0x51,
 				ImplementationClassUID = 0x52,
 				AsynchronousOperationsWindow = 0x53,

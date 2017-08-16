@@ -1,4 +1,5 @@
 #include <emdl/pdu/items/UserInformation.h>
+#include <emdl/pdu/items/ItemFactory.h>
 
 namespace emdl
 {
@@ -15,5 +16,7 @@ namespace emdl
 		{
 			read(in);
 		}
+
+		RegisterItem<UserInformation> userInformationItem{ItemType::UserInformation};
 	}
 }

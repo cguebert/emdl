@@ -1,4 +1,5 @@
 #include <emdl/pdu/subitems/ImplementationClassUID.h>
+#include <emdl/pdu/items/ItemFactory.h>
 
 namespace emdl
 {
@@ -21,5 +22,7 @@ namespace emdl
 		{
 			read(in);
 		}
+
+		RegisterItem<ImplementationClassUID> implementationClassUIDSubItem{ItemType::ImplementationClassUID};
 	}
 }

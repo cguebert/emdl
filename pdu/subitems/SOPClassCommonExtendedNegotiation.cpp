@@ -1,4 +1,5 @@
 #include <emdl/pdu/subitems/SOPClassCommonExtendedNegotiation.h>
+#include <emdl/pdu/items/ItemFactory.h>
 
 namespace emdl
 {
@@ -113,5 +114,7 @@ namespace emdl
 		{
 			return m_uid.get();
 		}
+
+		RegisterItem<SOPClassCommonExtendedNegotiation> sopClassCommonExtendedNegotiationSubItem{ItemType::SOPClassCommonExtendedNegotiation};
 	}
 }

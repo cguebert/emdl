@@ -1,4 +1,5 @@
 #include <emdl/pdu/subitems/UserIdentityRQ.h>
+#include <emdl/pdu/items/ItemFactory.h>
 
 namespace emdl
 {
@@ -91,5 +92,7 @@ namespace emdl
 			m_primaryField.set(assertion);
 			m_secondaryField.set("");
 		}
+
+		RegisterItem<UserIdentityRQ> userIdentityRQSubItem{ItemType::UserIdentityRQ};
 	}
 }

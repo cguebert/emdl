@@ -1,4 +1,5 @@
 #include <emdl/pdu/subitems/SOPClassExtendedNegotiation.h>
+#include <emdl/pdu/items/ItemFactory.h>
 
 namespace emdl
 {
@@ -53,5 +54,7 @@ namespace emdl
 		{
 			m_serviceClassApplicationInformation.set(value);
 		}
+
+		RegisterItem<SOPClassExtendedNegotiation> sopClassExtendedNegotiationSubItem{ItemType::SOPClassExtendedNegotiation};
 	}
 }
