@@ -3,7 +3,6 @@
 #include <emdl/dataset/DataSetAccessors.h>
 
 #include <odil/ElementsDictionary.h>
-#include <odil/DataSet.h>
 #include <odil/registry.h>
 
 #include <algorithm>
