@@ -1,14 +1,13 @@
-#include "CFindRequest.h"
-
-#include <odil/registry.h>
+#include <emdl/message/CFindRequest.h>
+#include <emdl/registry.h>
 
 namespace emdl
 {
 	namespace message
 	{
 		CFindRequest::CFindRequest()
-			: affectedSopClass(initField(odil::registry::AffectedSOPClassUID))
-			, priority(initField(odil::registry::Priority))
+			: affectedSopClass(initField(registry::AffectedSOPClassUID))
+			, priority(initField(registry::Priority))
 		{
 			commandField.set(Command::C_FIND_RQ);
 		}

@@ -5,11 +5,6 @@
 
 #include <ostream>
 
-namespace odil
-{
-	class Tag;
-}
-
 namespace emdl
 {
 	class EMDL_API DataSetWriter : public BaseWriter

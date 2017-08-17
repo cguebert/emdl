@@ -3,14 +3,13 @@
 #include <emdl/dataset/DataSetAccessors.h>
 #include <emdl/dataset/reader/DataSetReader.h>
 #include <emdl/dataset/writer/DataSetWriter.h>
+#include <emdl/registry.h>
 
 #include <emdl/pdu/AAssociateAC.h>
 #include <emdl/pdu/AAssociateRQ.h>
 #include <emdl/pdu/AAssociateRJ.h>
 #include <emdl/pdu/PDataTF.h>
 #include <emdl/pdu/items/PresentationDataValue.h>
-
-#include <odil/registry.h>
 
 #include <algorithm>
 #include <map>
@@ -309,7 +308,7 @@ namespace emdl
 			{
 				auto buffer = createBufferFromStream(m_readMessage.commandStream);
 				m_readMessage.commandSet = DataSetReader{buffer, TransferSyntax::ImplicitVRLittleEndian}.readDataSet();
-				const auto value = asInt(m_readMessage.commandSet, odil::registry::CommandDataSetType, 0);
+				const auto value = asInt(m_readMessage.commandSet, registry::CommandDataSetType, 0);
 
 				if (value == message::Message::DataSetType::ABSENT)
 					m_readMessage.hasDataSet = false;
@@ -458,12 +457,12 @@ namespace emdl
 			m_cancelableWrappers.erase(last, m_cancelableWrappers.end());
 
 			// Add this message
-			const auto msgId = *firstInt(wrapper->message->commandSet(), odil::registry::MessageID);
+			const auto msgId = *firstInt(wrapper->message->commandSet(), registry::MessageID);
 			m_cancelableWrappers.emplace_back(msgId, wrapper);
 		}
 		else if (commandField == Cmd::C_CANCEL_RQ)
 		{
-			const auto msgId = *firstInt(wrapper->message->commandSet(), odil::registry::MessageIDBeingRespondedTo);
+			const auto msgId = *firstInt(wrapper->message->commandSet(), registry::MessageIDBeingRespondedTo);
 
 			std::lock_guard<std::mutex> lock(m_cancelableWrappersMutex);
 			const auto it = std::find_if(m_cancelableWrappers.begin(), m_cancelableWrappers.end(), [msgId](const WrapperPair& p) {

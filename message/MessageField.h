@@ -18,13 +18,13 @@ namespace emdl
 			class BaseInitField
 			{
 			public:
-				BaseInitField(odil::Tag tag, Message& owner, DataSet& dataSet)
+				BaseInitField(Tag tag, Message& owner, DataSet& dataSet)
 					: tag(tag)
 					, owner(owner)
 					, dataSet(dataSet)
 				{
 				}
-				odil::Tag tag;
+				Tag tag;
 				Message& owner;
 				DataSet& dataSet;
 
@@ -37,7 +37,7 @@ namespace emdl
 			class InitField : public BaseField::BaseInitField
 			{
 			public:
-				InitField(odil::Tag tag, const ValueType& value, Message& owner, DataSet& dataSet)
+				InitField(Tag tag, const ValueType& value, Message& owner, DataSet& dataSet)
 					: BaseInitField(tag, owner, dataSet)
 					, value(value)
 				{
@@ -51,25 +51,25 @@ namespace emdl
 			BaseField(BaseField&&) = delete;
 			BaseField& operator=(BaseField&&) = delete;
 
-			odil::Tag tag() const;
+			Tag tag() const;
 
 			virtual void copyFrom(const DataSet& dataSet) = 0;
 
 		protected:
-			odil::Tag m_tag;
+			Tag m_tag;
 			DataSet& m_dataSet;
 		};
 
 		namespace details
 		{
 			template <class T>
-			const T& read(const DataSet& dataSet, odil::Tag tag)
+			const T& read(const DataSet& dataSet, Tag tag)
 			{
 				return boost::get<T>(dataSet[tag]->value().value());
 			}
 
 			template <class T>
-			T& write(DataSet& dataSet, odil::Tag tag)
+			T& write(DataSet& dataSet, Tag tag)
 			{
 				if (!dataSet[tag])
 					dataSet.set(tag);

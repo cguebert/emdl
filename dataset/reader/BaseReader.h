@@ -3,9 +3,8 @@
 #include <emdl/dataset/VR.h>
 #include <emdl/ArrayView.h>
 #include <emdl/Exception.h>
+#include <emdl/Tag.h>
 #include <emdl/TransferSyntaxes.h>
-
-#include <odil/Tag.h>
 
 #include <memory>
 
@@ -30,7 +29,7 @@ namespace emdl
 		size_t offset() const; //!< Current reading offset
 		void ignore(size_t offset); //!< Jump over this number of bytes
 
-		odil::Tag readTag(); //!< Read one tag
+		Tag readTag(); //!< Read one tag
 		std::string readString(size_t size); //!< Read one string
 		uint32_t readLength(VR vr); //!< Read the length of an element
 

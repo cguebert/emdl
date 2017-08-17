@@ -1,18 +1,17 @@
-#include "CGetResponse.h"
-
-#include <odil/registry.h>
+#include <emdl/message/CGetResponse.h>
+#include <emdl/registry.h>
 
 namespace emdl
 {
 	namespace message
 	{
 		CGetResponse::CGetResponse()
-			: messageId(initField(odil::registry::MessageID))
-			, affectedSopClass(initField(odil::registry::AffectedSOPClassUID))
-			, numberOfRemainingSubOperations(initField(odil::registry::NumberOfRemainingSuboperations))
-			, numberOfCompletedSubOperations(initField(odil::registry::NumberOfCompletedSuboperations))
-			, numberOfFailedSubOperations(initField(odil::registry::NumberOfFailedSuboperations))
-			, numberOfWarningSubOperations(initField(odil::registry::NumberOfWarningSuboperations))
+			: messageId(initField(registry::MessageID))
+			, affectedSopClass(initField(registry::AffectedSOPClassUID))
+			, numberOfRemainingSubOperations(initField(registry::NumberOfRemainingSuboperations))
+			, numberOfCompletedSubOperations(initField(registry::NumberOfCompletedSuboperations))
+			, numberOfFailedSubOperations(initField(registry::NumberOfFailedSuboperations))
+			, numberOfWarningSubOperations(initField(registry::NumberOfWarningSuboperations))
 		{
 			commandField.set(Command::C_GET_RSP);
 		}

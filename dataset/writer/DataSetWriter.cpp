@@ -1,9 +1,8 @@
 #include <emdl/dataset/writer/DataSetWriter.h>
 #include <emdl/dataset/writer/ElementWriter.h>
 #include <emdl/Exception.h>
+#include <emdl/registry.h>
 #include <emdl/association/AssociationParameters.h>
-
-#include <odil/registry.h>
 
 #include <fstream>
 #include <sstream>
@@ -31,29 +30,29 @@ namespace emdl
 
 		// Build file meta information
 		Value::Binaries::value_type::vector_type version = {0x00, 0x01};
-		metaInformation.set(odil::registry::FileMetaInformationVersion, Value::Binaries({version}));
+		metaInformation.set(registry::FileMetaInformationVersion, Value::Binaries({version}));
 
-		const auto& sopClassUID = dataSet[odil::registry::SOPClassUID];
+		const auto& sopClassUID = dataSet[registry::SOPClassUID];
 		if (!sopClassUID)
 			throw Exception("{} Missing SOP Class UID", LOG_POSITION);
 		if (!sopClassUID->isString())
 			throw Exception("{} SOP Class UID is not a string", LOG_POSITION);
 		if (sopClassUID->asString().empty())
 			throw Exception("{} Empty SOP Class UID", LOG_POSITION);
-		metaInformation.set(odil::registry::MediaStorageSOPClassUID, *sopClassUID);
+		metaInformation.set(registry::MediaStorageSOPClassUID, *sopClassUID);
 
-		const auto& sopInstanceUID = dataSet[odil::registry::SOPInstanceUID];
+		const auto& sopInstanceUID = dataSet[registry::SOPInstanceUID];
 		if (!sopInstanceUID)
 			throw Exception("{} Missing SOP Instance UID", LOG_POSITION);
 		if (!sopInstanceUID->isString())
 			throw Exception("{} SOP Instance UID is not a string", LOG_POSITION);
 		if (sopInstanceUID->asString().empty())
 			throw Exception("{} Empty SOP Instance UID", LOG_POSITION);
-		metaInformation.set(odil::registry::MediaStorageSOPInstanceUID, *sopInstanceUID);
+		metaInformation.set(registry::MediaStorageSOPInstanceUID, *sopInstanceUID);
 
-		metaInformation.set(odil::registry::TransferSyntaxUID, {getTransferSyntaxUID(dataSet.transferSyntax())});
-		metaInformation.set(odil::registry::ImplementationClassUID, {emdl::defaultImplementationClassUid});
-		metaInformation.set(odil::registry::ImplementationVersionName, {emdl::defaultImplementationVersionName});
+		metaInformation.set(registry::TransferSyntaxUID, {getTransferSyntaxUID(dataSet.transferSyntax())});
+		metaInformation.set(registry::ImplementationClassUID, {emdl::defaultImplementationClassUid});
+		metaInformation.set(registry::ImplementationVersionName, {emdl::defaultImplementationVersionName});
 
 		static const auto preamble = std::vector<char>(128, 0);
 		out.write(preamble.data(), 128);
@@ -83,7 +82,7 @@ namespace emdl
 			// So we write the elements to a temporary buffer first
 			if (group.group == 0 || group.group == 2)
 			{
-				writeTag(odil::Tag(group.group, 0)); // Group length tag
+				writeTag(Tag(group.group, 0)); // Group length tag
 
 				// Write a dummy value
 				const auto lenPos = m_stream.tellp();
@@ -128,7 +127,7 @@ namespace emdl
 			if (!fastWrite || dataSet.isModified(tes))
 			{
 				// Copy the tag
-				m_stream.write(reinterpret_cast<const char*>(&tes.tag), sizeof(odil::Tag));
+				m_stream.write(reinterpret_cast<const char*>(&tes.tag), sizeof(Tag));
 
 				// Use the ElementWriter to write the value
 				writeElement(dataSet.getElement(tes));

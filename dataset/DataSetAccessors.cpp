@@ -18,32 +18,32 @@ namespace emdl
 		return container[position];
 	}
 
-	bool isInt(const DataSet& dataSet, odil::Tag tag)
+	bool isInt(const DataSet& dataSet, Tag tag)
 	{
 		return dataSet[tag]->isInt();
 	}
 
-	const Value::Integers& asInt(const DataSet& dataSet, odil::Tag tag)
+	const Value::Integers& asInt(const DataSet& dataSet, Tag tag)
 	{
 		return dataSet[tag]->asInt();
 	}
 
-	Value::Integers& asInt(DataSet& dataSet, odil::Tag tag)
+	Value::Integers& asInt(DataSet& dataSet, Tag tag)
 	{
 		return dataSet[tag]->asInt();
 	}
 
-	const Value::Integer& asInt(const DataSet& dataSet, odil::Tag tag, size_t position)
+	const Value::Integer& asInt(const DataSet& dataSet, Tag tag, size_t position)
 	{
 		return atPos(asInt(dataSet, tag), position);
 	}
 
-	Value::Integer& asInt(DataSet& dataSet, odil::Tag tag, size_t position)
+	Value::Integer& asInt(DataSet& dataSet, Tag tag, size_t position)
 	{
 		return atPos(asInt(dataSet, tag), position);
 	}
 
-	boost::optional<const Value::Integer&> firstInt(const DataSet& dataSet, odil::Tag tag)
+	boost::optional<const Value::Integer&> firstInt(const DataSet& dataSet, Tag tag)
 	{
 		const auto elt = dataSet[tag];
 		if (elt && !elt->empty())
@@ -51,7 +51,7 @@ namespace emdl
 		return {};
 	}
 
-	const Value::Integers& intList(const DataSet& dataSet, odil::Tag tag)
+	const Value::Integers& intList(const DataSet& dataSet, Tag tag)
 	{
 		const auto elt = dataSet[tag];
 		if (elt)
@@ -62,32 +62,32 @@ namespace emdl
 
 	/*****************************************************************************/
 
-	bool isReal(const DataSet& dataSet, odil::Tag tag)
+	bool isReal(const DataSet& dataSet, Tag tag)
 	{
 		return dataSet[tag]->isReal();
 	}
 
-	const Value::Reals& asReal(const DataSet& dataSet, odil::Tag tag)
+	const Value::Reals& asReal(const DataSet& dataSet, Tag tag)
 	{
 		return dataSet[tag]->asReal();
 	}
 
-	Value::Reals& asReal(DataSet& dataSet, odil::Tag tag)
+	Value::Reals& asReal(DataSet& dataSet, Tag tag)
 	{
 		return dataSet[tag]->asReal();
 	}
 
-	const Value::Real& asReal(const DataSet& dataSet, odil::Tag tag, size_t position)
+	const Value::Real& asReal(const DataSet& dataSet, Tag tag, size_t position)
 	{
 		return atPos(asReal(dataSet, tag), position);
 	}
 
-	Value::Real& asReal(DataSet& dataSet, odil::Tag tag, size_t position)
+	Value::Real& asReal(DataSet& dataSet, Tag tag, size_t position)
 	{
 		return atPos(asReal(dataSet, tag), position);
 	}
 
-	boost::optional<const Value::Real&> firstReal(const DataSet& dataSet, odil::Tag tag)
+	boost::optional<const Value::Real&> firstReal(const DataSet& dataSet, Tag tag)
 	{
 		const auto elt = dataSet[tag];
 		if (elt && !elt->empty())
@@ -95,7 +95,7 @@ namespace emdl
 		return {};
 	}
 
-	const Value::Reals& realList(const DataSet& dataSet, odil::Tag tag)
+	const Value::Reals& realList(const DataSet& dataSet, Tag tag)
 	{
 		const auto elt = dataSet[tag];
 		if (elt)
@@ -106,32 +106,32 @@ namespace emdl
 
 	/*****************************************************************************/
 
-	bool isString(const DataSet& dataSet, odil::Tag tag)
+	bool isString(const DataSet& dataSet, Tag tag)
 	{
 		return dataSet[tag]->isString();
 	}
 
-	const Value::Strings& asString(const DataSet& dataSet, odil::Tag tag)
+	const Value::Strings& asString(const DataSet& dataSet, Tag tag)
 	{
 		return dataSet[tag]->asString();
 	}
 
-	Value::Strings& asString(DataSet& dataSet, odil::Tag tag)
+	Value::Strings& asString(DataSet& dataSet, Tag tag)
 	{
 		return dataSet[tag]->asString();
 	}
 
-	const Value::String& asString(const DataSet& dataSet, odil::Tag tag, size_t position)
+	const Value::String& asString(const DataSet& dataSet, Tag tag, size_t position)
 	{
 		return atPos(asString(dataSet, tag), position);
 	}
 
-	Value::String& asString(DataSet& dataSet, odil::Tag tag, size_t position)
+	Value::String& asString(DataSet& dataSet, Tag tag, size_t position)
 	{
 		return atPos(asString(dataSet, tag), position);
 	}
 
-	boost::optional<const Value::String&> firstString(const DataSet& dataSet, odil::Tag tag)
+	boost::optional<const Value::String&> firstString(const DataSet& dataSet, Tag tag)
 	{
 		const auto elt = dataSet[tag];
 		if (elt && !elt->empty())
@@ -139,7 +139,7 @@ namespace emdl
 		return {};
 	}
 
-	const Value::Strings& stringList(const DataSet& dataSet, odil::Tag tag)
+	const Value::Strings& stringList(const DataSet& dataSet, Tag tag)
 	{
 		const auto elt = dataSet[tag];
 		if (elt)
@@ -150,32 +150,32 @@ namespace emdl
 
 	/*****************************************************************************/
 
-	bool isDataSet(const DataSet& dataSet, odil::Tag tag)
+	bool isDataSet(const DataSet& dataSet, Tag tag)
 	{
 		return dataSet[tag]->isDataSet();
 	}
 
-	const Value::DataSets& asDataSet(const DataSet& dataSet, odil::Tag tag)
+	const Value::DataSets& asDataSet(const DataSet& dataSet, Tag tag)
 	{
 		return dataSet[tag]->asDataSet();
 	}
 
-	Value::DataSets& asDataSet(DataSet& dataSet, odil::Tag tag)
+	Value::DataSets& asDataSet(DataSet& dataSet, Tag tag)
 	{
 		return dataSet[tag]->asDataSet();
 	}
 
-	const DataSet& asDataSet(const DataSet& dataSet, odil::Tag tag, size_t position)
+	const DataSet& asDataSet(const DataSet& dataSet, Tag tag, size_t position)
 	{
 		return atPos(asDataSet(dataSet, tag), position);
 	}
 
-	DataSet& asDataSet(DataSet& dataSet, odil::Tag tag, size_t position)
+	DataSet& asDataSet(DataSet& dataSet, Tag tag, size_t position)
 	{
 		return atPos(asDataSet(dataSet, tag), position);
 	}
 
-	boost::optional<const DataSet&> firstDataSet(const DataSet& dataSet, odil::Tag tag)
+	boost::optional<const DataSet&> firstDataSet(const DataSet& dataSet, Tag tag)
 	{
 		const auto elt = dataSet[tag];
 		if (elt && !elt->empty())
@@ -183,7 +183,7 @@ namespace emdl
 		return {};
 	}
 
-	const Value::DataSets& dataSetList(const DataSet& dataSet, odil::Tag tag)
+	const Value::DataSets& dataSetList(const DataSet& dataSet, Tag tag)
 	{
 		const auto elt = dataSet[tag];
 		if (elt)
@@ -194,32 +194,32 @@ namespace emdl
 
 	/*****************************************************************************/
 
-	bool isBinary(const DataSet& dataSet, odil::Tag tag)
+	bool isBinary(const DataSet& dataSet, Tag tag)
 	{
 		return dataSet[tag]->isBinary();
 	}
 
-	const Value::Binaries& asBinary(const DataSet& dataSet, odil::Tag tag)
+	const Value::Binaries& asBinary(const DataSet& dataSet, Tag tag)
 	{
 		return dataSet[tag]->asBinary();
 	}
 
-	Value::Binaries& asBinary(DataSet& dataSet, odil::Tag tag)
+	Value::Binaries& asBinary(DataSet& dataSet, Tag tag)
 	{
 		return dataSet[tag]->asBinary();
 	}
 
-	const Value::Binaries::value_type& asBinary(const DataSet& dataSet, odil::Tag tag, size_t position)
+	const Value::Binaries::value_type& asBinary(const DataSet& dataSet, Tag tag, size_t position)
 	{
 		return atPos(asBinary(dataSet, tag), position);
 	}
 
-	Value::Binaries::value_type& asBinary(DataSet& dataSet, odil::Tag tag, size_t position)
+	Value::Binaries::value_type& asBinary(DataSet& dataSet, Tag tag, size_t position)
 	{
 		return atPos(asBinary(dataSet, tag), position);
 	}
 
-	boost::optional<const Value::Binaries::value_type&> firstBinary(const DataSet& dataSet, odil::Tag tag)
+	boost::optional<const Value::Binaries::value_type&> firstBinary(const DataSet& dataSet, Tag tag)
 	{
 		const auto elt = dataSet[tag];
 		if (elt && !elt->empty())
@@ -227,7 +227,7 @@ namespace emdl
 		return {};
 	}
 
-	const Value::Binaries& binaryList(const DataSet& dataSet, odil::Tag tag)
+	const Value::Binaries& binaryList(const DataSet& dataSet, Tag tag)
 	{
 		const auto elt = dataSet[tag];
 		if (elt)

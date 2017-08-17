@@ -1,9 +1,8 @@
 #include <emdl/dataset/VRFinder.h>
 #include <emdl/dataset/DataSet.h>
 #include <emdl/dataset/DataSetAccessors.h>
-
-#include <odil/ElementsDictionary.h>
-#include <odil/registry.h>
+#include <emdl/registry.h>
+#include <emdl/TagsDictionary.h>
 
 #include <algorithm>
 
@@ -17,21 +16,21 @@ namespace
 	{
 		static const GroupVRList groups = [] {
 			GroupVRList groups;
-			for (const auto& elt : odil::registry::public_dictionary)
+			for (const auto& elt : emdl::registry::getPublicDictionary())
 			{
-				if (elt.first.get_type() != odil::ElementsDictionaryKey::Type::Tag)
+				if (elt.first.type() != emdl::TagsDictionaryKey::Type::Tag)
 					continue;
 
-				const auto& tag = elt.first.get_tag();
-				if (tag == odil::registry::Item
-					|| tag == odil::registry::ItemDelimitationItem
-					|| tag == odil::registry::SequenceDelimitationItem)
+				const auto tag = elt.first.tag();
+				if (tag == emdl::registry::Item
+					|| tag == emdl::registry::ItemDelimitationItem
+					|| tag == emdl::registry::SequenceDelimitationItem)
 					continue;
 
 				emdl::VR vr = emdl::VR::Unknown;
 				try
 				{
-					vr = emdl::asVr(elt.second.vr.substr(0, 2));
+					vr = emdl::asVr(std::string{elt.second.vr}.substr(0, 2));
 				} // HACK: only take the first VR when there are two or more (better to have something than not)
 				catch (...)
 				{
@@ -39,7 +38,7 @@ namespace
 				}
 
 				// Find the group
-				auto grIt = std::lower_bound(groups.begin(), groups.end(), tag, [](const GroupPair& lhs, const odil::Tag& rhs) {
+				auto grIt = std::lower_bound(groups.begin(), groups.end(), tag, [](const GroupPair& lhs, const emdl::Tag rhs) {
 					return lhs.first < rhs.group;
 				});
 
@@ -53,7 +52,7 @@ namespace
 
 				// Find where to insert the element
 				auto& elements = grIt->second;
-				auto elIt = std::lower_bound(elements.begin(), elements.end(), tag, [](const ElementVRPair& lhs, const odil::Tag& rhs) {
+				auto elIt = std::lower_bound(elements.begin(), elements.end(), tag, [](const ElementVRPair& lhs, const emdl::Tag rhs) {
 					return lhs.first < rhs.element;
 				});
 
@@ -74,9 +73,9 @@ namespace
 	{
 		static const StringVRList strings = [] {
 			StringVRList strings;
-			for (const auto& elt : odil::registry::public_dictionary)
+			for (const auto& elt : emdl::registry::getPublicDictionary())
 			{
-				if (elt.first.get_type() == odil::ElementsDictionaryKey::Type::String)
+				if (elt.first.type() == emdl::TagsDictionaryKey::Type::String)
 				{
 					emdl::VR vr = emdl::VR::Unknown;
 					try
@@ -86,7 +85,7 @@ namespace
 					catch (...)
 					{
 					}
-					strings.emplace_back(elt.first.get_string(), vr);
+					strings.emplace_back(elt.first.string(), vr);
 				}
 			}
 
@@ -99,13 +98,13 @@ namespace
 		return strings;
 	}
 
-	emdl::VR publicDictionary(const odil::Tag& tag)
+	emdl::VR publicDictionary(const emdl::Tag tag)
 	{
 		const auto& groups = publicDictionnary_tags();
 		auto grIt = std::find_if(groups.begin(), groups.end(), [&tag](const GroupPair& g) {
 			return g.first == tag.group;
 		});
-		/*	auto grIt = std::lower_bound(groups.begin(), groups.end(), tag, [](const GroupPair& lhs, const odil::Tag& rhs) {
+		/*	auto grIt = std::lower_bound(groups.begin(), groups.end(), tag, [](const GroupPair& lhs, const Tag& rhs) {
 			return lhs.first < rhs.group;
 		});
 		*/
@@ -115,7 +114,7 @@ namespace
 			/*	auto elIt = std::find_if(elements.begin(), elements.end(), [&tag](const ElementVRPair& e) {
 				return e.first == tag.element;
 			});*/
-			auto elIt = std::lower_bound(elements.begin(), elements.end(), tag, [](const ElementVRPair& lhs, const odil::Tag& rhs) {
+			auto elIt = std::lower_bound(elements.begin(), elements.end(), tag, [](const ElementVRPair& lhs, const emdl::Tag rhs) {
 				return lhs.first < rhs.element;
 			});
 
@@ -136,7 +135,7 @@ namespace
 		return emdl::VR::UN;
 	}
 
-	emdl::VR groupLength(const odil::Tag& tag, const emdl::DataSet&, emdl::TransferSyntax)
+	emdl::VR groupLength(const emdl::Tag tag, const emdl::DataSet&, emdl::TransferSyntax)
 	{
 		if (tag.element == 0)
 			return emdl::VR::UL;
@@ -144,7 +143,7 @@ namespace
 		return emdl::VR::Unknown;
 	}
 
-	emdl::VR privateTag(const odil::Tag& tag, const emdl::DataSet&, emdl::TransferSyntax)
+	emdl::VR privateTag(const emdl::Tag tag, const emdl::DataSet&, emdl::TransferSyntax)
 	{
 		if (tag.group % 2 == 1)
 			return emdl::VR::UN;
@@ -152,89 +151,91 @@ namespace
 		return emdl::VR::Unknown;
 	}
 
-	emdl::VR implicitVRLittleEndian(const odil::Tag& tag, const emdl::DataSet& dataSet, emdl::TransferSyntax transferSyntax)
+	emdl::VR implicitVRLittleEndian(const emdl::Tag tag, const emdl::DataSet& dataSet, emdl::TransferSyntax transferSyntax)
 	{
 		if (transferSyntax != emdl::TransferSyntax::ImplicitVRLittleEndian)
 			return emdl::VR::Unknown;
 
-		if (tag == odil::registry::PixelData)
+		namespace reg = emdl::registry;
+		if (tag == reg::PixelData)
 			return emdl::VR::OW;
 		else if ((tag.group >> 8) == 0x60 && tag.element == 0x3000)
 			return emdl::VR::OW;
-		else if (tag == odil::registry::WaveformData)
+		else if (tag == reg::WaveformData)
 			return emdl::VR::OW;
-		else if (tag == odil::registry::RedPaletteColorLookupTableData
-				 || tag == odil::registry::GreenPaletteColorLookupTableData
-				 || tag == odil::registry::BluePaletteColorLookupTableData
-				 || tag == odil::registry::AlphaPaletteColorLookupTableData)
+		else if (tag == reg::RedPaletteColorLookupTableData
+				 || tag == reg::GreenPaletteColorLookupTableData
+				 || tag == reg::BluePaletteColorLookupTableData
+				 || tag == reg::AlphaPaletteColorLookupTableData)
 			return emdl::VR::OW;
-		else if (tag == odil::registry::SegmentedRedPaletteColorLookupTableData
-				 || tag == odil::registry::SegmentedGreenPaletteColorLookupTableData
-				 || tag == odil::registry::SegmentedBluePaletteColorLookupTableData)
+		else if (tag == reg::SegmentedRedPaletteColorLookupTableData
+				 || tag == reg::SegmentedGreenPaletteColorLookupTableData
+				 || tag == reg::SegmentedBluePaletteColorLookupTableData)
 			return emdl::VR::OW;
-		else if (tag == odil::registry::BlendingLookupTableData)
+		else if (tag == reg::BlendingLookupTableData)
 			return emdl::VR::OW;
-		else if (tag == odil::registry::VertexPointIndexList
-				 || tag == odil::registry::EdgePointIndexList
-				 || tag == odil::registry::TrianglePointIndexList
-				 || tag == odil::registry::PrimitivePointIndexList)
+		else if (tag == reg::VertexPointIndexList
+				 || tag == reg::EdgePointIndexList
+				 || tag == reg::TrianglePointIndexList
+				 || tag == reg::PrimitivePointIndexList)
 			return emdl::VR::OW;
-		else if (tag == odil::registry::SmallestImagePixelValue
-				 || tag == odil::registry::LargestImagePixelValue
-				 || tag == odil::registry::SmallestPixelValueInSeries
-				 || tag == odil::registry::LargestPixelValueInSeries
-				 || tag == odil::registry::PixelPaddingValue)
+		else if (tag == reg::SmallestImagePixelValue
+				 || tag == reg::LargestImagePixelValue
+				 || tag == reg::SmallestPixelValueInSeries
+				 || tag == reg::LargestPixelValueInSeries
+				 || tag == reg::PixelPaddingValue)
 		{
-			if (!dataSet.has(odil::registry::PixelRepresentation))
+			if (!dataSet.has(reg::PixelRepresentation))
 				throw std::exception("Cannot find VR without PixelRepresentation");
-			const auto pixelRepresentation = asInt(dataSet, odil::registry::PixelRepresentation, 0);
+			const auto pixelRepresentation = asInt(dataSet, reg::PixelRepresentation, 0);
 			return pixelRepresentation ? emdl::VR::SS : emdl::VR::US;
 		}
 		else
 			return emdl::VR::Unknown;
 	}
 
-	emdl::VR explicitVRLittleEndian(const odil::Tag& tag, const emdl::DataSet& dataSet, emdl::TransferSyntax transferSyntax)
+	emdl::VR explicitVRLittleEndian(const emdl::Tag tag, const emdl::DataSet& dataSet, emdl::TransferSyntax transferSyntax)
 	{
 		if (transferSyntax != emdl::TransferSyntax::ExplicitVRLittleEndian)
 			return emdl::VR::Unknown;
 
-		if (tag == odil::registry::PixelData)
+		namespace reg = emdl::registry;
+		if (tag == reg::PixelData)
 		{
-			if (!dataSet.has(odil::registry::BitsAllocated))
+			if (!dataSet.has(reg::BitsAllocated))
 				throw std::exception("Cannot find VR without BitsAllocated");
-			auto const& bits_allocated = asInt(dataSet, odil::registry::BitsAllocated, 0);
+			auto const& bits_allocated = asInt(dataSet, reg::BitsAllocated, 0);
 			return (bits_allocated <= 8) ? emdl::VR::OB : emdl::VR::OW;
 		}
 		else if ((tag.group >> 8) == 0x60 && tag.element == 0x3000)
 			return emdl::VR::OW;
-		else if (tag == odil::registry::WaveformData)
+		else if (tag == reg::WaveformData)
 			return emdl::VR::OW;
-		else if (tag == odil::registry::RedPaletteColorLookupTableData
-				 || tag == odil::registry::GreenPaletteColorLookupTableData
-				 || tag == odil::registry::BluePaletteColorLookupTableData
-				 || tag == odil::registry::AlphaPaletteColorLookupTableData)
+		else if (tag == reg::RedPaletteColorLookupTableData
+				 || tag == reg::GreenPaletteColorLookupTableData
+				 || tag == reg::BluePaletteColorLookupTableData
+				 || tag == reg::AlphaPaletteColorLookupTableData)
 			return emdl::VR::OW;
-		else if (tag == odil::registry::SegmentedRedPaletteColorLookupTableData
-				 || tag == odil::registry::SegmentedGreenPaletteColorLookupTableData
-				 || tag == odil::registry::SegmentedBluePaletteColorLookupTableData)
+		else if (tag == reg::SegmentedRedPaletteColorLookupTableData
+				 || tag == reg::SegmentedGreenPaletteColorLookupTableData
+				 || tag == reg::SegmentedBluePaletteColorLookupTableData)
 			return emdl::VR::OW;
-		else if (tag == odil::registry::BlendingLookupTableData)
+		else if (tag == reg::BlendingLookupTableData)
 			return emdl::VR::OW;
-		else if (tag == odil::registry::VertexPointIndexList
-				 || tag == odil::registry::EdgePointIndexList
-				 || tag == odil::registry::TrianglePointIndexList
-				 || tag == odil::registry::PrimitivePointIndexList)
+		else if (tag == reg::VertexPointIndexList
+				 || tag == reg::EdgePointIndexList
+				 || tag == reg::TrianglePointIndexList
+				 || tag == reg::PrimitivePointIndexList)
 			return emdl::VR::OW;
-		else if (tag == odil::registry::SmallestImagePixelValue
-				 || tag == odil::registry::LargestImagePixelValue
-				 || tag == odil::registry::SmallestPixelValueInSeries
-				 || tag == odil::registry::LargestPixelValueInSeries
-				 || tag == odil::registry::PixelPaddingValue)
+		else if (tag == reg::SmallestImagePixelValue
+				 || tag == reg::LargestImagePixelValue
+				 || tag == reg::SmallestPixelValueInSeries
+				 || tag == reg::LargestPixelValueInSeries
+				 || tag == reg::PixelPaddingValue)
 		{
-			if (!dataSet.has(odil::registry::PixelRepresentation))
+			if (!dataSet.has(reg::PixelRepresentation))
 				throw std::exception("Cannot find VR without PixelRepresentation");
-			const auto pixelRepresentation = asInt(dataSet, odil::registry::PixelRepresentation, 0);
+			const auto pixelRepresentation = asInt(dataSet, reg::PixelRepresentation, 0);
 			return pixelRepresentation ? emdl::VR::SS : emdl::VR::US;
 		}
 		else
@@ -244,12 +245,12 @@ namespace
 
 namespace emdl
 {
-	VR findVR(const odil::Tag& tag)
+	VR findVR(const Tag tag)
 	{
 		return publicDictionary(tag);
 	}
 
-	VR findVR(const odil::Tag& tag, const DataSet& dataSet)
+	VR findVR(const Tag tag, const DataSet& dataSet)
 	{
 		TransferSyntax transferSyntax = dataSet.transferSyntax();
 		for (const auto& func : {groupLength, privateTag, implicitVRLittleEndian, explicitVRLittleEndian})

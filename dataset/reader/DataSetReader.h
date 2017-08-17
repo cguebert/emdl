@@ -22,7 +22,7 @@ namespace emdl
 	class EMDL_API DataSetReader : public BaseReader
 	{
 	public:
-		using HaltConditionFunc = std::function<bool(const odil::Tag&)>;
+		using HaltConditionFunc = std::function<bool(const Tag&)>;
 
 		DataSetReader(const BinaryBufferSPtr& buffer, BinaryView view, TransferSyntax transferSyntax);
 		DataSetReader(const BinaryBufferSPtr& buffer, TransferSyntax transferSyntax);

@@ -1,8 +1,6 @@
 #include <emdl/dataset/DataSet.h>
 #include <emdl/dataset/reader/ElementReader.h>
 
-#include <odil/registry.h>
-
 namespace emdl
 {
 	const uint32_t DataSet::TagElementStruct::npos = static_cast<uint32_t>(-1);
@@ -19,7 +17,7 @@ namespace emdl
 	{
 	}
 
-	bool DataSet::has(const odil::Tag& tag) const
+	bool DataSet::has(const Tag& tag) const
 	{
 		auto itG = std::find_if(m_groups.begin(), m_groups.end(), [tag](const Group& g) {
 			return tag.group == g.group;
@@ -35,7 +33,7 @@ namespace emdl
 		return itE != elements.end();
 	}
 
-	void DataSet::set(const odil::Tag& tag, VR vr)
+	void DataSet::set(const Tag& tag, VR vr)
 	{
 		if (vr == VR::Unknown)
 			vr = findVR(tag);
@@ -43,24 +41,24 @@ namespace emdl
 		getPreparedElement(edit(tag)) = {true, Element{vr}};
 	}
 
-	void DataSet::set(const odil::Tag& tag, BinaryView view)
+	void DataSet::set(const Tag& tag, BinaryView view)
 	{
 		auto& tes = edit(tag);
 		tes.pos = view.data() - m_view.data();
 		tes.size = view.size();
 	}
 
-	void DataSet::set(const odil::Tag& tag, const Element& element)
+	void DataSet::set(const Tag& tag, const Element& element)
 	{
 		getPreparedElement(edit(tag)) = {true, element};
 	}
 
-	void DataSet::set(const odil::Tag& tag, Element&& element)
+	void DataSet::set(const Tag& tag, Element&& element)
 	{
 		getPreparedElement(edit(tag)) = {true, std::move(element)};
 	}
 
-	void DataSet::remove(const odil::Tag& tag)
+	void DataSet::remove(const Tag& tag)
 	{
 		auto itG = std::find_if(m_groups.begin(), m_groups.end(), [tag](const Group& g) {
 			return tag.group == g.group;
@@ -82,7 +80,7 @@ namespace emdl
 			m_groups.erase(itG);
 	}
 
-	boost::optional<Element&> DataSet::write(const odil::Tag& tag)
+	boost::optional<Element&> DataSet::write(const Tag& tag)
 	{
 		auto tes = find(tag);
 		if (!tes)
@@ -90,12 +88,12 @@ namespace emdl
 		return getElement(*tes);
 	}
 
-	boost::optional<Element&> DataSet::operator[](const odil::Tag& tag)
+	boost::optional<Element&> DataSet::operator[](const Tag& tag)
 	{
 		return write(tag);
 	}
 
-	boost::optional<const Element&> DataSet::read(const odil::Tag& tag) const
+	boost::optional<const Element&> DataSet::read(const Tag& tag) const
 	{
 		auto tes = find(tag);
 		if (!tes)
@@ -103,7 +101,7 @@ namespace emdl
 		return getElement(*tes);
 	}
 
-	boost::optional<const Element&> DataSet::operator[](const odil::Tag& tag) const
+	boost::optional<const Element&> DataSet::operator[](const Tag& tag) const
 	{
 		return read(tag);
 	}
@@ -157,7 +155,7 @@ namespace emdl
 		return m_groups;
 	}
 
-	const DataSet::TagElementStruct* DataSet::find(const odil::Tag& tag) const
+	const DataSet::TagElementStruct* DataSet::find(const Tag& tag) const
 	{
 		auto itG = std::find_if(m_groups.begin(), m_groups.end(), [tag](const Group& g) {
 			return tag.group == g.group;
@@ -175,7 +173,7 @@ namespace emdl
 		return &(*itE);
 	}
 
-	DataSet::TagElementStruct& DataSet::edit(const odil::Tag& tag)
+	DataSet::TagElementStruct& DataSet::edit(const Tag& tag)
 	{
 		auto itG = std::lower_bound(m_groups.begin(), m_groups.end(), tag.group, [](const Group& g, uint16_t id) {
 			return g.group < id;
@@ -257,7 +255,7 @@ namespace emdl
 		return m_preparedElements[tes.preparedIndex].first;
 	}
 
-	boost::optional<BinaryView> DataSet::getView(const odil::Tag& tag) const
+	boost::optional<BinaryView> DataSet::getView(const Tag& tag) const
 	{
 		auto tes = find(tag);
 		if (tes)
@@ -278,11 +276,11 @@ namespace emdl
 	{
 	}
 
-	odil::Tag DataSet::iterator_value::tag() const
+	Tag DataSet::iterator_value::tag() const
 	{
 		if (!m_element)
 			throw std::exception("Use of an invalid DataSet::iterator_value, trying to call tag()");
-		return odil::Tag(m_element->tag);
+		return Tag(m_element->tag);
 	}
 
 	const Element& DataSet::iterator_value::element() const

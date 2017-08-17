@@ -1,7 +1,7 @@
 #include <emdl/dataset/reader/DataSetReader.h>
 #include <emdl/Exception.h>
+#include <emdl/registry.h>
 
-#include <odil/registry.h>
 #include <fstream>
 
 namespace emdl
@@ -75,11 +75,11 @@ namespace emdl
 			throw std::exception("Unexpected prefix in DataSetReader::readFile");
 
 		// Read meta information
-		const auto metaInfoDataSet = metaInfoReader.readDataSet([](const odil::Tag& tag) {
+		const auto metaInfoDataSet = metaInfoReader.readDataSet([](const Tag& tag) {
 			return (tag.group != 0x0002);
 		});
 
-		const auto transferSyntaxElt = metaInfoDataSet[odil::registry::TransferSyntaxUID];
+		const auto transferSyntaxElt = metaInfoDataSet[registry::TransferSyntaxUID];
 		if (!transferSyntaxElt)
 			throw std::exception("Missing Transfer Syntax UID");
 		if (!transferSyntaxElt->isString())
@@ -165,9 +165,9 @@ namespace emdl
 			while (!eof())
 			{
 				const auto tag = readTag();
-				if (tag == odil::registry::Item)
+				if (tag == registry::Item)
 					ignoreItem();
-				else if (tag == odil::registry::SequenceDelimitationItem)
+				else if (tag == registry::SequenceDelimitationItem)
 				{
 					ignore(4);
 					break;
@@ -187,8 +187,8 @@ namespace emdl
 		const auto itemLength = read<uint32_t>();
 		if (itemLength == 0xFFFFFFFF)
 		{
-			readDataSet([](const odil::Tag& tag) {
-				return tag == odil::registry::ItemDelimitationItem;
+			readDataSet([](const Tag& tag) {
+				return tag == registry::ItemDelimitationItem;
 			});
 			ignore(8);
 		}

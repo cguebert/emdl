@@ -28,23 +28,23 @@ namespace emdl
 		explicit DataSet(const BinaryBufferSPtr& buffer, BinaryView view, TransferSyntax transferSyntax = TransferSyntax::ExplicitVRLittleEndian);
 
 		//! Test whether an element is in the data set.
-		bool has(const odil::Tag& tag) const;
+		bool has(const Tag& tag) const;
 
 		//! Add an element to the data set, or reset it if already in the data set. The type of the value created depends on the VR.
-		void set(const odil::Tag& tag, VR vr = VR::Unknown);
+		void set(const Tag& tag, VR vr = VR::Unknown);
 
 		//! Add an element to the data set using a pointer in the raw buffer, or assign it if already in the data set
-		void set(const odil::Tag& tag, BinaryView view);
+		void set(const Tag& tag, BinaryView view);
 
 		//! Add an element to the data set, or assign it if already in the data set
-		void set(const odil::Tag& tag, const Element& element);
+		void set(const Tag& tag, const Element& element);
 
 		//! Add an element to the data set, or assign it if already in the data set
-		void set(const odil::Tag& tag, Element&& element);
+		void set(const Tag& tag, Element&& element);
 
 		//! Add an element to the data set using a value, or assign it if already in the data set
 		template <class T>
-		void set(const odil::Tag& tag, const std::initializer_list<T>& value, VR vr = VR::Unknown)
+		void set(const Tag& tag, const std::initializer_list<T>& value, VR vr = VR::Unknown)
 		{
 			if (vr == VR::Unknown)
 				vr = findVR(tag);
@@ -53,7 +53,7 @@ namespace emdl
 
 		//! Add an element to the data set using a value, or assign it if already in the data set
 		template <class T>
-		void set(const odil::Tag& tag, const std::vector<T>& value, VR vr = VR::Unknown)
+		void set(const Tag& tag, const std::vector<T>& value, VR vr = VR::Unknown)
 		{
 			if (vr == VR::Unknown)
 				vr = findVR(tag);
@@ -62,7 +62,7 @@ namespace emdl
 
 		//! Add an element to the data set using a value, or assign it if already in the data set
 		template <class T>
-		void set(const odil::Tag& tag, std::vector<T>&& value, VR vr = VR::Unknown)
+		void set(const Tag& tag, std::vector<T>&& value, VR vr = VR::Unknown)
 		{
 			if (vr == VR::Unknown)
 				vr = findVR(tag);
@@ -70,13 +70,13 @@ namespace emdl
 		}
 
 		//! Remove an element from the data set (does nothing if not present)
-		void remove(const odil::Tag& tag);
+		void remove(const Tag& tag);
 
 		//! Return the element at the given tag, or empty if is not in the data set
-		boost::optional<Element&> operator[](const odil::Tag& tag);
+		boost::optional<Element&> operator[](const Tag& tag);
 
 		//! Return the element at the given tag, or empty if is not in the data set
-		boost::optional<const Element&> operator[](const odil::Tag& tag) const;
+		boost::optional<const Element&> operator[](const Tag& tag) const;
 
 		//! Return the current transfer syntax.
 		TransferSyntax transferSyntax() const;
@@ -102,7 +102,7 @@ namespace emdl
 		// This stores a pointer to the raw buffer, or a index into the prepard elements
 		struct TagElementStruct
 		{
-			odil::Tag tag; // Dicom tag
+			Tag tag; // Dicom tag
 			mutable uint32_t preparedIndex = static_cast<uint32_t>(-1); // If not -1, this is the index of the value to use for this tag
 			size_t pos = 0, size = 0; // Position and size of the whole element in the buffer
 
@@ -125,7 +125,7 @@ namespace emdl
 			iterator_value();
 			iterator_value(const DataSet* dataSet, const TagElementStruct* element);
 
-			odil::Tag tag() const;
+			Tag tag() const;
 			const Element& element() const;
 			BinaryView view() const;
 
@@ -186,7 +186,7 @@ namespace emdl
 		bool isModified(const TagElementStruct& tes) const;
 
 		// Get the raw buffer corresponding to the element at this tag
-		boost::optional<BinaryView> getView(const odil::Tag& tag) const;
+		boost::optional<BinaryView> getView(const Tag& tag) const;
 
 	private:
 		friend class iterator_value;
@@ -195,11 +195,11 @@ namespace emdl
 		using PreparedElement = std::pair<bool, Element>; // The bool tells if the element has been modified from the value in the buffer
 		using PreparedElements = std::deque<PreparedElement>; // Using a deque, so that pointers are never invalidated
 
-		const TagElementStruct* find(const odil::Tag& tag) const; // Return null if is not present
-		TagElementStruct& edit(const odil::Tag& tag); // Create the element if is not present
+		const TagElementStruct* find(const Tag& tag) const; // Return null if is not present
+		TagElementStruct& edit(const Tag& tag); // Create the element if is not present
 
-		boost::optional<Element&> write(const odil::Tag& tag); // Does not create the element, just gives a write access to it if present
-		boost::optional<const Element&> read(const odil::Tag& tag) const; // Gives a read only access to the element if present
+		boost::optional<Element&> write(const Tag& tag); // Does not create the element, just gives a write access to it if present
+		boost::optional<const Element&> read(const Tag& tag) const; // Gives a read only access to the element if present
 
 		const Element& getElement(const TagElementStruct& tes, bool modified) const; // Get the element (parse it from the buffer if necessary), and set the modified flag
 		PreparedElement& getPreparedElement(const TagElementStruct& tes) const; // Access to the prepared element (does not parse the view if we create the prepared element)

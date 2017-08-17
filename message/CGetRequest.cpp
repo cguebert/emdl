@@ -1,14 +1,13 @@
-#include "CGetRequest.h"
-
-#include <odil/registry.h>
+#include <emdl/message/CGetRequest.h>
+#include <emdl/registry.h>
 
 namespace emdl
 {
 	namespace message
 	{
 		CGetRequest::CGetRequest()
-			: affectedSopClass(initField(odil::registry::AffectedSOPClassUID))
-			, priority(initField(odil::registry::Priority))
+			: affectedSopClass(initField(registry::AffectedSOPClassUID))
+			, priority(initField(registry::Priority))
 		{
 			commandField.set(Command::C_GET_RQ);
 		}

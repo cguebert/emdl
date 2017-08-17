@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 3.5)
 # External dependencies
 find_package(Boost REQUIRED COMPONENTS filesystem system date_time)
 find_package(fmt REQUIRED)
-find_package(odil REQUIRED)
 
 # Target name
 set(target emdl)
@@ -46,7 +45,6 @@ target_include_directories(${target}
 # Libraries
 target_link_libraries(${target}
 	PUBLIC
-	libodil
 	Boost::date_time
 	Boost::system
 	fmt::fmt)

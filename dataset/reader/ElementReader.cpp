@@ -1,8 +1,7 @@
 #include <emdl/dataset/reader/ElementReader.h>
 #include <emdl/dataset/reader/DataSetReader.h>
 #include <emdl/Exception.h>
-
-#include <odil/registry.h>
+#include <emdl/registry.h>
 
 namespace
 {
@@ -115,7 +114,7 @@ namespace emdl
 
 	VR ElementReader::readVR(const DataSet& dataSet)
 	{
-		odil::Tag tag = readTag();
+		Tag tag = readTag();
 		VR vr = VR::Unknown;
 		if (isExplicitTS())
 			vr = asVr(readString(2));
@@ -232,7 +231,7 @@ namespace emdl
 
 			for (size_t i = 0, nb = integers.size(); i < nb; i += 2)
 			{
-				const auto tag = odil::Tag(static_cast<uint16_t>(integers[i]), static_cast<uint16_t>(integers[i + 1]));
+				const auto tag = Tag(static_cast<uint16_t>(integers[i]), static_cast<uint16_t>(integers[i + 1]));
 				result.push_back(static_cast<std::string>(tag)); // TODO: use fmt to convert the tag to a string (should be faster)
 			}
 		}
@@ -266,7 +265,7 @@ namespace emdl
 			while (offset() < end)
 			{
 				const auto tag = readTag();
-				if (tag == odil::registry::Item)
+				if (tag == registry::Item)
 					result.push_back(readItem());
 				else
 					throw Exception("{} Expected Item, got: {} at position {}", LOG_POSITION, std::string(tag), offset());
@@ -277,9 +276,9 @@ namespace emdl
 			while (!eof())
 			{
 				const auto tag = readTag();
-				if (tag == odil::registry::Item)
+				if (tag == registry::Item)
 					result.push_back(readItem());
-				else if (tag == odil::registry::SequenceDelimitationItem)
+				else if (tag == registry::SequenceDelimitationItem)
 				{
 					ignore(4);
 					break;
@@ -308,12 +307,12 @@ namespace emdl
 			auto remaining = view().size() - offset();
 			auto itemView = BinaryView{view().data() + offset(), remaining};
 			auto itemReader = DataSetReader(buffer(), itemView, transferSyntax());
-			item = itemReader.readDataSet([](const odil::Tag& tag) {
-				return tag == odil::registry::ItemDelimitationItem;
+			item = itemReader.readDataSet([](const Tag& tag) {
+				return tag == registry::ItemDelimitationItem;
 			});
 
 			auto const tag = itemReader.readTag();
-			if (tag != odil::registry::ItemDelimitationItem)
+			if (tag != registry::ItemDelimitationItem)
 				throw Exception("{} Unexpected tag: {} at position {}", LOG_POSITION, std::string(tag), offset());
 			ignore(itemReader.offset() + 4);
 		}
@@ -344,9 +343,9 @@ namespace emdl
 			const auto tag = readTag();
 			const auto itemLength = read<uint32_t>();
 
-			if (tag == odil::registry::Item)
+			if (tag == registry::Item)
 				result.emplace_back(getView(itemLength));
-			else if (tag == odil::registry::SequenceDelimitationItem)
+			else if (tag == registry::SequenceDelimitationItem)
 				break;
 			else
 				throw Exception("{} Expected SequenceDelimitationItem, got: {} at position {}", LOG_POSITION, std::string(tag), offset());

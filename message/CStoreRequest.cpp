@@ -1,17 +1,16 @@
-#include "CStoreRequest.h"
-
-#include <odil/registry.h>
+#include <emdl/message/CStoreRequest.h>
+#include <emdl/registry.h>
 
 namespace emdl
 {
 	namespace message
 	{
 		CStoreRequest::CStoreRequest()
-			: affectedSopClass(initField(odil::registry::AffectedSOPClassUID))
-			, affectedSopInstanceUid(initField(odil::registry::AffectedSOPInstanceUID))
-			, priority(initField(odil::registry::Priority))
-			, moveOriginatorAet(initField(odil::registry::MoveOriginatorApplicationEntityTitle))
-			, moveOriginatorMessageId(initField(odil::registry::MoveOriginatorMessageID))
+			: affectedSopClass(initField(registry::AffectedSOPClassUID))
+			, affectedSopInstanceUid(initField(registry::AffectedSOPInstanceUID))
+			, priority(initField(registry::Priority))
+			, moveOriginatorAet(initField(registry::MoveOriginatorApplicationEntityTitle))
+			, moveOriginatorMessageId(initField(registry::MoveOriginatorMessageID))
 		{
 			commandField.set(Command::C_STORE_RQ);
 		}

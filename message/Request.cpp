@@ -1,13 +1,12 @@
 #include <emdl/message/Request.h>
-
-#include <odil/registry.h>
+#include <emdl/registry.h>
 
 namespace emdl
 {
 	namespace message
 	{
 		Request::Request()
-			: messageId(initField(odil::registry::MessageID))
+			: messageId(initField(registry::MessageID))
 		{
 		}
 

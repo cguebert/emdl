@@ -1,15 +1,14 @@
-#include "CMoveRequest.h"
-
-#include <odil/registry.h>
+#include <emdl/message/CMoveRequest.h>
+#include <emdl/registry.h>
 
 namespace emdl
 {
 	namespace message
 	{
 		CMoveRequest::CMoveRequest()
-			: affectedSopClass(initField(odil::registry::AffectedSOPClassUID))
-			, priority(initField(odil::registry::Priority))
-			, moveDestination(initField(odil::registry::MoveDestination))
+			: affectedSopClass(initField(registry::AffectedSOPClassUID))
+			, priority(initField(registry::Priority))
+			, moveDestination(initField(registry::MoveDestination))
 		{
 			commandField.set(Command::C_MOVE_RQ);
 		}

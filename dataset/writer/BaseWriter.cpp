@@ -1,6 +1,6 @@
 #include <emdl/dataset/writer/BaseWriter.h>
+#include <emdl/Tag.h>
 
-#include <odil/Tag.h>
 #include <fstream>
 
 namespace emdl
@@ -22,7 +22,7 @@ namespace emdl
 		return m_itemEncoding;
 	}
 
-	void BaseWriter::writeTag(const odil::Tag& tag) const
+	void BaseWriter::writeTag(const Tag tag) const
 	{
 		write(tag.group);
 		write(tag.element);

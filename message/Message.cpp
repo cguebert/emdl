@@ -1,40 +1,38 @@
 #include <emdl/message/Message.h>
-
 #include <emdl/Exception.h>
+#include <emdl/registry.h>
 #include <emdl/dataset/DataSetAccessors.h>
 #include <emdl/dataset/reader/DataSetReader.h>
 
 #include <boost/container/flat_map.hpp>
-#include <odil/registry.h>
-
-namespace reg = odil::registry;
 
 namespace emdl
 {
+	namespace reg = registry;
 	namespace message
 	{
 		Message::Message()
-			: commandField(initField(odil::registry::CommandField))
+			: commandField(initField(registry::CommandField))
 		{
 			m_commandSet.set(reg::CommandDataSetType, {static_cast<int64_t>(DataSetType::ABSENT)}, VR::US);
 		}
 
 		Message::Message(const DataSet& commandSet)
-			: commandField(initField(odil::registry::CommandField))
+			: commandField(initField(registry::CommandField))
 			, m_commandSet(commandSet)
 		{
 			m_commandSet.set(reg::CommandDataSetType, {static_cast<int64_t>(DataSetType::ABSENT)}, VR::US);
 		}
 
 		Message::Message(DataSet&& commandSet)
-			: commandField(initField(odil::registry::CommandField))
+			: commandField(initField(registry::CommandField))
 			, m_commandSet(std::move(commandSet))
 		{
 			m_commandSet.set(reg::CommandDataSetType, {static_cast<int64_t>(DataSetType::ABSENT)}, VR::US);
 		}
 
 		Message::Message(const DataSet& commandSet, const DataSet& dataSet)
-			: commandField(initField(odil::registry::CommandField))
+			: commandField(initField(registry::CommandField))
 			, m_commandSet(commandSet)
 			, m_dataSet(dataSet)
 		{
@@ -42,7 +40,7 @@ namespace emdl
 		}
 
 		Message::Message(DataSet&& commandSet, DataSet&& dataSet)
-			: commandField(initField(odil::registry::CommandField))
+			: commandField(initField(registry::CommandField))
 			, m_commandSet(std::move(commandSet))
 			, m_dataSet(std::move(dataSet))
 		{
@@ -50,7 +48,7 @@ namespace emdl
 		}
 
 		Message::Message(const DataSet& commandSet, const BinaryBufferSPtr& dataBuffer, TransferSyntax transferSyntax)
-			: commandField(initField(odil::registry::CommandField))
+			: commandField(initField(registry::CommandField))
 			, m_commandSet(commandSet)
 			, m_dataBuffer(dataBuffer)
 			, m_transferSyntax(transferSyntax)
@@ -59,7 +57,7 @@ namespace emdl
 		}
 
 		Message::Message(DataSet&& commandSet, const BinaryBufferSPtr& dataBuffer, TransferSyntax transferSyntax)
-			: commandField(initField(odil::registry::CommandField))
+			: commandField(initField(registry::CommandField))
 			, m_commandSet(std::move(commandSet))
 			, m_dataBuffer(dataBuffer)
 			, m_transferSyntax(transferSyntax)
@@ -122,7 +120,7 @@ namespace emdl
 			return m_dataBuffer;
 		}
 
-		BaseField::BaseInitField Message::initField(odil::Tag tag)
+		BaseField::BaseInitField Message::initField(Tag tag)
 		{
 			return BaseField::BaseInitField(tag, *this, m_commandSet);
 		}

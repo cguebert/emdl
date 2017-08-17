@@ -1,14 +1,13 @@
-#include "CFindResponse.h"
-
-#include <odil/registry.h>
+#include <emdl/message/CFindResponse.h>
+#include <emdl/registry.h>
 
 namespace emdl
 {
 	namespace message
 	{
 		CFindResponse::CFindResponse()
-			: messageId(initField(odil::registry::MessageID))
-			, affectedSopClass(initField(odil::registry::AffectedSOPClassUID))
+			: messageId(initField(registry::MessageID))
+			, affectedSopClass(initField(registry::AffectedSOPClassUID))
 		{
 			commandField.set(Command::C_FIND_RSP);
 		}

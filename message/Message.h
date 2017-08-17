@@ -150,11 +150,11 @@ namespace emdl
 			void copyFromMessage(const Message& message, Value::Integer commandField, DataSetRequirement dataSetRequired);
 
 			//! Helper function to set the owner of a Field as this object, which will automatically add the Field to the list
-			BaseField::BaseInitField initField(odil::Tag tag);
+			BaseField::BaseInitField initField(Tag tag);
 
 			//! Templated version of initField which accepts an initial value (otherwise the value is default constructed)
 			template <class T>
-			typename BaseField::InitField<T> initField(odil::Tag tag, const T& value)
+			typename BaseField::InitField<T> initField(Tag tag, const T& value)
 			{
 				return BaseField::InitField<T>(tag, value, *this, m_commandSet);
 			}

@@ -1,11 +1,6 @@
 #include <emdl/pdu/Object.h>
 #include <emdl/Exception.h>
 
-#include <boost/container/flat_map.hpp>
-#include <odil/registry.h>
-
-namespace reg = odil::registry;
-
 namespace emdl
 {
 	namespace pdu

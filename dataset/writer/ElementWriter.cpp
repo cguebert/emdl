@@ -2,8 +2,7 @@
 #include <emdl/dataset/writer/DataSetWriter.h>
 #include <emdl/dataset/writer/writeDS.h>
 #include <emdl/Exception.h>
-
-#include <odil/registry.h>
+#include <emdl/registry.h>
 
 #include <sstream>
 
@@ -221,7 +220,7 @@ namespace emdl
 			Value::Integers integers;
 			for (const auto& string : value)
 			{
-				const odil::Tag tag(string);
+				const Tag tag(string);
 				integers.push_back(tag.group);
 				integers.push_back(tag.element);
 			}
@@ -238,7 +237,7 @@ namespace emdl
 		for (const auto& item : value)
 		{
 			// Start of item
-			writeTag(odil::registry::Item);
+			writeTag(registry::Item);
 
 			// Item length
 			const auto lenPos = m_stream.tellp();
@@ -251,7 +250,7 @@ namespace emdl
 
 			if (undefinedlength)
 			{ // End of item
-				writeTag(odil::registry::ItemDelimitationItem);
+				writeTag(registry::ItemDelimitationItem);
 				write<uint32_t>(0);
 			}
 			else
@@ -268,7 +267,7 @@ namespace emdl
 		// End of item
 		if (undefinedlength)
 		{
-			writeTag(odil::registry::SequenceDelimitationItem);
+			writeTag(registry::SequenceDelimitationItem);
 			write<uint32_t>(0);
 		}
 	}
@@ -295,7 +294,7 @@ namespace emdl
 	{
 		for (const auto& fragment : value)
 		{
-			writeTag(odil::registry::Item);
+			writeTag(registry::Item);
 			const uint32_t length = static_cast<uint32_t>(fragment.size());
 			write(length);
 
@@ -306,7 +305,7 @@ namespace emdl
 			}
 		}
 
-		writeTag(odil::registry::SequenceDelimitationItem);
+		writeTag(registry::SequenceDelimitationItem);
 		write<uint32_t>(0);
 		TEST_STREAM
 	}

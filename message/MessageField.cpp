@@ -11,7 +11,7 @@ namespace emdl
 			init.registerField(*this);
 		}
 
-		odil::Tag BaseField::tag() const
+		Tag BaseField::tag() const
 		{
 			return m_tag;
 		}

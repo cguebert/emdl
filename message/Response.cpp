@@ -1,11 +1,9 @@
 #include <emdl/message/Response.h>
-
-#include <odil/registry.h>
-
-namespace reg = odil::registry;
+#include <emdl/registry.h>
 
 namespace emdl
 {
+	namespace reg = registry;
 	namespace message
 	{
 		bool Response::isPending(Value::Integer status)

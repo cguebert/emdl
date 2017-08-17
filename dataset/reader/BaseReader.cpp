@@ -60,9 +60,9 @@ namespace emdl
 		m_offset += offset;
 	}
 
-	odil::Tag BaseReader::readTag()
+	Tag BaseReader::readTag()
 	{
-		odil::Tag tag;
+		Tag tag;
 		(*this) >> tag.group;
 		(*this) >> tag.element;
 		return tag;
