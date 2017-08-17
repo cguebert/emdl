@@ -1,9 +1,9 @@
 #include <emdl/dataset/ElementWriter.h>
 #include <emdl/dataset/DataSetWriter.h>
+#include <emdl/dataset/writeDS.h>
 #include <emdl/Exception.h>
 
 #include <odil/registry.h>
-#include <odil/write_ds.h>
 
 #include <sstream>
 
@@ -189,7 +189,7 @@ namespace emdl
 				// Each item in the DS is at most 16 bytes, account for NULL at end
 				static const unsigned int buffer_size = 16 + 1;
 				static char buffer[buffer_size];
-				odil::write_ds(item, buffer, buffer_size);
+				writeDS(item, buffer, buffer_size);
 				const auto length = strlen(buffer);
 
 				m_stream.write(buffer, length);
