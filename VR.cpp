@@ -1,4 +1,4 @@
-#include <emdl/dataset/VR.h>
+#include <emdl/VR.h>
 #include <emdl/Exception.h>
 
 #include <boost/container/flat_map.hpp>

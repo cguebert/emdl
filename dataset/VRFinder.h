@@ -1,6 +1,6 @@
 #pragma once
 
-#include <emdl/dataset/VR.h>
+#include <emdl/VR.h>
 #include <emdl/Tag.h>
 
 namespace emdl

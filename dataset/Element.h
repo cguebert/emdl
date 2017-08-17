@@ -1,7 +1,7 @@
 #pragma once
 
 #include <emdl/dataset/Value.h>
-#include <emdl/dataset/VR.h>
+#include <emdl/VR.h>
 #include <emdl/Tag.h>
 
 namespace
