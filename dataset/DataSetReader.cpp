@@ -152,11 +152,11 @@ namespace emdl
 	DataSetReader::ElementInfo DataSetReader::readElement()
 	{
 		ElementInfo elt;
-		elt.vr = odil::VR::UNKNOWN;
+		elt.vr = VR::Unknown;
 		elt.length = 0;
 
 		if (isExplicitTS())
-			elt.vr = odil::as_vr(readString(2));
+			elt.vr = asVr(readString(2));
 
 		elt.length = readLength(elt.vr);
 

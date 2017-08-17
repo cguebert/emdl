@@ -87,7 +87,7 @@ namespace emdl
 
 				// Write a dummy value
 				const auto lenPos = m_stream.tellp();
-				writeElement(Element(Value::Integers({0}), odil::VR::UL));
+				writeElement(Element(Value::Integers({0}), VR::UL));
 
 				// Write the entire group
 				const auto startPos = m_stream.tellp();
@@ -101,7 +101,7 @@ namespace emdl
 				// Update the length
 				const auto groupLength = endPos - startPos; // Compute the length of the group
 				m_stream.seekp(lenPos); // Go back to the length tag
-				writeElement(Element(Value::Integers({groupLength}), odil::VR::UL)); // Overwrite the length tag
+				writeElement(Element(Value::Integers({groupLength}), VR::UL)); // Overwrite the length tag
 				m_stream.seekp(endPos); // Go back to the end position (could also do a seekp(0, std::ios_bacse::end);)
 
 				TEST_STREAM

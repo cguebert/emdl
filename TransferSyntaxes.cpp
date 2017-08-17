@@ -72,7 +72,7 @@ namespace emdl
 	TransferSyntax getTransferSyntax(const std::string& uid)
 	{
 		const auto& tsm = getTransferSyntaxMap();
-		auto it = tsm.find(uid);
+		const auto it = tsm.find(uid);
 		if (it != tsm.end())
 			return it->second;
 		return TransferSyntax::Unknown;

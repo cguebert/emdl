@@ -31,7 +31,7 @@ namespace emdl
 		bool has(const odil::Tag& tag) const;
 
 		//! Add an element to the data set, or reset it if already in the data set. The type of the value created depends on the VR.
-		void set(const odil::Tag& tag, odil::VR vr = odil::VR::UNKNOWN);
+		void set(const odil::Tag& tag, VR vr = VR::Unknown);
 
 		//! Add an element to the data set using a pointer in the raw buffer, or assign it if already in the data set
 		void set(const odil::Tag& tag, BinaryView view);
@@ -44,28 +44,28 @@ namespace emdl
 
 		//! Add an element to the data set using a value, or assign it if already in the data set
 		template <class T>
-		void set(const odil::Tag& tag, const std::initializer_list<T>& value, odil::VR vr = odil::VR::UNKNOWN)
+		void set(const odil::Tag& tag, const std::initializer_list<T>& value, VR vr = VR::Unknown)
 		{
-			if (vr == odil::VR::UNKNOWN)
-				vr = asVR(tag);
+			if (vr == VR::Unknown)
+				vr = findVR(tag);
 			set(tag, Element(value, vr));
 		}
 
 		//! Add an element to the data set using a value, or assign it if already in the data set
 		template <class T>
-		void set(const odil::Tag& tag, const std::vector<T>& value, odil::VR vr = odil::VR::UNKNOWN)
+		void set(const odil::Tag& tag, const std::vector<T>& value, VR vr = VR::Unknown)
 		{
-			if (vr == odil::VR::UNKNOWN)
-				vr = asVR(tag);
+			if (vr == VR::Unknown)
+				vr = findVR(tag);
 			set(tag, Element(value, vr));
 		}
 
 		//! Add an element to the data set using a value, or assign it if already in the data set
 		template <class T>
-		void set(const odil::Tag& tag, std::vector<T>&& value, odil::VR vr = odil::VR::UNKNOWN)
+		void set(const odil::Tag& tag, std::vector<T>&& value, VR vr = VR::Unknown)
 		{
-			if (vr == odil::VR::UNKNOWN)
-				vr = asVR(tag);
+			if (vr == VR::Unknown)
+				vr = findVR(tag);
 			set(tag, Element(std::move(value), vr));
 		}
 

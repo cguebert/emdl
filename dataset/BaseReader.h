@@ -1,21 +1,20 @@
 #pragma once
 
+#include <emdl/dataset/VR.h>
 #include <emdl/ArrayView.h>
 #include <emdl/Exception.h>
 #include <emdl/TransferSyntaxes.h>
 
 #include <odil/Tag.h>
-#include <odil/VR.h>
 
 #include <memory>
 
 namespace emdl
 {
-
 	using BinaryBuffer = std::vector<uint8_t>;
 	using BinaryBufferSPtr = std::shared_ptr<BinaryBuffer>;
 	using BinaryView = ArrayView<const uint8_t>;
-	
+
 	class EMDL_API BaseReader
 	{
 	public:
@@ -33,7 +32,7 @@ namespace emdl
 
 		odil::Tag readTag(); //!< Read one tag
 		std::string readString(size_t size); //!< Read one string
-		uint32_t readLength(odil::VR vr); //!< Read the length of an element
+		uint32_t readLength(VR vr); //!< Read the length of an element
 
 		//! Read one value of a specific type
 		template <class T>
@@ -54,7 +53,7 @@ namespace emdl
 
 		//! Read one value of a specific type
 		template <class T>
-		BaseReader& operator >> (T& value)
+		BaseReader& operator>>(T& value)
 		{
 			value = read<T>();
 			return *this;

@@ -1,9 +1,9 @@
 #pragma once
 
 #include <emdl/dataset/Value.h>
+#include <emdl/dataset/VR.h>
 
 #include <odil/Tag.h>
-#include <odil/VR.h>
 
 namespace
 {
@@ -19,7 +19,7 @@ namespace emdl
 	{
 	public:
 		//! Value Rrepresentation of the element
-		odil::VR vr = odil::VR::INVALID;
+		VR vr = VR::Invalid;
 
 		//! Default constructor
 		Element() = default;
@@ -31,11 +31,11 @@ namespace emdl
 		Element(Element&&) = default;
 
 		//! Create an element. The type of the value created depends on the VR.
-		Element(odil::VR vr);
+		Element(VR vr);
 
 		//! Create an element by creating, copying or moving a value
 		template <class T, std::enable_if_t<!is_element<T>, bool> = true>
-		Element(T&& value, const odil::VR& vr = odil::VR::INVALID)
+		Element(T&& value, const VR& vr = VR::Invalid)
 			: m_value(std::forward<T>(value))
 			, vr(vr)
 		{

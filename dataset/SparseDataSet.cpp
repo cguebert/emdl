@@ -35,10 +35,10 @@ namespace emdl
 		return itE != elements.end();
 	}
 
-	void SparseDataSet::set(const odil::Tag& tag, odil::VR vr)
+	void SparseDataSet::set(const odil::Tag& tag, VR vr)
 	{
-		if (vr == odil::VR::UNKNOWN)
-			vr = odil::as_vr(tag);
+		if (vr == VR::Unknown)
+			vr = findVR(tag);
 
 		getPreparedElement(edit(tag)) = {true, Element{vr}};
 	}

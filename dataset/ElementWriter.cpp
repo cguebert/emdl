@@ -45,9 +45,9 @@ namespace
 		}
 	}
 
-	bool needLargeLength(odil::VR vr)
+	bool needLargeLength(emdl::VR vr)
 	{
-		using VR = odil::VR;
+		using VR = emdl::VR;
 		return vr == VR::OB || vr == VR::OD || vr == VR::OF || vr == VR::OL || vr == VR::OW || vr == VR::SQ || vr == VR::UC || vr == VR::UR || vr == VR::UT || vr == VR::UN;
 	}
 }
@@ -67,7 +67,7 @@ namespace emdl
 		// If explicit transfer syntax, write the value representation
 		if (isExplicitTS())
 		{
-			m_stream << odil::as_string(vr);
+			m_stream << asString(vr);
 			TEST_STREAM
 		}
 
@@ -103,14 +103,13 @@ namespace emdl
 		// Overwrite the value length
 		if (isExplicitTS())
 		{
-			using VR = odil::VR;
 			if (explicitLargeLength)
 			{
 				write<uint16_t>(0);
 
 				if (vr == VR::SQ && itemEncoding() == ItemEncoding::UndefinedLength)
 					write<uint32_t>(0xffffffff);
-				else if (is_binary(vr) && element.size() > 1)
+				else if (vrType(vr) == VRType::Binary && element.size() > 1)
 					write<uint32_t>(0xffffffff);
 				else
 					write<uint32_t>(static_cast<uint32_t>(valueLength));
@@ -128,7 +127,7 @@ namespace emdl
 
 	/*****************************************************************************/
 
-	ElementWriter::WriterVisitor::WriterVisitor(std::ostream& stream, odil::VR vr, bool explicitVR, BaseWriter::ItemEncoding itemEncoding)
+	ElementWriter::WriterVisitor::WriterVisitor(std::ostream& stream, VR vr, bool explicitVR, BaseWriter::ItemEncoding itemEncoding)
 		: BaseWriter(stream, explicitVR, itemEncoding)
 		, m_vr(vr)
 	{
@@ -136,7 +135,6 @@ namespace emdl
 
 	void ElementWriter::WriterVisitor::operator()(const Value::Integers& value) const
 	{
-		using VR = odil::VR;
 		switch (m_vr)
 		{
 		case VR::IS:
@@ -165,13 +163,12 @@ namespace emdl
 			break;
 
 		default:
-			throw Exception("Cannot write {} as integers", odil::as_string(m_vr));
+			throw Exception("Cannot write {} as integers", asString(m_vr));
 		}
 	}
 
 	void ElementWriter::WriterVisitor::operator()(const Value::Reals& value) const
 	{
-		using VR = odil::VR;
 		if (m_vr == VR::DS)
 		{
 			size_t nbWritten = 0;
@@ -214,12 +211,11 @@ namespace emdl
 				write<float>(static_cast<float>(item));
 		}
 		else
-			throw Exception("Cannot write {} as reals", odil::as_string(m_vr));
+			throw Exception("Cannot write {} as reals", asString(m_vr));
 	}
 
 	void ElementWriter::WriterVisitor::operator()(const Value::Strings& value) const
 	{
-		using VR = odil::VR;
 		if (m_vr == VR::AT)
 		{
 			Value::Integers integers;
@@ -279,7 +275,6 @@ namespace emdl
 
 	void ElementWriter::WriterVisitor::operator()(const Value::Binaries& value) const
 	{
-		using VR = odil::VR;
 		if (value.empty())
 			return;
 		else if (value.size() > 1)

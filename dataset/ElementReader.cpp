@@ -59,11 +59,11 @@ namespace emdl
 
 	Element ElementReader::readElement(const SparseDataSet& dataSet)
 	{
-		odil::VR vr = readVR(dataSet); // This reads the tag and the VR
+		VR vr = readVR(dataSet); // This reads the tag and the VR
 
 		const auto length = readLength(vr);
 
-		using VR = odil::VR;
+		using VR = VR;
 		switch (vr)
 		{
 		case VR::IS:
@@ -107,27 +107,27 @@ namespace emdl
 		case VR::UN:
 			return {readBinaries(vr, length), vr};
 
-		case VR::UNKNOWN:
+		case VR::Unknown:
 		default:
 			throw Exception("{} Unknown VR at position {}", LOG_POSITION, offset());
 		}
 	}
 
-	odil::VR ElementReader::readVR(const SparseDataSet& dataSet)
+	VR ElementReader::readVR(const SparseDataSet& dataSet)
 	{
 		odil::Tag tag = readTag();
-		odil::VR vr = odil::VR::UNKNOWN;
+		VR vr = VR::Unknown;
 		if (isExplicitTS())
-			vr = odil::as_vr(readString(2));
+			vr = asVr(readString(2));
 		else
 			vr = findVR(tag, dataSet);
 		return vr;
 	}
 
-	Value::Integers ElementReader::readIntegers(odil::VR vr, uint32_t length)
+	Value::Integers ElementReader::readIntegers(VR vr, uint32_t length)
 	{
 		Value::Integers result;
-		using VR = odil::VR;
+		using VR = VR;
 		if (vr == VR::IS)
 		{
 			auto const str = readString(length);
@@ -149,7 +149,7 @@ namespace emdl
 			else if (vr == VR::AT || vr == VR::SS || vr == VR::US)
 				nb = length / 2;
 			else
-				throw Exception("Cannot read integers from {} at position {}", as_string(vr), offset());
+				throw Exception("Cannot read integers from {} at position {}", asString(vr), offset());
 
 			result.resize(nb);
 			if (vr == VR::SL)
@@ -177,10 +177,10 @@ namespace emdl
 		return result;
 	}
 
-	Value::Reals ElementReader::readReals(odil::VR vr, uint32_t length)
+	Value::Reals ElementReader::readReals(VR vr, uint32_t length)
 	{
 		Value::Reals result;
-		using VR = odil::VR;
+		using VR = VR;
 		if (vr == VR::DS)
 		{
 			auto const str = readString(length);
@@ -201,7 +201,7 @@ namespace emdl
 			else if (vr == VR::FL)
 				nb = length / 4;
 			else
-				throw Exception("Cannot read reals from {} at position {}", as_string(vr), offset());
+				throw Exception("Cannot read reals from {} at position {}", asString(vr), offset());
 
 			result.resize(nb);
 			if (vr == VR::FD)
@@ -219,10 +219,10 @@ namespace emdl
 		return result;
 	}
 
-	Value::Strings ElementReader::readStrings(odil::VR vr, uint32_t length)
+	Value::Strings ElementReader::readStrings(VR vr, uint32_t length)
 	{
 		Value::Strings result;
-		using VR = odil::VR;
+		using VR = VR;
 		if (vr == VR::AT)
 		{
 			const auto integers = readIntegers(vr, length);
@@ -255,10 +255,10 @@ namespace emdl
 		return result;
 	}
 
-	Value::DataSets ElementReader::readDataSets(odil::VR vr, uint32_t length)
+	Value::DataSets ElementReader::readDataSets(VR vr, uint32_t length)
 	{
 		Value::DataSets result;
-		using VR = odil::VR;
+		using VR = VR;
 		if (length != 0xffffffff)
 		{ // Explicit length sequence
 			const auto end = offset() + length;
@@ -321,10 +321,10 @@ namespace emdl
 		return item;
 	}
 
-	Value::Binaries ElementReader::readBinaries(odil::VR vr, uint32_t length)
+	Value::Binaries ElementReader::readBinaries(VR vr, uint32_t length)
 	{
 		Value::Binaries result;
-		using VR = odil::VR;
+		using VR = VR;
 		if (length == 0)
 			return result;
 		else if (length == 0xffffffff)

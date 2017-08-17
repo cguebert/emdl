@@ -38,19 +38,19 @@ namespace
 
 namespace emdl
 {
-	Element::Element(odil::VR vr)
+	Element::Element(VR vr)
 		: vr(vr)
 	{
-		if (odil::is_int(vr))
-			m_value = Value::Integers();
-		else if (odil::is_real(vr))
-			m_value = Value::Reals();
-		else if (odil::is_string(vr))
-			m_value = Value::Strings();
-		else if (odil::is_binary(vr))
-			m_value = Value::Binaries();
-		else if (vr == odil::VR::SQ)
-			m_value = Value::DataSets();
+		// clang-format off
+		switch (vrType(vr))
+		{
+		case VRType::Int:     m_value = Value::Integers(); break;
+		case VRType::Real:    m_value = Value::Reals();    break;
+		case VRType::String:  m_value = Value::Strings();  break;
+		case VRType::Binary:  m_value = Value::Binaries(); break;
+		case VRType::Dataset: m_value = Value::DataSets(); break;
+		}
+		// clang-format on
 	}
 
 	bool Element::empty() const

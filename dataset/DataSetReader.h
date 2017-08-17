@@ -37,7 +37,7 @@ namespace emdl
 		struct ElementInfo
 		{
 			uint32_t length;
-			odil::VR vr;
+			VR vr;
 		};
 		ElementInfo readElement();
 		void ignoreItem();

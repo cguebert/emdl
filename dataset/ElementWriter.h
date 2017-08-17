@@ -22,7 +22,7 @@ namespace emdl
 		public:
 			using result_type = void;
 
-			WriterVisitor(std::ostream& stream, odil::VR vr, bool explicitTS, ItemEncoding itemEncoding);
+			WriterVisitor(std::ostream& stream, VR vr, bool explicitTS, ItemEncoding itemEncoding);
 
 			void operator()(const boost::blank& value) const {}
 			void operator()(const Value::Integers& value) const;
@@ -34,7 +34,7 @@ namespace emdl
 		private:
 			void writeEncapsulatedPixelData(const Value::Binaries& value) const;
 
-			const odil::VR m_vr;
+			const VR m_vr;
 		};
 	};
 }

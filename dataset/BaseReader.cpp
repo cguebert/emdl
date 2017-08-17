@@ -81,22 +81,22 @@ namespace emdl
 		return value;
 	}
 
-	uint32_t BaseReader::readLength(odil::VR vr)
+	uint32_t BaseReader::readLength(VR vr)
 	{
 		if (m_explicit)
 		{
 			switch (vr)
 			{
-			case odil::VR::OB:
-			case odil::VR::OD:
-			case odil::VR::OF:
-			case odil::VR::OL:
-			case odil::VR::OW:
-			case odil::VR::SQ:
-			case odil::VR::UC:
-			case odil::VR::UR:
-			case odil::VR::UT:
-			case odil::VR::UN:
+			case VR::OB:
+			case VR::OD:
+			case VR::OF:
+			case VR::OL:
+			case VR::OW:
+			case VR::SQ:
+			case VR::UC:
+			case VR::UR:
+			case VR::UT:
+			case VR::UN:
 			{
 				ignore(2);
 				uint32_t length = 0;

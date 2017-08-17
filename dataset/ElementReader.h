@@ -2,9 +2,9 @@
 
 #include <emdl/dataset/BaseReader.h>
 #include <emdl/dataset/SparseDataSet.h>
+#include <emdl/dataset/VR.h>
 
 #include <odil/Tag.h>
-#include <odil/VR.h>
 
 #include <istream>
 
@@ -21,14 +21,14 @@ namespace emdl
 		Element readElement(const SparseDataSet& dataSet = SparseDataSet{});
 
 		//! Read only the VR of an element, or try to guess it for implicit transfer syntaxes.
-		odil::VR readVR(const SparseDataSet& dataSet = SparseDataSet{});
+		VR readVR(const SparseDataSet& dataSet = SparseDataSet{});
 
 	protected:
-		Value::Integers readIntegers(odil::VR vr, uint32_t length);
-		Value::Reals readReals(odil::VR vr, uint32_t length);
-		Value::Strings readStrings(odil::VR vr, uint32_t length);
-		Value::DataSets readDataSets(odil::VR vr, uint32_t length);
-		Value::Binaries readBinaries(odil::VR vr, uint32_t length);
+		Value::Integers readIntegers(VR vr, uint32_t length);
+		Value::Reals readReals(VR vr, uint32_t length);
+		Value::Strings readStrings(VR vr, uint32_t length);
+		Value::DataSets readDataSets(VR vr, uint32_t length);
+		Value::Binaries readBinaries(VR vr, uint32_t length);
 
 		SparseDataSet readItem();
 		Value::Binaries readEncapsulatedPixelData();
