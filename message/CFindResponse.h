@@ -25,7 +25,7 @@ namespace emdl
 			CFindResponse(Value::Integer messageIdBeingRespondedTo, Value::Integer status);
 
 			//! Create a find response with given Message ID, status, and data set.
-			CFindResponse(Value::Integer messageIdBeingRespondedTo, Value::Integer status, const SparseDataSet& dataSet);
+			CFindResponse(Value::Integer messageIdBeingRespondedTo, Value::Integer status, const DataSet& dataSet);
 
 			//! Create a C-FIND-RSP from a generic Message.
 			CFindResponse(const Message& message);

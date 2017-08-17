@@ -1,25 +1,25 @@
-#include <emdl/dataset/SparseDataSet.h>
+#include <emdl/dataset/DataSet.h>
 #include <emdl/dataset/reader/ElementReader.h>
 
 #include <odil/registry.h>
 
 namespace emdl
 {
-	const uint32_t SparseDataSet::TagElementStruct::npos = static_cast<uint32_t>(-1);
+	const uint32_t DataSet::TagElementStruct::npos = static_cast<uint32_t>(-1);
 
-	SparseDataSet::SparseDataSet(TransferSyntax transferSyntax)
+	DataSet::DataSet(TransferSyntax transferSyntax)
 		: m_transferSyntax(transferSyntax)
 	{
 	}
 
-	SparseDataSet::SparseDataSet(const BinaryBufferSPtr& buffer, BinaryView view, TransferSyntax transferSyntax)
+	DataSet::DataSet(const BinaryBufferSPtr& buffer, BinaryView view, TransferSyntax transferSyntax)
 		: m_buffer(buffer)
 		, m_view(view)
 		, m_transferSyntax(transferSyntax)
 	{
 	}
 
-	bool SparseDataSet::has(const odil::Tag& tag) const
+	bool DataSet::has(const odil::Tag& tag) const
 	{
 		auto itG = std::find_if(m_groups.begin(), m_groups.end(), [tag](const Group& g) {
 			return tag.group == g.group;
@@ -35,7 +35,7 @@ namespace emdl
 		return itE != elements.end();
 	}
 
-	void SparseDataSet::set(const odil::Tag& tag, VR vr)
+	void DataSet::set(const odil::Tag& tag, VR vr)
 	{
 		if (vr == VR::Unknown)
 			vr = findVR(tag);
@@ -43,24 +43,24 @@ namespace emdl
 		getPreparedElement(edit(tag)) = {true, Element{vr}};
 	}
 
-	void SparseDataSet::set(const odil::Tag& tag, BinaryView view)
+	void DataSet::set(const odil::Tag& tag, BinaryView view)
 	{
 		auto& tes = edit(tag);
 		tes.pos = view.data() - m_view.data();
 		tes.size = view.size();
 	}
 
-	void SparseDataSet::set(const odil::Tag& tag, const Element& element)
+	void DataSet::set(const odil::Tag& tag, const Element& element)
 	{
 		getPreparedElement(edit(tag)) = {true, element};
 	}
 
-	void SparseDataSet::set(const odil::Tag& tag, Element&& element)
+	void DataSet::set(const odil::Tag& tag, Element&& element)
 	{
 		getPreparedElement(edit(tag)) = {true, std::move(element)};
 	}
 
-	void SparseDataSet::remove(const odil::Tag& tag)
+	void DataSet::remove(const odil::Tag& tag)
 	{
 		auto itG = std::find_if(m_groups.begin(), m_groups.end(), [tag](const Group& g) {
 			return tag.group == g.group;
@@ -82,7 +82,7 @@ namespace emdl
 			m_groups.erase(itG);
 	}
 
-	boost::optional<Element&> SparseDataSet::write(const odil::Tag& tag)
+	boost::optional<Element&> DataSet::write(const odil::Tag& tag)
 	{
 		auto tes = find(tag);
 		if (!tes)
@@ -90,12 +90,12 @@ namespace emdl
 		return getElement(*tes);
 	}
 
-	boost::optional<Element&> SparseDataSet::operator[](const odil::Tag& tag)
+	boost::optional<Element&> DataSet::operator[](const odil::Tag& tag)
 	{
 		return write(tag);
 	}
 
-	boost::optional<const Element&> SparseDataSet::read(const odil::Tag& tag) const
+	boost::optional<const Element&> DataSet::read(const odil::Tag& tag) const
 	{
 		auto tes = find(tag);
 		if (!tes)
@@ -103,61 +103,61 @@ namespace emdl
 		return getElement(*tes);
 	}
 
-	boost::optional<const Element&> SparseDataSet::operator[](const odil::Tag& tag) const
+	boost::optional<const Element&> DataSet::operator[](const odil::Tag& tag) const
 	{
 		return read(tag);
 	}
 
-	TransferSyntax SparseDataSet::transferSyntax() const
+	TransferSyntax DataSet::transferSyntax() const
 	{
 		return m_transferSyntax;
 	}
 
-	void SparseDataSet::setTransferSyntax(TransferSyntax transferSyntax)
+	void DataSet::setTransferSyntax(TransferSyntax transferSyntax)
 	{
 		m_transferSyntax = transferSyntax;
 	}
 
-	bool SparseDataSet::modified() const
+	bool DataSet::modified() const
 	{
 		return m_modified;
 	}
 
-	BinaryView SparseDataSet::view() const
+	BinaryView DataSet::view() const
 	{
 		return m_view;
 	}
 
-	bool SparseDataSet::empty() const
+	bool DataSet::empty() const
 	{
 		return m_groups.empty();
 	}
 
-	void SparseDataSet::updateViewSize(size_t size)
+	void DataSet::updateViewSize(size_t size)
 	{
 		m_view = BinaryView(m_view.data(), size);
 	}
 
-	SparseDataSet::const_iterator SparseDataSet::begin() const
+	DataSet::const_iterator DataSet::begin() const
 	{
 		if (m_groups.empty())
 			return const_iterator(this, m_groups.begin(), {});
 		return const_iterator(this, m_groups.begin(), m_groups.front().elements.begin());
 	}
 
-	SparseDataSet::const_iterator SparseDataSet::end() const
+	DataSet::const_iterator DataSet::end() const
 	{
 		if (m_groups.empty())
 			return const_iterator(this, m_groups.end(), {});
 		return const_iterator(this, m_groups.end() - 1, m_groups.back().elements.end());
 	}
 
-	const SparseDataSet::Groups& SparseDataSet::getGroups() const
+	const DataSet::Groups& DataSet::getGroups() const
 	{
 		return m_groups;
 	}
 
-	const SparseDataSet::TagElementStruct* SparseDataSet::find(const odil::Tag& tag) const
+	const DataSet::TagElementStruct* DataSet::find(const odil::Tag& tag) const
 	{
 		auto itG = std::find_if(m_groups.begin(), m_groups.end(), [tag](const Group& g) {
 			return tag.group == g.group;
@@ -175,7 +175,7 @@ namespace emdl
 		return &(*itE);
 	}
 
-	SparseDataSet::TagElementStruct& SparseDataSet::edit(const odil::Tag& tag)
+	DataSet::TagElementStruct& DataSet::edit(const odil::Tag& tag)
 	{
 		auto itG = std::lower_bound(m_groups.begin(), m_groups.end(), tag.group, [](const Group& g, uint16_t id) {
 			return g.group < id;
@@ -208,19 +208,19 @@ namespace emdl
 		}
 	}
 
-	Element& SparseDataSet::getElement(const TagElementStruct& tes)
+	Element& DataSet::getElement(const TagElementStruct& tes)
 	{
 		m_modified = true;
 
-		return const_cast<Element&>(const_cast<const SparseDataSet*>(this)->getElement(tes, true));
+		return const_cast<Element&>(const_cast<const DataSet*>(this)->getElement(tes, true));
 	}
 
-	const Element& SparseDataSet::getElement(const TagElementStruct& tes) const
+	const Element& DataSet::getElement(const TagElementStruct& tes) const
 	{
 		return getElement(tes, false);
 	}
 
-	const Element& SparseDataSet::getElement(const TagElementStruct& tes, bool modified) const
+	const Element& DataSet::getElement(const TagElementStruct& tes, bool modified) const
 	{
 		// We already have a value
 		if (tes.preparedIndex != TagElementStruct::npos)
@@ -232,7 +232,7 @@ namespace emdl
 		return m_preparedElements.back().second;
 	}
 
-	SparseDataSet::PreparedElement& SparseDataSet::getPreparedElement(const TagElementStruct& tes) const
+	DataSet::PreparedElement& DataSet::getPreparedElement(const TagElementStruct& tes) const
 	{
 		// We already have a value
 		if (tes.preparedIndex != TagElementStruct::npos)
@@ -244,20 +244,20 @@ namespace emdl
 		return m_preparedElements.back();
 	}
 
-	BinaryView SparseDataSet::getView(const TagElementStruct& tes) const
+	BinaryView DataSet::getView(const TagElementStruct& tes) const
 	{
 		return {m_view.data() + tes.pos, tes.size};
 	}
 
-	bool SparseDataSet::isModified(const TagElementStruct& tes) const
+	bool DataSet::isModified(const TagElementStruct& tes) const
 	{
-		if (tes.preparedIndex == SparseDataSet::TagElementStruct::npos)
+		if (tes.preparedIndex == DataSet::TagElementStruct::npos)
 			return false;
 
 		return m_preparedElements[tes.preparedIndex].first;
 	}
 
-	boost::optional<BinaryView> SparseDataSet::getView(const odil::Tag& tag) const
+	boost::optional<BinaryView> DataSet::getView(const odil::Tag& tag) const
 	{
 		auto tes = find(tag);
 		if (tes)
@@ -268,62 +268,62 @@ namespace emdl
 
 	/*****************************************************************************/
 
-	SparseDataSet::iterator_value::iterator_value()
+	DataSet::iterator_value::iterator_value()
 	{
 	}
 
-	SparseDataSet::iterator_value::iterator_value(const SparseDataSet* dataSet, const TagElementStruct* element)
+	DataSet::iterator_value::iterator_value(const DataSet* dataSet, const TagElementStruct* element)
 		: m_dataSet(dataSet)
 		, m_element(element)
 	{
 	}
 
-	odil::Tag SparseDataSet::iterator_value::tag() const
+	odil::Tag DataSet::iterator_value::tag() const
 	{
 		if (!m_element)
-			throw std::exception("Use of an invalid SparseDataSet::iterator_value, trying to call tag()");
+			throw std::exception("Use of an invalid DataSet::iterator_value, trying to call tag()");
 		return odil::Tag(m_element->tag);
 	}
 
-	const Element& SparseDataSet::iterator_value::element() const
+	const Element& DataSet::iterator_value::element() const
 	{
 		if (!m_dataSet || !m_element)
-			throw std::exception("Use of an invalid SparseDataSet::iterator_value, trying to call element()");
+			throw std::exception("Use of an invalid DataSet::iterator_value, trying to call element()");
 		return m_dataSet->getElement(*m_element);
 	}
 
-	BinaryView SparseDataSet::iterator_value::view() const
+	BinaryView DataSet::iterator_value::view() const
 	{
 		if (!m_dataSet || !m_element)
-			throw std::exception("Use of an invalid SparseDataSet::iterator_value, trying to call view()");
+			throw std::exception("Use of an invalid DataSet::iterator_value, trying to call view()");
 		return m_dataSet->getView(*m_element);
 	}
 
 	/*****************************************************************************/
 
-	SparseDataSet::const_iterator::const_iterator()
+	DataSet::const_iterator::const_iterator()
 	{
 	}
 
-	SparseDataSet::const_iterator::const_iterator(const SparseDataSet* dataSet, groups_iterator grIt, elements_iterator elIt)
+	DataSet::const_iterator::const_iterator(const DataSet* dataSet, groups_iterator grIt, elements_iterator elIt)
 		: m_dataSet(dataSet)
 		, m_groupsIterator(grIt)
 		, m_elementsIterator(elIt)
 	{
 	}
 
-	SparseDataSet::const_iterator::reference SparseDataSet::const_iterator::operator*() const
+	DataSet::const_iterator::reference DataSet::const_iterator::operator*() const
 	{
 		if (!m_dataSet || m_groupsIterator == m_dataSet->m_groups.end())
-			throw std::exception("Deferencing an invalid SparseDataSet::const_iterator");
+			throw std::exception("Deferencing an invalid DataSet::const_iterator");
 
-		return SparseDataSet::iterator_value(m_dataSet, &(*m_elementsIterator));
+		return DataSet::iterator_value(m_dataSet, &(*m_elementsIterator));
 	}
 
-	SparseDataSet::const_iterator& SparseDataSet::const_iterator::operator++()
+	DataSet::const_iterator& DataSet::const_iterator::operator++()
 	{
 		if (!m_dataSet)
-			throw std::exception("Use of an invalid SparseDataSet::const_iterator, operator++");
+			throw std::exception("Use of an invalid DataSet::const_iterator, operator++");
 
 		if (m_groupsIterator == m_dataSet->m_groups.end()) // When there are no groups
 			return *this;
@@ -346,17 +346,17 @@ namespace emdl
 		return *this;
 	}
 
-	SparseDataSet::const_iterator SparseDataSet::const_iterator::operator++(int)
+	DataSet::const_iterator DataSet::const_iterator::operator++(int)
 	{
 		auto tmp = *this;
 		++*this;
 		return tmp;
 	}
 
-	SparseDataSet::const_iterator& SparseDataSet::const_iterator::operator--()
+	DataSet::const_iterator& DataSet::const_iterator::operator--()
 	{
 		if (!m_dataSet)
-			throw std::exception("Use of an invalid SparseDataSet::const_iterator, operator--");
+			throw std::exception("Use of an invalid DataSet::const_iterator, operator--");
 
 		if (m_groupsIterator == m_dataSet->m_groups.end()) // When there are no groups
 			return *this;
@@ -375,21 +375,21 @@ namespace emdl
 		return *this;
 	}
 
-	SparseDataSet::const_iterator SparseDataSet::const_iterator::operator--(int)
+	DataSet::const_iterator DataSet::const_iterator::operator--(int)
 	{
 		auto tmp = *this;
 		--*this;
 		return tmp;
 	}
 
-	bool SparseDataSet::const_iterator::operator==(const const_iterator& rhs) const
+	bool DataSet::const_iterator::operator==(const const_iterator& rhs) const
 	{
 		return m_dataSet == rhs.m_dataSet
 			   && m_groupsIterator == rhs.m_groupsIterator
 			   && m_elementsIterator == rhs.m_elementsIterator;
 	}
 
-	bool SparseDataSet::const_iterator::operator!=(const const_iterator& rhs) const
+	bool DataSet::const_iterator::operator!=(const const_iterator& rhs) const
 	{
 		return !(*this == rhs);
 	}

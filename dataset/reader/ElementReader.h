@@ -1,7 +1,7 @@
 #pragma once
 
 #include <emdl/dataset/reader/BaseReader.h>
-#include <emdl/dataset/SparseDataSet.h>
+#include <emdl/dataset/DataSet.h>
 #include <emdl/dataset/VR.h>
 
 #include <odil/Tag.h>
@@ -18,10 +18,10 @@ namespace emdl
 		ElementReader(const BinaryBufferSPtr& buffer, TransferSyntax transferSyntax);
 
 		//! Read an element (VR and value), try to guess the VR from the tag, the partially read data set, and its transfer syntax.
-		Element readElement(const SparseDataSet& dataSet = SparseDataSet{});
+		Element readElement(const DataSet& dataSet = DataSet{});
 
 		//! Read only the VR of an element, or try to guess it for implicit transfer syntaxes.
-		VR readVR(const SparseDataSet& dataSet = SparseDataSet{});
+		VR readVR(const DataSet& dataSet = DataSet{});
 
 	protected:
 		Value::Integers readIntegers(VR vr, uint32_t length);
@@ -30,7 +30,7 @@ namespace emdl
 		Value::DataSets readDataSets(VR vr, uint32_t length);
 		Value::Binaries readBinaries(VR vr, uint32_t length);
 
-		SparseDataSet readItem();
+		DataSet readItem();
 		Value::Binaries readEncapsulatedPixelData();
 	};
 }

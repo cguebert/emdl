@@ -57,7 +57,7 @@ namespace emdl
 	{
 	}
 
-	Element ElementReader::readElement(const SparseDataSet& dataSet)
+	Element ElementReader::readElement(const DataSet& dataSet)
 	{
 		VR vr = readVR(dataSet); // This reads the tag and the VR
 
@@ -113,7 +113,7 @@ namespace emdl
 		}
 	}
 
-	VR ElementReader::readVR(const SparseDataSet& dataSet)
+	VR ElementReader::readVR(const DataSet& dataSet)
 	{
 		odil::Tag tag = readTag();
 		VR vr = VR::Unknown;
@@ -292,11 +292,11 @@ namespace emdl
 		return result;
 	}
 
-	SparseDataSet ElementReader::readItem()
+	DataSet ElementReader::readItem()
 	{
 		const auto itemLength = read<uint32_t>();
 
-		SparseDataSet item;
+		DataSet item;
 		if (itemLength != 0xffffffff)
 		{ // Explicit length item
 			const auto itemView = getView(itemLength);

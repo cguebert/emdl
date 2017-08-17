@@ -64,7 +64,7 @@ namespace emdl
 			return Response::isFailure(status.get());
 		}
 
-		void Response::setStatusFields(const SparseDataSet& statusFields)
+		void Response::setStatusFields(const DataSet& statusFields)
 		{
 			for (const auto& tagElt : statusFields)
 				m_commandSet.set(tagElt.tag(), tagElt.element());

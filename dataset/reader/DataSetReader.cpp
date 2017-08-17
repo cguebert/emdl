@@ -58,14 +58,14 @@ namespace emdl
 		return value == "DICM";
 	}
 
-	FileSparseDataSets DataSetReader::readFile(const std::string& fileName, HaltConditionFunc func)
+	FileDataSets DataSetReader::readFile(const std::string& fileName, HaltConditionFunc func)
 	{
 		const auto buffer = createBufferFromFile(fileName);
 
 		return readFile(buffer, func);
 	}
 
-	FileSparseDataSets DataSetReader::readFile(const BinaryBufferSPtr& buffer, HaltConditionFunc func)
+	FileDataSets DataSetReader::readFile(const BinaryBufferSPtr& buffer, HaltConditionFunc func)
 	{
 		// File preamble and DICOM prefix
 		DataSetReader metaInfoReader(buffer, TransferSyntax::ExplicitVRLittleEndian);
@@ -112,9 +112,9 @@ namespace emdl
 	{
 	}
 
-	SparseDataSet DataSetReader::readDataSet()
+	DataSet DataSetReader::readDataSet()
 	{
-		SparseDataSet dataSet(buffer(), view(), transferSyntax());
+		DataSet dataSet(buffer(), view(), transferSyntax());
 		while (!eof())
 		{
 			const auto start = offset();
@@ -127,9 +127,9 @@ namespace emdl
 		return dataSet;
 	}
 
-	SparseDataSet DataSetReader::readDataSet(HaltConditionFunc haltFunc)
+	DataSet DataSetReader::readDataSet(HaltConditionFunc haltFunc)
 	{
-		SparseDataSet dataSet(buffer(), view(), transferSyntax());
+		DataSet dataSet(buffer(), view(), transferSyntax());
 		while (!eof())
 		{
 			auto start = offset();

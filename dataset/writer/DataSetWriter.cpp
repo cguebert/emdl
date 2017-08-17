@@ -24,7 +24,7 @@ namespace emdl
 	{
 	}
 
-	void DataSetWriter::writeFile(std::ostream& out, const SparseDataSet& dataSet, SparseDataSet metaInformation, ItemEncoding itemEncoding)
+	void DataSetWriter::writeFile(std::ostream& out, const DataSet& dataSet, DataSet metaInformation, ItemEncoding itemEncoding)
 	{
 		if (dataSet.transferSyntax() == TransferSyntax::Unknown)
 			throw Exception("{} Cannot save a data set with no transfer syntax", LOG_POSITION);
@@ -68,12 +68,12 @@ namespace emdl
 		DataSetWriter::writeDataSet(out, dataSet, itemEncoding);
 	}
 
-	void DataSetWriter::writeDataSet(std::ostream& out, const SparseDataSet& dataSet, ItemEncoding itemEncoding)
+	void DataSetWriter::writeDataSet(std::ostream& out, const DataSet& dataSet, ItemEncoding itemEncoding)
 	{
 		DataSetWriter{out, dataSet.transferSyntax(), itemEncoding}.writeDataSet(dataSet);
 	}
 
-	void DataSetWriter::writeDataSet(const SparseDataSet& dataSet)
+	void DataSetWriter::writeDataSet(const DataSet& dataSet)
 	{
 		bool fastWrite = (isExplicit(dataSet.transferSyntax()) == isExplicitTS());
 
@@ -114,7 +114,7 @@ namespace emdl
 		}
 	}
 
-	void DataSetWriter::writeElementStruct(const SparseDataSet& dataSet, const SparseDataSet::TagElementStruct& tes, bool fastWrite) const
+	void DataSetWriter::writeElementStruct(const DataSet& dataSet, const DataSet::TagElementStruct& tes, bool fastWrite) const
 	{
 		// No raw view for this element
 		if (!tes.size)

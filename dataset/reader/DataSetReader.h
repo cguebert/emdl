@@ -1,7 +1,7 @@
 #pragma once
 
 #include <emdl/dataset/reader/BaseReader.h>
-#include <emdl/dataset/SparseDataSet.h>
+#include <emdl/dataset/DataSet.h>
 
 #include <functional>
 
@@ -13,10 +13,10 @@ namespace emdl
 	EMDL_API bool isDicomFile(const BinaryBufferSPtr& buffer);
 	EMDL_API bool isDicomFile(const std::string& filePath); // Does not load the whole file
 
-	struct EMDL_API FileSparseDataSets
+	struct EMDL_API FileDataSets
 	{
-		SparseDataSet metaInformation;
-		SparseDataSet dataSet;
+		DataSet metaInformation;
+		DataSet dataSet;
 	};
 
 	class EMDL_API DataSetReader : public BaseReader
@@ -27,11 +27,11 @@ namespace emdl
 		DataSetReader(const BinaryBufferSPtr& buffer, BinaryView view, TransferSyntax transferSyntax);
 		DataSetReader(const BinaryBufferSPtr& buffer, TransferSyntax transferSyntax);
 
-		static FileSparseDataSets readFile(const BinaryBufferSPtr& buffer, HaltConditionFunc func = {});
-		static FileSparseDataSets readFile(const std::string& filePath, HaltConditionFunc func = {});
+		static FileDataSets readFile(const BinaryBufferSPtr& buffer, HaltConditionFunc func = {});
+		static FileDataSets readFile(const std::string& filePath, HaltConditionFunc func = {});
 
-		SparseDataSet readDataSet();
-		SparseDataSet readDataSet(HaltConditionFunc haltFunc);
+		DataSet readDataSet();
+		DataSet readDataSet(HaltConditionFunc haltFunc);
 
 	private:
 		struct ElementInfo

@@ -26,7 +26,7 @@ namespace emdl
 			CGetResponse(Value::Integer messageIdBeingRespondedTo, Value::Integer status);
 
 			//! Create a get response with given Message ID, status, and data set.
-			CGetResponse(Value::Integer messageIdBeingRespondedTo, Value::Integer status, const SparseDataSet& dataSet);
+			CGetResponse(Value::Integer messageIdBeingRespondedTo, Value::Integer status, const DataSet& dataSet);
 
 			//! Create a C-GET-RSP from a generic Message.
 			CGetResponse(const Message& message);

@@ -1,5 +1,5 @@
 #include <emdl/dataset/VRFinder.h>
-#include <emdl/dataset/SparseDataSet.h>
+#include <emdl/dataset/DataSet.h>
 #include <emdl/dataset/DataSetAccessors.h>
 
 #include <odil/ElementsDictionary.h>
@@ -136,7 +136,7 @@ namespace
 		return emdl::VR::UN;
 	}
 
-	emdl::VR groupLength(const odil::Tag& tag, const emdl::SparseDataSet&, emdl::TransferSyntax)
+	emdl::VR groupLength(const odil::Tag& tag, const emdl::DataSet&, emdl::TransferSyntax)
 	{
 		if (tag.element == 0)
 			return emdl::VR::UL;
@@ -144,7 +144,7 @@ namespace
 		return emdl::VR::Unknown;
 	}
 
-	emdl::VR privateTag(const odil::Tag& tag, const emdl::SparseDataSet&, emdl::TransferSyntax)
+	emdl::VR privateTag(const odil::Tag& tag, const emdl::DataSet&, emdl::TransferSyntax)
 	{
 		if (tag.group % 2 == 1)
 			return emdl::VR::UN;
@@ -152,7 +152,7 @@ namespace
 		return emdl::VR::Unknown;
 	}
 
-	emdl::VR implicitVRLittleEndian(const odil::Tag& tag, const emdl::SparseDataSet& dataSet, emdl::TransferSyntax transferSyntax)
+	emdl::VR implicitVRLittleEndian(const odil::Tag& tag, const emdl::DataSet& dataSet, emdl::TransferSyntax transferSyntax)
 	{
 		if (transferSyntax != emdl::TransferSyntax::ImplicitVRLittleEndian)
 			return emdl::VR::Unknown;
@@ -194,7 +194,7 @@ namespace
 			return emdl::VR::Unknown;
 	}
 
-	emdl::VR explicitVRLittleEndian(const odil::Tag& tag, const emdl::SparseDataSet& dataSet, emdl::TransferSyntax transferSyntax)
+	emdl::VR explicitVRLittleEndian(const odil::Tag& tag, const emdl::DataSet& dataSet, emdl::TransferSyntax transferSyntax)
 	{
 		if (transferSyntax != emdl::TransferSyntax::ExplicitVRLittleEndian)
 			return emdl::VR::Unknown;
@@ -249,7 +249,7 @@ namespace emdl
 		return publicDictionary(tag);
 	}
 
-	VR findVR(const odil::Tag& tag, const SparseDataSet& dataSet)
+	VR findVR(const odil::Tag& tag, const DataSet& dataSet)
 	{
 		TransferSyntax transferSyntax = dataSet.transferSyntax();
 		for (const auto& func : {groupLength, privateTag, implicitVRLittleEndian, explicitVRLittleEndian})

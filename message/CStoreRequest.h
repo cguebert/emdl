@@ -13,7 +13,7 @@ namespace emdl
 			//! Create a store request with given Message ID, affected SOP class, priority, and data set.
 			CStoreRequest(Value::Integer messageId, SOP_Class affectedSopClass,
 						  const Value::String& affectedSopInstanceUid,
-						  Value::Integer priority, const SparseDataSet& dataSet,
+						  Value::Integer priority, const DataSet& dataSet,
 						  const Value::String& moveOriginatorAet = "",
 						  Value::Integer moveOriginatorMessageId = -1);
 

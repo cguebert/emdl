@@ -19,21 +19,21 @@ namespace emdl
 			m_commandSet.set(reg::CommandDataSetType, {static_cast<int64_t>(DataSetType::ABSENT)}, VR::US);
 		}
 
-		Message::Message(const SparseDataSet& commandSet)
+		Message::Message(const DataSet& commandSet)
 			: commandField(initField(odil::registry::CommandField))
 			, m_commandSet(commandSet)
 		{
 			m_commandSet.set(reg::CommandDataSetType, {static_cast<int64_t>(DataSetType::ABSENT)}, VR::US);
 		}
 
-		Message::Message(SparseDataSet&& commandSet)
+		Message::Message(DataSet&& commandSet)
 			: commandField(initField(odil::registry::CommandField))
 			, m_commandSet(std::move(commandSet))
 		{
 			m_commandSet.set(reg::CommandDataSetType, {static_cast<int64_t>(DataSetType::ABSENT)}, VR::US);
 		}
 
-		Message::Message(const SparseDataSet& commandSet, const SparseDataSet& dataSet)
+		Message::Message(const DataSet& commandSet, const DataSet& dataSet)
 			: commandField(initField(odil::registry::CommandField))
 			, m_commandSet(commandSet)
 			, m_dataSet(dataSet)
@@ -41,7 +41,7 @@ namespace emdl
 			m_commandSet.set(reg::CommandDataSetType, {static_cast<int64_t>(DataSetType::PRESENT)}, VR::US);
 		}
 
-		Message::Message(SparseDataSet&& commandSet, SparseDataSet&& dataSet)
+		Message::Message(DataSet&& commandSet, DataSet&& dataSet)
 			: commandField(initField(odil::registry::CommandField))
 			, m_commandSet(std::move(commandSet))
 			, m_dataSet(std::move(dataSet))
@@ -49,7 +49,7 @@ namespace emdl
 			m_commandSet.set(reg::CommandDataSetType, {static_cast<int64_t>(DataSetType::PRESENT)}, VR::US);
 		}
 
-		Message::Message(const SparseDataSet& commandSet, const BinaryBufferSPtr& dataBuffer, TransferSyntax transferSyntax)
+		Message::Message(const DataSet& commandSet, const BinaryBufferSPtr& dataBuffer, TransferSyntax transferSyntax)
 			: commandField(initField(odil::registry::CommandField))
 			, m_commandSet(commandSet)
 			, m_dataBuffer(dataBuffer)
@@ -58,7 +58,7 @@ namespace emdl
 			m_commandSet.set(reg::CommandDataSetType, {static_cast<int64_t>(DataSetType::PRESENT)}, VR::US);
 		}
 
-		Message::Message(SparseDataSet&& commandSet, const BinaryBufferSPtr& dataBuffer, TransferSyntax transferSyntax)
+		Message::Message(DataSet&& commandSet, const BinaryBufferSPtr& dataBuffer, TransferSyntax transferSyntax)
 			: commandField(initField(odil::registry::CommandField))
 			, m_commandSet(std::move(commandSet))
 			, m_dataBuffer(dataBuffer)
@@ -69,12 +69,12 @@ namespace emdl
 
 		Message::~Message() = default;
 
-		const SparseDataSet& Message::commandSet() const
+		const DataSet& Message::commandSet() const
 		{
 			return m_commandSet;
 		}
 
-		SparseDataSet& Message::commandSet()
+		DataSet& Message::commandSet()
 		{
 			return m_commandSet;
 		}
@@ -84,7 +84,7 @@ namespace emdl
 			return (asInt(m_commandSet, reg::CommandDataSetType, 0) == DataSetType::PRESENT);
 		}
 
-		const SparseDataSet& Message::dataSet() const
+		const DataSet& Message::dataSet() const
 		{
 			if (!hasDataSet() || (!m_dataSet && !m_dataBuffer))
 				throw Exception("No data set in message");
@@ -93,12 +93,12 @@ namespace emdl
 			return *m_dataSet;
 		}
 
-		SparseDataSet& Message::dataSet()
+		DataSet& Message::dataSet()
 		{
-			return const_cast<SparseDataSet&>(const_cast<const Message*>(this)->dataSet());
+			return const_cast<DataSet&>(const_cast<const Message*>(this)->dataSet());
 		}
 
-		void Message::setDataSet(const SparseDataSet& dataSet)
+		void Message::setDataSet(const DataSet& dataSet)
 		{
 			m_dataSet = dataSet;
 			asInt(m_commandSet, reg::CommandDataSetType) = {DataSetType::PRESENT};

@@ -27,7 +27,7 @@ namespace emdl
 			CMoveResponse(Value::Integer messageIdBeingRespondedTo, Value::Integer status);
 
 			//! Create a move response with given Message ID, status, and data set.
-			CMoveResponse(Value::Integer messageIdBeingRespondedTo, Value::Integer status, const SparseDataSet& dataSet);
+			CMoveResponse(Value::Integer messageIdBeingRespondedTo, Value::Integer status, const DataSet& dataSet);
 
 			//! Create a C-MOVE-RSP from a generic Message.
 			CMoveResponse(const Message& message);

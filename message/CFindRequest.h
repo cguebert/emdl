@@ -11,7 +11,7 @@ namespace emdl
 		{
 		public:
 			//! Create a find request with given Message ID, affected SOP class, priority, and data set.
-			CFindRequest(Value::Integer messageId, SOP_Class affectedSopClass, Value::Integer priority, const SparseDataSet& dataSet);
+			CFindRequest(Value::Integer messageId, SOP_Class affectedSopClass, Value::Integer priority, const DataSet& dataSet);
 
 			//! Create a C-FIND-RQ from a generic Message.
 			CFindRequest(const Message& message);

@@ -11,7 +11,7 @@ namespace emdl
 		{
 		public:
 			//! Create a get request with given Message ID, affected SOP class, priority, and data set.
-			CGetRequest(Value::Integer messageId, SOP_Class affectedSopClass, Value::Integer priority, const SparseDataSet& dataSet);
+			CGetRequest(Value::Integer messageId, SOP_Class affectedSopClass, Value::Integer priority, const DataSet& dataSet);
 
 			//! Create a C-GET-RQ from a generic Message.
 			CGetRequest(const Message& message);

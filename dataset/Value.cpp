@@ -1,5 +1,5 @@
 #include <emdl/dataset/Value.h>
-#include <emdl/dataset/SparseDataSet.h>
+#include <emdl/dataset/DataSet.h>
 
 namespace emdl
 {

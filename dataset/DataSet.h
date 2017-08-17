@@ -21,11 +21,11 @@ namespace emdl
 
 	class Element;
 
-	class EMDL_API SparseDataSet
+	class EMDL_API DataSet
 	{
 	public:
-		explicit SparseDataSet(TransferSyntax transferSyntax = TransferSyntax::ExplicitVRLittleEndian);
-		explicit SparseDataSet(const BinaryBufferSPtr& buffer, BinaryView view, TransferSyntax transferSyntax = TransferSyntax::ExplicitVRLittleEndian);
+		explicit DataSet(TransferSyntax transferSyntax = TransferSyntax::ExplicitVRLittleEndian);
+		explicit DataSet(const BinaryBufferSPtr& buffer, BinaryView view, TransferSyntax transferSyntax = TransferSyntax::ExplicitVRLittleEndian);
 
 		//! Test whether an element is in the data set.
 		bool has(const odil::Tag& tag) const;
@@ -123,14 +123,14 @@ namespace emdl
 		{
 		public:
 			iterator_value();
-			iterator_value(const SparseDataSet* dataSet, const TagElementStruct* element);
+			iterator_value(const DataSet* dataSet, const TagElementStruct* element);
 
 			odil::Tag tag() const;
 			const Element& element() const;
 			BinaryView view() const;
 
 		private:
-			const SparseDataSet* m_dataSet = nullptr;
+			const DataSet* m_dataSet = nullptr;
 			const TagElementStruct* m_element = nullptr;
 		};
 
@@ -147,7 +147,7 @@ namespace emdl
 			using elements_iterator = typename TagElements::const_iterator;
 
 			const_iterator();
-			const_iterator(const SparseDataSet* dataSet, groups_iterator grIt, elements_iterator elIt);
+			const_iterator(const DataSet* dataSet, groups_iterator grIt, elements_iterator elIt);
 
 			reference operator*() const;
 
@@ -161,7 +161,7 @@ namespace emdl
 			bool operator!=(const const_iterator& rhs) const;
 
 		private:
-			const SparseDataSet* m_dataSet = nullptr;
+			const DataSet* m_dataSet = nullptr;
 			groups_iterator m_groupsIterator;
 			elements_iterator m_elementsIterator;
 		};

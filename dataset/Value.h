@@ -2,7 +2,7 @@
 
 #include <emdl/emdl_api.h>
 
-// SparseDataSet.h is not included, to break the circular inclusion. It then needs to be included each time this file is included.
+// DataSet.h is not included, to break the circular inclusion. It then needs to be included each time this file is included.
 #include <emdl/BinaryValue.h>
 
 #include <boost/variant.hpp>
@@ -16,8 +16,7 @@ namespace
 
 namespace emdl
 {
-
-	class SparseDataSet;
+	class DataSet;
 
 	//! The value of a DICOM element
 	class EMDL_API Value
@@ -43,7 +42,7 @@ namespace emdl
 		using Integers = std::vector<Integer>;
 		using Reals = std::vector<Real>;
 		using Strings = std::vector<String>;
-		using DataSets = std::vector<SparseDataSet>;
+		using DataSets = std::vector<DataSet>;
 		using Binaries = std::vector<BinaryValue>;
 
 		// Type of the variant used to store the value
@@ -53,8 +52,7 @@ namespace emdl
 			Reals,
 			Strings,
 			DataSets,
-			Binaries
-		>;
+			Binaries>;
 
 		Value() = default; //!< Build an empty value.
 
@@ -67,7 +65,9 @@ namespace emdl
 		//! Build a value from existing data
 		template <class T, std::enable_if_t<!is_value<T>, bool> = true>
 		Value(T&& value)
-			: m_value(std::forward<T>(value)) {}
+			: m_value(std::forward<T>(value))
+		{
+		}
 
 		//! Copy another value
 		Value& operator=(const Value& value) = default;
@@ -78,7 +78,10 @@ namespace emdl
 		//! Copy a value from existing data
 		template <class T>
 		std::enable_if_t<!is_value<T>, Value&> operator=(T&& value)
-		{ m_value = std::forward<T>(value); return *this; }
+		{
+			m_value = std::forward<T>(value);
+			return *this;
+		}
 
 		Type type() const; //!< Return the type store in the value.
 		bool empty() const; //!< Test whether the value is empty.
@@ -106,14 +109,17 @@ namespace emdl
 		// Apply a visitor of values
 		template <class Visitor>
 		typename Visitor::result_type applyVisitor(const Visitor& visitor) const
-		{ return boost::apply_visitor(visitor, m_value); }
+		{
+			return boost::apply_visitor(visitor, m_value);
+		}
 
 		template <class Visitor>
 		typename Visitor::result_type applyModifyingVisitor(Visitor& visitor)
-		{ return boost::apply_visitor(visitor, m_value); }
+		{
+			return boost::apply_visitor(visitor, m_value);
+		}
 
 	private:
 		ValueVariant m_value;
 	};
-
 }

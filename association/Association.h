@@ -11,7 +11,7 @@
 
 #include <emdl/TransferSyntaxes.h>
 #include <emdl/association/AssociationAcceptor.h>
-#include <emdl/dataset/SparseDataSet.h>
+#include <emdl/dataset/DataSet.h>
 #include <emdl/dul/StateMachine.h>
 #include <emdl/message/Message.h>
 
@@ -178,7 +178,7 @@ namespace emdl
 			bool receivedCommandSet = false;
 			bool receivedDataSet = false;
 			bool hasDataSet = true;
-			SparseDataSet commandSet;
+			DataSet commandSet;
 			std::stringstream commandStream, dataStream;
 			std::chrono::high_resolution_clock::time_point receptionStart;
 		};

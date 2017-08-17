@@ -15,7 +15,7 @@ namespace emdl
 						 SOP_Class affectedSopClass,
 						 Value::Integer priority,
 						 const Value::String& moveDestination,
-						 const SparseDataSet& dataSet);
+						 const DataSet& dataSet);
 
 			//! Create a C-MOVE-RQ from a generic Message.
 			CMoveRequest(const Message& message);
