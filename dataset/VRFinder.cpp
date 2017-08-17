@@ -15,9 +15,8 @@ namespace
 	using GroupVRList = std::vector<GroupPair>;
 	const GroupVRList& publicDictionnary_tags()
 	{
-		static GroupVRList groups;
-		if (groups.empty())
-		{
+		static const GroupVRList groups = [] {
+			GroupVRList groups;
 			for (const auto& elt : odil::registry::public_dictionary)
 			{
 				if (elt.first.get_type() != odil::ElementsDictionaryKey::Type::Tag)
@@ -63,7 +62,8 @@ namespace
 				e.second = vr;
 				elements.insert(elIt, e);
 			}
-		}
+			return groups;
+		}();
 
 		return groups;
 	}
@@ -72,9 +72,8 @@ namespace
 	using StringVRList = std::vector<StringVRPair>;
 	const StringVRList& publicDictionnary_strings()
 	{
-		static StringVRList strings;
-		if (strings.empty())
-		{
+		static const StringVRList strings = [] {
+			StringVRList strings;
 			for (const auto& elt : odil::registry::public_dictionary)
 			{
 				if (elt.first.get_type() == odil::ElementsDictionaryKey::Type::String)
@@ -94,7 +93,8 @@ namespace
 			std::sort(strings.begin(), strings.end(), [](const StringVRPair& lhs, const StringVRPair& rhs) {
 				return lhs.first < rhs.first;
 			});
-		}
+			return strings;
+		}();
 
 		return strings;
 	}
