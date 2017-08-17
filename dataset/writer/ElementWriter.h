@@ -1,6 +1,6 @@
 #pragma once
 
-#include <emdl/dataset/BaseWriter.h>
+#include <emdl/dataset/writer/BaseWriter.h>
 #include <emdl/dataset/Element.h>
 
 #include <ostream>

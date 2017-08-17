@@ -1,8 +1,8 @@
 #include <emdl/association/Association.h>
 #include <emdl/dul/EventData.h>
 #include <emdl/dataset/DataSetAccessors.h>
-#include <emdl/dataset/DataSetReader.h>
-#include <emdl/dataset/DataSetWriter.h>
+#include <emdl/dataset/reader/DataSetReader.h>
+#include <emdl/dataset/writer/DataSetWriter.h>
 
 #include <emdl/pdu/AAssociateAC.h>
 #include <emdl/pdu/AAssociateRQ.h>

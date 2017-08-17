@@ -1,6 +1,6 @@
-#include <emdl/dataset/ElementWriter.h>
-#include <emdl/dataset/DataSetWriter.h>
-#include <emdl/dataset/writeDS.h>
+#include <emdl/dataset/writer/ElementWriter.h>
+#include <emdl/dataset/writer/DataSetWriter.h>
+#include <emdl/dataset/writer/writeDS.h>
 #include <emdl/Exception.h>
 
 #include <odil/registry.h>
