@@ -155,7 +155,7 @@ namespace emdl
 		/// @}
 
 	private:
-		void supportCancellation(const MessageWrapperSPtr& wrapper);
+		bool isCancel(const MessageWrapperSPtr& wrapper); // Also store cancellable messages
 
 		uint16_t m_nextMessageId = 1;
 		std::shared_ptr<dul::StateMachine> m_stateMachine;
