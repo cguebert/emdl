@@ -232,7 +232,7 @@ namespace emdl
 			for (size_t i = 0, nb = integers.size(); i < nb; i += 2)
 			{
 				const auto tag = Tag(static_cast<uint16_t>(integers[i]), static_cast<uint16_t>(integers[i + 1]));
-				result.push_back(static_cast<std::string>(tag)); // TODO: use fmt to convert the tag to a string (should be faster)
+				result.push_back(asString(tag)); // TODO: use fmt to convert the tag to a string (should be faster)
 			}
 		}
 		else
@@ -268,7 +268,7 @@ namespace emdl
 				if (tag == registry::Item)
 					result.push_back(readItem());
 				else
-					throw Exception("{} Expected Item, got: {} at position {}", LOG_POSITION, std::string(tag), offset());
+					throw Exception("{} Expected Item, got: {} at position {}", LOG_POSITION, asString(tag), offset());
 			}
 		}
 		else
@@ -284,7 +284,7 @@ namespace emdl
 					break;
 				}
 				else
-					throw Exception("{} Expected SequenceDelimitationItem, got: {} at position {}", LOG_POSITION, std::string(tag), offset());
+					throw Exception("{} Expected SequenceDelimitationItem, got: {} at position {}", LOG_POSITION, asString(tag), offset());
 			}
 		}
 
@@ -313,7 +313,7 @@ namespace emdl
 
 			auto const tag = itemReader.readTag();
 			if (tag != registry::ItemDelimitationItem)
-				throw Exception("{} Unexpected tag: {} at position {}", LOG_POSITION, std::string(tag), offset());
+				throw Exception("{} Unexpected tag: {} at position {}", LOG_POSITION, asString(tag), offset());
 			ignore(itemReader.offset() + 4);
 		}
 
@@ -348,7 +348,7 @@ namespace emdl
 			else if (tag == registry::SequenceDelimitationItem)
 				break;
 			else
-				throw Exception("{} Expected SequenceDelimitationItem, got: {} at position {}", LOG_POSITION, std::string(tag), offset());
+				throw Exception("{} Expected SequenceDelimitationItem, got: {} at position {}", LOG_POSITION, asString(tag), offset());
 		}
 
 		return result;

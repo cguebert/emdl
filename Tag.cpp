@@ -49,10 +49,10 @@ namespace emdl
 		return !(*this < other);
 	}
 
-	Tag::operator std::string() const
+	std::string asString(Tag tag)
 	{
 		std::ostringstream stream;
-		stream << (*this);
+		stream << tag;
 		return stream.str();
 	}
 

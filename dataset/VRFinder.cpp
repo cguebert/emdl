@@ -122,7 +122,7 @@ namespace
 				return elIt->second;
 		}
 
-		std::string tagStr(tag);
+		auto tagStr = asString(tag);
 		tagStr[2] = tagStr[3] = 'x';
 		const auto& strings = publicDictionnary_strings();
 		const auto it2 = std::lower_bound(strings.begin(), strings.end(), tagStr, [](const StringVRPair& lhs, const std::string& rhs) {

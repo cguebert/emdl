@@ -85,7 +85,7 @@ namespace emdl
 		auto it = dictionary.find(tag);
 		if (it == dictionary.end())
 		{
-			std::string tagString(tag);
+			auto tagString = asString(tag);
 			tagString[2] = tagString[3] = 'x';
 
 			it = dictionary.find(tagString);

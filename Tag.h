@@ -24,9 +24,10 @@ namespace emdl
 		bool operator>(Tag other) const;
 		bool operator<=(Tag other) const;
 		bool operator>=(Tag other) const;
-
-		operator std::string() const; /// Convert to string
 	};
+
+	/// Convert a Tag to its string representation.
+	EMDL_API std::string asString(Tag tag);
 
 	/// Stream inserter
 	EMDL_API std::ostream& operator<<(std::ostream& stream, Tag tag);

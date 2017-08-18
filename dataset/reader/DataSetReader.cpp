@@ -173,7 +173,7 @@ namespace emdl
 					break;
 				}
 				else
-					throw Exception("{} Expected SequenceDelimitationItem, got: {} at position {}", LOG_POSITION, std::string(tag), offset());
+					throw Exception("{} Expected SequenceDelimitationItem, got: {} at position {}", LOG_POSITION, asString(tag), offset());
 			}
 		}
 		else
