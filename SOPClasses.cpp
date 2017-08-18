@@ -656,7 +656,7 @@ namespace emdl
 		return sops[index].description;
 	}
 
-	std::vector<SOP_Class> getSOPClassList()
+	const std::vector<SOP_Class>& getSOPClassList()
 	{
 		static const auto list = [] {
 			std::vector<SOP_Class> list;

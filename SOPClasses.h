@@ -7,7 +7,7 @@
 
 namespace emdl
 {
-
+	// clang-format off
 	enum class SOP_Class
 	{
 		Unknown, /// Not supported, or not recognized
@@ -263,16 +263,16 @@ namespace emdl
 		ImplantAssemblyTemplateStorage,
 		ImplantTemplateGroupStorage
 	};
+	// clang-format on
 
 	EMDL_API SOP_Class getSOPClass(const std::string& uid);
 	EMDL_API const std::string& getSOPClassUID(SOP_Class sop_class);
 	EMDL_API const std::string& getSOPClassDescription(SOP_Class sop_class);
-	EMDL_API std::vector<SOP_Class> getSOPClassList();
+	EMDL_API const std::vector<SOP_Class>& getSOPClassList();
 
 	EMDL_API bool isStorage(SOP_Class sop);
 	EMDL_API bool isImage(SOP_Class sop);
 	EMDL_API bool isStructuredReport(SOP_Class sop);
 	EMDL_API bool isPresentationState(SOP_Class sop);
 	EMDL_API bool isRetired(SOP_Class sop);
-
 }
