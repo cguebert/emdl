@@ -30,7 +30,7 @@ namespace emdl
 	EMDL_API std::string asString(VR vr);
 
 	/// Convert a string to its VR, or throw an exception.
-	EMDL_API VR asVr(const std::string& vr);
+	EMDL_API VR asVR(const std::string& vr);
 
 	/// Return the data type of the VR
 	EMDL_API VRType vrType(VR vr);

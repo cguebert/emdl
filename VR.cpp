@@ -86,7 +86,7 @@ namespace emdl
 		return getVRInfos()[static_cast<int>(vr)].name;
 	}
 
-	VR asVr(const std::string& vr)
+	VR asVR(const std::string& vr)
 	{
 		const auto& vrm = getVRMap();
 		const auto it = vrm.find(vr);

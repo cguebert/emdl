@@ -117,7 +117,7 @@ namespace emdl
 		Tag tag = readTag();
 		VR vr = VR::Unknown;
 		if (isExplicitTS())
-			vr = asVr(readString(2));
+			vr = asVR(readString(2));
 		else
 			vr = findVR(tag, dataSet);
 		return vr;

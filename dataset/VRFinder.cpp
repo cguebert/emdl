@@ -30,7 +30,7 @@ namespace
 				emdl::VR vr = emdl::VR::Unknown;
 				try
 				{
-					vr = emdl::asVr(std::string{elt.second.vr}.substr(0, 2));
+					vr = emdl::asVR(std::string{elt.second.vr}.substr(0, 2));
 				} // HACK: only take the first VR when there are two or more (better to have something than not)
 				catch (...)
 				{
@@ -80,7 +80,7 @@ namespace
 					emdl::VR vr = emdl::VR::Unknown;
 					try
 					{
-						vr = emdl::asVr(elt.second.vr);
+						vr = emdl::asVR(elt.second.vr);
 					}
 					catch (...)
 					{

@@ -156,7 +156,7 @@ namespace emdl
 		elt.length = 0;
 
 		if (isExplicitTS())
-			elt.vr = asVr(readString(2));
+			elt.vr = asVR(readString(2));
 
 		elt.length = readLength(elt.vr);
 
