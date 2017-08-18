@@ -92,7 +92,8 @@ namespace emdl
 		const auto it = vrm.find(vr);
 		if (it != vrm.end())
 			return it->second;
-		return VR::Unknown;
+
+		throw Exception("Unknown VR: " + vr);
 	}
 
 	VRType vrType(VR vr)
