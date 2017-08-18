@@ -26,9 +26,7 @@ namespace emdl
 
 		boost::asio::io_service& Transport::service()
 		{
-			if (!m_socket)
-				throw Exception("Not connected");
-			return m_socket->get_io_service();
+			return m_service;
 		}
 
 		Transport::Socket::endpoint_type Transport::remoteEndpoint() const
