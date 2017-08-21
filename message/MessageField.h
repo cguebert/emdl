@@ -130,24 +130,24 @@ namespace emdl
 		class MandatoryField : public Field<T>
 		{
 		public:
-			using value_type = typename Field::value_type;
-			using variant_type = typename Field::variant_type;
+			using value_type = typename Field<T>::value_type;
+			using variant_type = typename Field<T>::variant_type;
 
 			explicit MandatoryField(const BaseField::BaseInitField& init)
-				: Field(init)
+				: Field<T>(init)
 			{
 			}
 
 			template <class U>
 			explicit MandatoryField(const BaseField::InitField<U>& init)
-				: Field(init)
+				: Field<T>(init)
 			{
 				set(init.value);
 			}
 
 			void copyFrom(const DataSet& dataSet) override
 			{
-				details::write<variant_type>(m_dataSet, m_tag) = details::read<variant_type>(dataSet, m_tag);
+				details::write<variant_type>(BaseField::m_dataSet, BaseField::m_tag) = details::read<variant_type>(dataSet, BaseField::m_tag);
 			}
 		};
 
@@ -156,36 +156,36 @@ namespace emdl
 		class OptionalField : public Field<T>
 		{
 		public:
-			using value_type = typename Field::value_type;
-			using variant_type = typename Field::variant_type;
+			using value_type = typename Field<T>::value_type;
+			using variant_type = typename Field<T>::variant_type;
 
 			explicit OptionalField(const BaseField::BaseInitField& init)
-				: Field(init)
+				: Field<T>(init)
 			{
 			}
 
 			template <class U>
 			explicit OptionalField(const BaseField::InitField<U>& init)
-				: Field(init)
+				: Field<T>(init)
 			{
 				set(init.value);
 			}
 
 			void copyFrom(const DataSet& dataSet) override
 			{
-				auto element = dataSet[m_tag];
+				auto element = dataSet[BaseField::m_tag];
 				if (element && !element->empty()) // Copy only if non null
-					details::write<variant_type>(m_dataSet, m_tag) = details::read<variant_type>(dataSet, m_tag);
+					details::write<variant_type>(BaseField::m_dataSet, BaseField::m_tag) = details::read<variant_type>(dataSet, BaseField::m_tag);
 			}
 
 			bool isPresent() const
 			{
-				return m_dataSet.has(m_tag);
+				return BaseField::m_dataSet.has(BaseField::m_tag);
 			}
 
 			void remove()
 			{
-				return m_dataSet.remove(m_tag);
+				return BaseField::m_dataSet.remove(BaseField::m_tag);
 			}
 		};
 	}

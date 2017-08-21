@@ -58,7 +58,7 @@ namespace emdl
 
 			/// Add a list of objects (derived from BaseItem)
 			template <class U>
-			std::enable_if_t<std::is_base_of_v<BaseItem, U>> add(const std::vector<std::shared_ptr<U>>& val)
+			std::enable_if_t<std::is_base_of<BaseItem, U>::value> add(const std::vector<std::shared_ptr<U>>& val)
 			{
 				m_items.insert(m_items.end(), val.begin(), val.end());
 				updateSize();

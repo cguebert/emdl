@@ -37,8 +37,8 @@ namespace emdl
 		}
 
 		BinaryValue(BinaryValue&& other) // Move constructor
-			: m_view(other.m_view)
-			, m_data(std::move(other.m_data))
+			: m_data(std::move(other.m_data))
+			, m_view(other.m_view)
 		{
 		}
 

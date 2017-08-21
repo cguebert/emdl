@@ -34,9 +34,9 @@ namespace emdl
 			public:
 				RelatedGeneralSOPClassIdentification(const std::string& uid);
 				RelatedGeneralSOPClassIdentification(std::istream& in);
-				RelatedGeneralSOPClassIdentification(RelatedGeneralSOPClassIdentification& other);
+				RelatedGeneralSOPClassIdentification(const RelatedGeneralSOPClassIdentification& other);
 
-				RelatedGeneralSOPClassIdentification& operator=(RelatedGeneralSOPClassIdentification& other);
+				RelatedGeneralSOPClassIdentification& operator=(const RelatedGeneralSOPClassIdentification& other);
 
 				const std::string& uid() const;
 

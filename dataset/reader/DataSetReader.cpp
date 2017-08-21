@@ -72,7 +72,7 @@ namespace emdl
 		metaInfoReader.ignore(128);
 		const auto prefix = metaInfoReader.readString(4);
 		if (prefix != "DICM")
-			throw std::exception("Unexpected prefix in DataSetReader::readFile");
+			throw Exception("Unexpected prefix in DataSetReader::readFile");
 
 		// Read meta information
 		const auto metaInfoDataSet = metaInfoReader.readDataSet([](const Tag& tag) {
@@ -81,11 +81,11 @@ namespace emdl
 
 		const auto transferSyntaxElt = metaInfoDataSet[registry::TransferSyntaxUID];
 		if (!transferSyntaxElt)
-			throw std::exception("Missing Transfer Syntax UID");
+			throw Exception("Missing Transfer Syntax UID");
 		if (!transferSyntaxElt->isString())
-			throw std::exception("Transfer Syntax UID is not a string");
+			throw Exception("Transfer Syntax UID is not a string");
 		if (transferSyntaxElt->empty())
-			throw std::exception("Empty Transfer Syntax UID");
+			throw Exception("Empty Transfer Syntax UID");
 		const auto& tsStr = transferSyntaxElt->asString()[0];
 		auto ts = getTransferSyntax(tsStr);
 		if (ts == TransferSyntax::Unknown)

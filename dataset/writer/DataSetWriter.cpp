@@ -1,6 +1,5 @@
 #include <emdl/dataset/writer/DataSetWriter.h>
 #include <emdl/dataset/writer/ElementWriter.h>
-#include <emdl/Exception.h>
 #include <emdl/registry.h>
 #include <emdl/association/AssociationParameters.h>
 

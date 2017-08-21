@@ -7,11 +7,16 @@
 
 #include <boost/variant.hpp>
 
+namespace emdl
+{
+	class Value;
+}
+
 namespace
 {
 	// Returns true if T is a Value after removing const, volatile and references
 	template <class T>
-	constexpr bool is_value = typename std::is_same<emdl::Value, std::remove_cv_t<std::remove_reference_t<T>>>::value;
+	constexpr bool is_value = std::is_same<emdl::Value, std::remove_cv_t<std::remove_reference_t<T>>>::value;
 }
 
 namespace emdl

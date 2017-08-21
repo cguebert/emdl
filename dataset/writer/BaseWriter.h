@@ -29,7 +29,7 @@ namespace emdl
 		{
 			m_stream.write(reinterpret_cast<const char*>(&value), sizeof(value));
 			if (!m_stream)
-				throw std::exception("BaseWriter: could not write a value to stream");
+				throw Exception("BaseWriter: could not write a value to stream");
 		}
 
 	protected:

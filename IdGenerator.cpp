@@ -1,6 +1,7 @@
 #include <emdl/IdGenerator.h>
 
 #include <atomic>
+#include <cstring>
 #include <ctime>
 #include <limits>
 #include <memory>
@@ -16,7 +17,7 @@ namespace
 	private:
 		IdGenerator();
 
-		std::atomic_uint32_t m_atomicCounter;
+		std::atomic<uint32_t> m_atomicCounter;
 		std::time_t m_timeRef;
 
 		std::string seconds();
@@ -25,7 +26,11 @@ namespace
 
 	IdGenerator::IdGenerator()
 	{
-		std::tm refDate = {0, 0, 0, 1, 0, 100}; /* January 01, 2000 */
+		/* January 01, 2000 */
+		std::tm refDate;
+		std::memset(&refDate, 0, sizeof(refDate)); 
+		refDate.tm_mday = 1;
+		refDate.tm_year = 2000;
 		m_timeRef = std::mktime(&refDate);
 
 		std::random_device rd;

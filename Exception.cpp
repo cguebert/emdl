@@ -7,7 +7,7 @@ namespace emdl
 	{
 	}
 
-	const char* Exception::what() const
+	const char* Exception::what() const noexcept
 	{
 		return m_message.c_str();
 	}

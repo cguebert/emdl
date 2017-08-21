@@ -221,6 +221,8 @@ namespace emdl
 		case Status::Closed:
 			m_messagesCondition.notify_one();
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -283,7 +285,6 @@ namespace emdl
 
 	void Association::onPDataTF(dul::EventData& data)
 	{
-		sizeof(MessageConstruction);
 		const auto pData = std::dynamic_pointer_cast<pdu::PDataTF>(data.pdu);
 		if (!pData)
 			throw Exception("Invalid PDU received");
@@ -339,7 +340,7 @@ namespace emdl
 			}
 
 			m_messagesCondition.notify_one();
-			m_readMessage = {}; // Reset
+			m_readMessage = MessageConstruction(); // Reset
 		}
 	}
 

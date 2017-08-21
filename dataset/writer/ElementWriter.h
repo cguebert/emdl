@@ -24,7 +24,7 @@ namespace emdl
 
 			WriterVisitor(std::ostream& stream, VR vr, bool explicitTS, ItemEncoding itemEncoding);
 
-			void operator()(const boost::blank& value) const {}
+			void operator()(const boost::blank&) const {}
 			void operator()(const Value::Integers& value) const;
 			void operator()(const Value::Reals& value) const;
 			void operator()(const Value::Strings& value) const;

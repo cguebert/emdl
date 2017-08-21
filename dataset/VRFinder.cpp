@@ -1,6 +1,7 @@
 #include <emdl/dataset/VRFinder.h>
 #include <emdl/dataset/DataSet.h>
 #include <emdl/dataset/DataSetAccessors.h>
+#include <emdl/Exception.h>
 #include <emdl/registry.h>
 #include <emdl/TagsDictionary.h>
 
@@ -186,7 +187,7 @@ namespace
 				 || tag == reg::PixelPaddingValue)
 		{
 			if (!dataSet.has(reg::PixelRepresentation))
-				throw std::exception("Cannot find VR without PixelRepresentation");
+				throw emdl::Exception("Cannot find VR without PixelRepresentation");
 			const auto pixelRepresentation = asInt(dataSet, reg::PixelRepresentation, 0);
 			return pixelRepresentation ? emdl::VR::SS : emdl::VR::US;
 		}
@@ -203,7 +204,7 @@ namespace
 		if (tag == reg::PixelData)
 		{
 			if (!dataSet.has(reg::BitsAllocated))
-				throw std::exception("Cannot find VR without BitsAllocated");
+				throw emdl::Exception("Cannot find VR without BitsAllocated");
 			auto const& bits_allocated = asInt(dataSet, reg::BitsAllocated, 0);
 			return (bits_allocated <= 8) ? emdl::VR::OB : emdl::VR::OW;
 		}
@@ -234,7 +235,7 @@ namespace
 				 || tag == reg::PixelPaddingValue)
 		{
 			if (!dataSet.has(reg::PixelRepresentation))
-				throw std::exception("Cannot find VR without PixelRepresentation");
+				throw emdl::Exception("Cannot find VR without PixelRepresentation");
 			const auto pixelRepresentation = asInt(dataSet, reg::PixelRepresentation, 0);
 			return pixelRepresentation ? emdl::VR::SS : emdl::VR::US;
 		}

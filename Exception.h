@@ -27,7 +27,7 @@ namespace emdl
 			: m_message(fmt::format(str, std::forward<Args>(args)...))
 		{}
 
-		const char* what() const override; //!< Return the reason for the exception.
+		const char* what() const noexcept override; //!< Return the reason for the exception.
 
 	protected:
 		std::string m_message; //!< brief Message of the exception.

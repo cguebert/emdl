@@ -171,7 +171,7 @@ namespace emdl
 		if (m_vr == VR::DS)
 		{
 			size_t nbWritten = 0;
-			for (int i = 0; i < value.size(); ++i)
+			for (size_t i = 0; i < value.size(); ++i)
 			{
 				if (i)
 				{
@@ -183,7 +183,7 @@ namespace emdl
 				const auto& item = value[i];
 
 				if (!std::isfinite(item))
-					throw std::exception("DS items must be finite");
+					throw Exception("DS items must be finite");
 
 				// Each item in the DS is at most 16 bytes, account for NULL at end
 				static const unsigned int buffer_size = 16 + 1;

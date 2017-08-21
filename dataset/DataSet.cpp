@@ -1,5 +1,6 @@
 #include <emdl/dataset/DataSet.h>
 #include <emdl/dataset/reader/ElementReader.h>
+#include <emdl/Exception.h>
 
 namespace emdl
 {
@@ -279,21 +280,21 @@ namespace emdl
 	Tag DataSet::iterator_value::tag() const
 	{
 		if (!m_element)
-			throw std::exception("Use of an invalid DataSet::iterator_value, trying to call tag()");
+			throw Exception("Use of an invalid DataSet::iterator_value, trying to call tag()");
 		return Tag(m_element->tag);
 	}
 
 	const Element& DataSet::iterator_value::element() const
 	{
 		if (!m_dataSet || !m_element)
-			throw std::exception("Use of an invalid DataSet::iterator_value, trying to call element()");
+			throw Exception("Use of an invalid DataSet::iterator_value, trying to call element()");
 		return m_dataSet->getElement(*m_element);
 	}
 
 	BinaryView DataSet::iterator_value::view() const
 	{
 		if (!m_dataSet || !m_element)
-			throw std::exception("Use of an invalid DataSet::iterator_value, trying to call view()");
+			throw Exception("Use of an invalid DataSet::iterator_value, trying to call view()");
 		return m_dataSet->getView(*m_element);
 	}
 
@@ -313,7 +314,7 @@ namespace emdl
 	DataSet::const_iterator::reference DataSet::const_iterator::operator*() const
 	{
 		if (!m_dataSet || m_groupsIterator == m_dataSet->m_groups.end())
-			throw std::exception("Deferencing an invalid DataSet::const_iterator");
+			throw Exception("Deferencing an invalid DataSet::const_iterator");
 
 		return DataSet::iterator_value(m_dataSet, &(*m_elementsIterator));
 	}
@@ -321,7 +322,7 @@ namespace emdl
 	DataSet::const_iterator& DataSet::const_iterator::operator++()
 	{
 		if (!m_dataSet)
-			throw std::exception("Use of an invalid DataSet::const_iterator, operator++");
+			throw Exception("Use of an invalid DataSet::const_iterator, operator++");
 
 		if (m_groupsIterator == m_dataSet->m_groups.end()) // When there are no groups
 			return *this;
@@ -354,7 +355,7 @@ namespace emdl
 	DataSet::const_iterator& DataSet::const_iterator::operator--()
 	{
 		if (!m_dataSet)
-			throw std::exception("Use of an invalid DataSet::const_iterator, operator--");
+			throw Exception("Use of an invalid DataSet::const_iterator, operator--");
 
 		if (m_groupsIterator == m_dataSet->m_groups.end()) // When there are no groups
 			return *this;

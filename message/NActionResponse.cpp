@@ -6,9 +6,9 @@ namespace emdl
 	namespace message
 	{
 		NActionResponse::NActionResponse()
-			: affectedSopClass(initField(registry::AffectedSOPClassUID))
+			: actionTypeId(initField(registry::ActionTypeID))
+			, affectedSopClass(initField(registry::AffectedSOPClassUID))
 			, affectedSopInstance(initField(registry::AffectedSOPInstanceUID))
-			, actionTypeId(initField(registry::ActionTypeID))
 		{
 			commandField.set(Command::N_ACTION_RSP);
 		}

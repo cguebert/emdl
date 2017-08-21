@@ -27,6 +27,7 @@ namespace emdl
 			: SOPClassExtendedNegotiation()
 		{
 			m_sopClassUid.set(sopUid);
+			m_serviceClassApplicationInformation.set(serviceInfo);
 		}
 
 		SOPClassExtendedNegotiation::SOPClassExtendedNegotiation(std::istream& in)

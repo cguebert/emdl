@@ -98,13 +98,13 @@ namespace emdl
 			read(in);
 		}
 
-		SOPClassCommonExtendedNegotiation::RelatedGeneralSOPClassIdentification::RelatedGeneralSOPClassIdentification(RelatedGeneralSOPClassIdentification& other)
+		SOPClassCommonExtendedNegotiation::RelatedGeneralSOPClassIdentification::RelatedGeneralSOPClassIdentification(const RelatedGeneralSOPClassIdentification& other)
 			: RelatedGeneralSOPClassIdentification()
 		{
 			m_uid.set(other.uid());
 		}
 
-		SOPClassCommonExtendedNegotiation::RelatedGeneralSOPClassIdentification& SOPClassCommonExtendedNegotiation::RelatedGeneralSOPClassIdentification::operator=(RelatedGeneralSOPClassIdentification& other)
+		SOPClassCommonExtendedNegotiation::RelatedGeneralSOPClassIdentification& SOPClassCommonExtendedNegotiation::RelatedGeneralSOPClassIdentification::operator=(const RelatedGeneralSOPClassIdentification& other)
 		{
 			m_uid.set(other.uid());
 			return *this;

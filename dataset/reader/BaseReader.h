@@ -65,8 +65,8 @@ namespace emdl
 
 	private:
 		size_t m_offset = 0;
-		BinaryView m_view;
 		BinaryBufferSPtr m_buffer;
+		BinaryView m_view;
 		const TransferSyntax m_transferSyntax;
 		const bool m_explicit;
 	};

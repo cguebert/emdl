@@ -4,11 +4,16 @@
 #include <emdl/VR.h>
 #include <emdl/Tag.h>
 
+namespace emdl
+{
+	class Element;
+}
+
 namespace
 {
 	// Returns true if T is a Value after removing const, volatile and references
 	template <class T>
-	constexpr bool is_element = typename std::is_same<emdl::Element, std::remove_cv_t<std::remove_reference_t<T>>>::value;
+	constexpr bool is_element = std::is_same<emdl::Element, std::remove_cv_t<std::remove_reference_t<T>>>::value;
 }
 
 namespace emdl
@@ -35,8 +40,8 @@ namespace emdl
 		//! Create an element by creating, copying or moving a value
 		template <class T, std::enable_if_t<!is_element<T>, bool> = true>
 		Element(T&& value, const VR& vr = VR::Invalid)
-			: m_value(std::forward<T>(value))
-			, vr(vr)
+			: vr(vr)
+			, m_value(std::forward<T>(value))
 		{
 		}
 
