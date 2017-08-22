@@ -51,5 +51,11 @@ namespace emdl
 		{
 			m_fields.push_back(&field);
 		}
+
+		std::ostream& operator<<(std::ostream& stream, const Object& object)
+		{
+			object.save(stream);
+			return stream;
+		}
 	}
 }
