@@ -1,4 +1,5 @@
 #include <emdl/dataset/DataSetAccessors.h>
+#include <emdl/Exception.h>
 
 namespace emdl
 {
@@ -6,7 +7,7 @@ namespace emdl
 	const typename C::value_type& atPos(const C& container, size_t position)
 	{
 		if (container.size() <= position)
-			throw std::out_of_range("No such element");
+			throw Exception("No such element");
 		return container[position];
 	}
 
@@ -14,23 +15,32 @@ namespace emdl
 	typename C::value_type& atPos(C& container, size_t position)
 	{
 		if (container.size() <= position)
-			throw std::out_of_range("No such element");
+			throw Exception("No such element");
 		return container[position];
 	}
 
 	bool isInt(const DataSet& dataSet, Tag tag)
 	{
-		return dataSet[tag]->isInt();
+		const auto elt = dataSet[tag];
+		if (!elt)
+			throw Exception("No such tag {}", asString(tag));
+		return elt->isInt();
 	}
 
 	const Value::Integers& asInt(const DataSet& dataSet, Tag tag)
 	{
-		return dataSet[tag]->asInt();
+		const auto elt = dataSet[tag];
+		if (!elt)
+			throw Exception("No such tag {}", asString(tag));
+		return elt->asInt();
 	}
 
 	Value::Integers& asInt(DataSet& dataSet, Tag tag)
 	{
-		return dataSet[tag]->asInt();
+		const auto elt = dataSet[tag];
+		if (!elt)
+			throw Exception("No such tag {}", asString(tag));
+		return elt->asInt();
 	}
 
 	const Value::Integer& asInt(const DataSet& dataSet, Tag tag, size_t position)
@@ -64,17 +74,26 @@ namespace emdl
 
 	bool isReal(const DataSet& dataSet, Tag tag)
 	{
-		return dataSet[tag]->isReal();
+		const auto elt = dataSet[tag];
+		if (!elt)
+			throw Exception("No such tag {}", asString(tag));
+		return elt->isReal();
 	}
 
 	const Value::Reals& asReal(const DataSet& dataSet, Tag tag)
 	{
-		return dataSet[tag]->asReal();
+		const auto elt = dataSet[tag];
+		if (!elt)
+			throw Exception("No such tag {}", asString(tag));
+		return elt->asReal();
 	}
 
 	Value::Reals& asReal(DataSet& dataSet, Tag tag)
 	{
-		return dataSet[tag]->asReal();
+		const auto elt = dataSet[tag];
+		if (!elt)
+			throw Exception("No such tag {}", asString(tag));
+		return elt->asReal();
 	}
 
 	const Value::Real& asReal(const DataSet& dataSet, Tag tag, size_t position)
@@ -108,17 +127,26 @@ namespace emdl
 
 	bool isString(const DataSet& dataSet, Tag tag)
 	{
-		return dataSet[tag]->isString();
+		const auto elt = dataSet[tag];
+		if (!elt)
+			throw Exception("No such tag {}", asString(tag));
+		return elt->isString();
 	}
 
 	const Value::Strings& asString(const DataSet& dataSet, Tag tag)
 	{
-		return dataSet[tag]->asString();
+		const auto elt = dataSet[tag];
+		if (!elt)
+			throw Exception("No such tag {}", asString(tag));
+		return elt->asString();
 	}
 
 	Value::Strings& asString(DataSet& dataSet, Tag tag)
 	{
-		return dataSet[tag]->asString();
+		const auto elt = dataSet[tag];
+		if (!elt)
+			throw Exception("No such tag {}", asString(tag));
+		return elt->asString();
 	}
 
 	const Value::String& asString(const DataSet& dataSet, Tag tag, size_t position)
@@ -152,17 +180,26 @@ namespace emdl
 
 	bool isDataSet(const DataSet& dataSet, Tag tag)
 	{
-		return dataSet[tag]->isDataSet();
+		const auto elt = dataSet[tag];
+		if (!elt)
+			throw Exception("No such tag {}", asString(tag));
+		return elt->isDataSet();
 	}
 
 	const Value::DataSets& asDataSet(const DataSet& dataSet, Tag tag)
 	{
-		return dataSet[tag]->asDataSet();
+		const auto elt = dataSet[tag];
+		if (!elt)
+			throw Exception("No such tag {}", asString(tag));
+		return elt->asDataSet();
 	}
 
 	Value::DataSets& asDataSet(DataSet& dataSet, Tag tag)
 	{
-		return dataSet[tag]->asDataSet();
+		const auto elt = dataSet[tag];
+		if (!elt)
+			throw Exception("No such tag {}", asString(tag));
+		return elt->asDataSet();
 	}
 
 	const DataSet& asDataSet(const DataSet& dataSet, Tag tag, size_t position)
@@ -196,17 +233,26 @@ namespace emdl
 
 	bool isBinary(const DataSet& dataSet, Tag tag)
 	{
-		return dataSet[tag]->isBinary();
+		const auto elt = dataSet[tag];
+		if (!elt)
+			throw Exception("No such tag {}", asString(tag));
+		return elt->isBinary();
 	}
 
 	const Value::Binaries& asBinary(const DataSet& dataSet, Tag tag)
 	{
-		return dataSet[tag]->asBinary();
+		const auto elt = dataSet[tag];
+		if (!elt)
+			throw Exception("No such tag {}", asString(tag));
+		return elt->asBinary();
 	}
 
 	Value::Binaries& asBinary(DataSet& dataSet, Tag tag)
 	{
-		return dataSet[tag]->asBinary();
+		const auto elt = dataSet[tag];
+		if (!elt)
+			throw Exception("No such tag {}", asString(tag));
+		return elt->asBinary();
 	}
 
 	const Value::Binaries::value_type& asBinary(const DataSet& dataSet, Tag tag, size_t position)
