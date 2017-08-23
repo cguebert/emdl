@@ -81,8 +81,8 @@ namespace
 					emdl::VR vr = emdl::VR::Unknown;
 					try
 					{
-						vr = emdl::asVR(elt.second.vr);
-					}
+						vr = emdl::asVR(std::string{elt.second.vr}.substr(0, 2));
+					} // HACK: only take the first VR when there are two or more (better to have something than not)
 					catch (...)
 					{
 					}
@@ -136,27 +136,8 @@ namespace
 		return emdl::VR::UN;
 	}
 
-	emdl::VR groupLength(const emdl::Tag tag, const emdl::DataSet&, emdl::TransferSyntax)
+	emdl::VR implicitVRLittleEndian(const emdl::Tag tag, const emdl::DataSet& dataSet)
 	{
-		if (tag.element == 0)
-			return emdl::VR::UL;
-
-		return emdl::VR::Unknown;
-	}
-
-	emdl::VR privateTag(const emdl::Tag tag, const emdl::DataSet&, emdl::TransferSyntax)
-	{
-		if (tag.group % 2 == 1)
-			return emdl::VR::UN;
-
-		return emdl::VR::Unknown;
-	}
-
-	emdl::VR implicitVRLittleEndian(const emdl::Tag tag, const emdl::DataSet& dataSet, emdl::TransferSyntax transferSyntax)
-	{
-		if (transferSyntax != emdl::TransferSyntax::ImplicitVRLittleEndian)
-			return emdl::VR::Unknown;
-
 		namespace reg = emdl::registry;
 		if (tag == reg::PixelData)
 			return emdl::VR::OW;
@@ -195,11 +176,8 @@ namespace
 			return emdl::VR::Unknown;
 	}
 
-	emdl::VR explicitVRLittleEndian(const emdl::Tag tag, const emdl::DataSet& dataSet, emdl::TransferSyntax transferSyntax)
+	emdl::VR explicitVRLittleEndian(const emdl::Tag tag, const emdl::DataSet& dataSet)
 	{
-		if (transferSyntax != emdl::TransferSyntax::ExplicitVRLittleEndian)
-			return emdl::VR::Unknown;
-
 		namespace reg = emdl::registry;
 		if (tag == reg::PixelData)
 		{
@@ -248,15 +226,31 @@ namespace emdl
 {
 	VR findVR(const Tag tag)
 	{
+		if (tag.element == 0) // Group length
+			return emdl::VR::UL;
+		if (tag.group % 2 == 1) // Private tag
+			return emdl::VR::UN;
+
 		return publicDictionary(tag);
 	}
 
 	VR findVR(const Tag tag, const DataSet& dataSet)
 	{
+		if (tag.element == 0) // Group length
+			return emdl::VR::UL;
+		if (tag.group % 2 == 1) // Private tag
+			return emdl::VR::UN;
+
 		TransferSyntax transferSyntax = dataSet.transferSyntax();
-		for (const auto& func : {groupLength, privateTag, implicitVRLittleEndian, explicitVRLittleEndian})
+		if (transferSyntax == emdl::TransferSyntax::ImplicitVRLittleEndian)
 		{
-			auto vr = func(tag, dataSet, transferSyntax);
+			auto vr = implicitVRLittleEndian(tag, dataSet);
+			if (vr != emdl::VR::Unknown)
+				return vr;
+		}
+		else if (transferSyntax == emdl::TransferSyntax::ExplicitVRLittleEndian)
+		{
+			auto vr = explicitVRLittleEndian(tag, dataSet);
 			if (vr != emdl::VR::Unknown)
 				return vr;
 		}
