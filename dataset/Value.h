@@ -14,9 +14,42 @@ namespace emdl
 
 namespace
 {
-	// Returns true if T is a Value after removing const, volatile and references
+	template <class...>
+	struct is_one_of
+	{
+		static constexpr bool value = false;
+	};
+
+	template <class F, class S, class... T>
+	struct is_one_of<F, S, T...>
+	{
+		static constexpr bool value = std::is_same<F, S>::value || is_one_of<F, T...>::value;
+	};
+
+	template <class F, class... T>
+	struct is_one_of<F, std::tuple<T...>>
+	{
+		static constexpr bool value = is_one_of<F, T...>::value;
+	};
+
 	template <class T>
-	constexpr bool is_value = std::is_same<emdl::Value, std::remove_cv_t<std::remove_reference_t<T>>>::value;
+	std::vector<int64_t> toInt64Vector(const std::vector<T>& vec)
+	{
+		std::vector<int64_t> res;
+		res.reserve(vec.size());
+		for (const auto v : vec)
+			res.push_back(v);
+		return res;
+	}
+
+	std::vector<std::string> toStringVector(const std::vector<const char*>& vec)
+	{
+		std::vector<std::string> res;
+		res.reserve(vec.size());
+		for (const auto v : vec)
+			res.push_back(v);
+		return res;
+	}
 }
 
 namespace emdl
@@ -59,6 +92,13 @@ namespace emdl
 			DataSets,
 			Binaries>;
 
+		using Types = std::tuple<
+			Integer,
+			Real,
+			String,
+			DataSet,
+			BinaryValue>;
+
 		Value() = default; //!< Build an empty value.
 
 		//! Copy another value
@@ -67,10 +107,56 @@ namespace emdl
 		//! Move another value
 		Value(Value&& value) = default;
 
-		//! Build a value from existing data
-		template <class T, std::enable_if_t<!is_value<T>, bool> = true>
-		Value(T&& value)
-			: m_value(std::forward<T>(value))
+		//! Build a value from an initializer list composed of one of the supported types
+		template <class T, std::enable_if_t<is_one_of<T, Types>::value, bool> = true>
+		Value(std::initializer_list<T> value)
+			: m_value(value)
+		{
+		}
+
+		//! Build a value from a vector of one of the supported types
+		template <class T, std::enable_if_t<is_one_of<T, Types>::value, bool> = true>
+		Value(const std::vector<T>& value)
+			: m_value(value)
+		{
+		}
+
+		//! Build a value from a rvalue vector of one of the supported types
+		template <class T, std::enable_if_t<is_one_of<T, Types>::value, bool> = true>
+		Value(std::vector<T>&& value)
+			: m_value(std::move(value))
+		{
+		}
+
+		//! Build a value from a list of integers (convertible to int64_t)
+		template <class T, std::enable_if_t<std::numeric_limits<T>::is_integer
+												&& !std::is_same<T, int64_t>::value,
+											bool> = true>
+		Value(const std::vector<T>& value)
+			: m_value(toInt64Vector(value))
+		{
+		}
+
+		//! Build a value from an initializer list of integers (convertible to int64_t)
+		template <class T, std::enable_if_t<std::numeric_limits<T>::is_integer
+												&& !std::is_same<T, int64_t>::value,
+											bool> = true>
+		Value(std::initializer_list<T> value)
+			: m_value(toInt64Vector<T>(value))
+		{
+		}
+
+		//! Build a value from a list of const char*
+		template <class T, std::enable_if_t<std::is_same<T, const char*>::value, bool> = true>
+		Value(const std::vector<T>& value)
+			: m_value(toStringVector(value))
+		{
+		}
+
+		//! Build a value from an initializer list of const char*
+		template <class T, std::enable_if_t<std::is_same<T, const char*>::value, bool> = true>
+		Value(std::initializer_list<T> value)
+			: m_value(toStringVector(value))
 		{
 		}
 
@@ -80,11 +166,63 @@ namespace emdl
 		//! Move another value
 		Value& operator=(Value&& value) = default;
 
-		//! Copy a value from existing data
-		template <class T>
-		std::enable_if_t<!is_value<T>, Value&> operator=(T&& value)
+		//! Copy an initializer list composed of one of the supported types
+		template <class T, std::enable_if_t<is_one_of<T, Types>::value, Value&> = true>
+		Value& operator=(std::initializer_list<T> value)
 		{
-			m_value = std::forward<T>(value);
+			m_value = value;
+			return *this;
+		}
+
+		//! Copy a vector of one of the supported types
+		template <class T, std::enable_if_t<is_one_of<T, Types>::value, bool> = true>
+		Value& operator=(const std::vector<T>& value)
+		{
+			m_value = value;
+			return *this;
+		}
+
+		//! Copy a rvalue vector of one of the supported types
+		template <class T, std::enable_if_t<is_one_of<T, Types>::value, bool> = true>
+		Value& operator=(std::vector<T>&& value)
+		{
+			m_value = std::move(value);
+			return *this;
+		}
+
+		//! Copy a list of integers (convertible to int64_t)
+		template <class T, std::enable_if_t<std::numeric_limits<T>::is_integer
+												&& !std::is_same<T, int64_t>::value,
+											bool> = true>
+		Value& operator=(const std::vector<T>& value)
+		{
+			m_value = toInt64Vector(value);
+			return *this;
+		}
+
+		//! Copy an initializer list of integers (convertible to int64_t)
+		template <class T, std::enable_if_t<std::numeric_limits<T>::is_integer
+												&& !std::is_same<T, int64_t>::value,
+											bool> = true>
+		Value& operator=(std::initializer_list<T> value)
+		{
+			m_value = toInt64Vector<T>(value);
+			return *this;
+		}
+
+		//! Copy a list of const char*
+		template <class T, std::enable_if_t<std::is_same<T, const char*>::value, bool> = true>
+		Value& operator=(const std::vector<T>& value)
+		{
+			m_value = toStringVector(value);
+			return *this;
+		}
+
+		//! Copy an initializer list of const char*
+		template <class T, std::enable_if_t<std::is_same<T, const char*>::value, bool> = true>
+		Value& operator=(std::initializer_list<T> value)
+		{
+			m_value = toStringVector(value);
 			return *this;
 		}
 
