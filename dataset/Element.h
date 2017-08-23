@@ -14,6 +14,17 @@ namespace
 	// Returns true if T is a Value after removing const, volatile and references
 	template <class T>
 	constexpr bool is_element = std::is_same<emdl::Element, std::remove_cv_t<std::remove_reference_t<T>>>::value;
+
+	// Returns true if T is a std::vector
+	template <class T>
+	struct is_vector : std::false_type
+	{
+	};
+
+	template <class T>
+	struct is_vector<std::vector<T>> : std::true_type
+	{
+	};
 }
 
 namespace emdl
@@ -37,11 +48,27 @@ namespace emdl
 		//! Create an element. The type of the value created depends on the VR.
 		Element(VR vr);
 
-		//! Create an element by creating, copying or moving a value
-		template <class T, std::enable_if_t<!is_element<T>, bool> = true>
-		Element(T&& value, const VR& vr = VR::Invalid)
+		//!  Create an element with a rvalue vector of values
+		template <class T>
+		Element(std::vector<T>&& value, const VR& vr = VR::Invalid)
 			: vr(vr)
-			, m_value(std::forward<T>(value))
+			, m_value(std::move(value))
+		{
+		}
+
+		//! Create an element with a vector of values
+		template <class T>
+		Element(const std::vector<T>& value, const VR& vr = VR::Invalid)
+			: vr(vr)
+			, m_value(value)
+		{
+		}
+
+		//! Create an element with an initializer list of values
+		template <class T, std::enable_if_t<!std::is_same<T, VR>::value && !is_vector<T>::value, bool> = true>
+		Element(std::initializer_list<T> value, const VR& vr = VR::Invalid)
+			: vr(vr)
+			, m_value(value)
 		{
 		}
 
