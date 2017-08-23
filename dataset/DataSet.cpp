@@ -259,7 +259,7 @@ namespace emdl
 	boost::optional<BinaryView> DataSet::getView(const Tag& tag) const
 	{
 		auto tes = find(tag);
-		if (tes)
+		if (tes && tes->size)
 			return getView(*tes);
 		else
 			return {};

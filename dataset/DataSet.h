@@ -44,7 +44,7 @@ namespace emdl
 
 		//! Add an element to the data set using a value, or assign it if already in the data set
 		template <class T>
-		void set(const Tag& tag, const std::initializer_list<T>& value, VR vr = VR::Unknown)
+		void set(const Tag& tag, std::initializer_list<T> value, VR vr = VR::Unknown)
 		{
 			if (vr == VR::Unknown)
 				vr = findVR(tag);
@@ -95,9 +95,6 @@ namespace emdl
 
 		//! Used mainly to reduce the size of the view after parsing
 		void updateViewSize(size_t size);
-
-		//! Recompute the raw content of the data set taking into account the modified elements
-		//	void update_raw_buffer();
 
 		// This stores a pointer to the raw buffer, or a index into the prepard elements
 		struct TagElementStruct

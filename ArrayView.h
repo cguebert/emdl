@@ -20,7 +20,7 @@ namespace emdl
 			, m_size(size)
 		{
 		}
-		constexpr ArrayView(std::vector<T>& data) noexcept
+		constexpr ArrayView(const std::vector<std::remove_const_t<T>>& data) noexcept
 			: m_data(data.data())
 			, m_size(data.size())
 		{
