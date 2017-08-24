@@ -21,6 +21,13 @@ namespace emdl
 			{
 			}
 
+			explicit FixedStringField(const BaseField::InitField<std::string>& init, uint32_t size)
+				: BaseField(init)
+				, m_size(size)
+			{
+				set(init.value);
+			}
+
 			value_type get() const
 			{
 				auto const begin = m_value.find_first_not_of(' ');

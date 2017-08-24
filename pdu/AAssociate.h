@@ -15,7 +15,6 @@ namespace emdl
 		{
 		public:
 			AAssociate();
-			AAssociate(std::istream& in);
 
 			Field<uint16_t> protocolVersion;
 			const Field<uint16_t> reserved2;

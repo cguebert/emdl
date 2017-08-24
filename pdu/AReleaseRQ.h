@@ -13,6 +13,7 @@ namespace emdl
 			AReleaseRQ();
 			AReleaseRQ(std::istream& in);
 
+		private:
 			const Field<uint32_t> reserved2;
 		};
 	}
