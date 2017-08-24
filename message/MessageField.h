@@ -1,6 +1,7 @@
 #pragma once
 
 #include <emdl/dataset/DataSet.h>
+#include <emdl/Exception.h>
 #include <emdl/SOPClasses.h>
 
 #include <boost/variant/get.hpp>
@@ -65,7 +66,10 @@ namespace emdl
 			template <class T>
 			const T& read(const DataSet& dataSet, Tag tag)
 			{
-				return boost::get<T>(dataSet[tag]->value().value());
+				const auto elt = dataSet[tag];
+				if (!elt)
+					throw Exception("No such tag {}", asString(tag));
+				return boost::get<T>(elt->value().value());
 			}
 
 			template <class T>
