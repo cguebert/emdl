@@ -105,6 +105,30 @@ namespace emdl
 			}
 		};
 
+		// Templated base class for vector fields
+		template <class T>
+		class Field<std::vector<T>> : public BaseField
+		{
+		public:
+			using value_type = std::vector<T>;
+			using variant_type = std::vector<T>;
+
+			explicit Field(const BaseField::BaseInitField& init)
+				: BaseField(init)
+			{
+			}
+
+			const value_type& get() const
+			{
+				return details::read<variant_type>(m_dataSet, m_tag);
+			}
+
+			void set(const value_type& val)
+			{
+				details::write<variant_type>(m_dataSet, m_tag) = val;
+			}
+		};
+
 		// Specialization for SOP_Class
 		template <>
 		class Field<SOP_Class> : public BaseField

@@ -18,7 +18,7 @@ namespace emdl
 
 			MandatoryField<SOP_Class> requestedSopClass;
 			MandatoryField<Value::String> requestedSopInstance;
-			OptionalField<Value::String> attributeIdentifierList;
+			OptionalField<Value::Strings> attributeIdentifierList;
 
 		private:
 			NGetRequest();
