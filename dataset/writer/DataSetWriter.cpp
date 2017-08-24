@@ -78,7 +78,6 @@ namespace emdl
 		for (const auto& group : dataSet.getGroups())
 		{
 			// For group 0 (command set) and group 2 (file meta information), we have to compute the group length
-			// So we write the elements to a temporary buffer first
 			if (group.group == 0 || group.group == 2)
 			{
 				writeTag(Tag(group.group, 0)); // Group length tag
