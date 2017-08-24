@@ -12,12 +12,14 @@ namespace emdl
 			commandField.set(Command::N_SET_RQ);
 		}
 
-		NSetRequest::NSetRequest(Value::Integer msgId, SOP_Class sopClass, Value::String sopInstance)
+		NSetRequest::NSetRequest(Value::Integer msgId, SOP_Class sopClass, Value::String sopInstance, const DataSet& dataSet)
 			: NSetRequest()
 		{
 			messageId.set(msgId);
 			requestedSopClass.set(sopClass);
 			requestedSopInstance.set(sopInstance);
+
+			setDataSet(dataSet);
 		}
 
 		NSetRequest::NSetRequest(const Message& message)

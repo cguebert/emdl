@@ -11,7 +11,7 @@ namespace emdl
 		{
 		public:
 			//! Create a set request with given Message ID, requested SOP class and requested SOP instance.
-			NSetRequest(Value::Integer messageId, SOP_Class requestedSopClass, Value::String requestedSopInstance);
+			NSetRequest(Value::Integer messageId, SOP_Class requestedSopClass, Value::String requestedSopInstance, const DataSet& dataSet);
 
 			//! Create a N-SET-RQ from a generic Message.
 			NSetRequest(const Message& message);
