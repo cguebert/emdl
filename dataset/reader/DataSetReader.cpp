@@ -68,13 +68,18 @@ namespace emdl
 	FileDataSets DataSetReader::readFile(const BinaryBufferSPtr& buffer, HaltConditionFunc func)
 	{
 		// File preamble and DICOM prefix
-		DataSetReader metaInfoReader(buffer, TransferSyntax::ExplicitVRLittleEndian);
-		metaInfoReader.ignore(128);
-		const auto prefix = metaInfoReader.readString(4);
-		if (prefix != "DICM")
-			throw Exception("Unexpected prefix in DataSetReader::readFile");
+		{
+			BaseReader headerReader(buffer, TransferSyntax::ExplicitVRLittleEndian);
+			headerReader.ignore(128);
+			const auto prefix = headerReader.readString(4);
+			if (prefix != "DICM")
+				throw Exception("Unexpected prefix in DataSetReader::readFile");
+		}
 
 		// Read meta information
+		DataSetReader metaInfoReader(buffer,
+									 BinaryView{buffer->data() + 132, buffer->size() - 132},
+									 TransferSyntax::ExplicitVRLittleEndian);
 		const auto metaInfoDataSet = metaInfoReader.readDataSet([](const Tag& tag) {
 			return (tag.group != 0x0002);
 		});
@@ -92,7 +97,7 @@ namespace emdl
 			throw Exception("Transfer syntax not supported: {}", tsStr);
 
 		// Read the remainder of the file
-		const auto start = metaInfoReader.offset();
+		const auto start = metaInfoReader.offset() + 132;
 		const auto dataSetView = BinaryView(buffer->data() + start, buffer->size() - start);
 		DataSetReader dataSetReader(buffer, dataSetView, ts);
 		const auto dataSet = func ? dataSetReader.readDataSet(func) : dataSetReader.readDataSet();
