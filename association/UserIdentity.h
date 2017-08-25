@@ -21,7 +21,7 @@ namespace emdl
 		UserIdentity() = default;
 		UserIdentity(Type type,
 					 const std::string& primaryField,
-					 const std::string& secondaryField,
+					 const std::string& secondaryField = "",
 					 bool positiveResponseRequested = false);
 
 		Type type = Type::None;

@@ -94,6 +94,7 @@ namespace emdl
 				userIdentity = {UserIdentity::Type::SAML, userId.primaryField(), ""};
 				break;
 			}
+			userIdentity.positiveResponseRequested = userId.positiveResponseRequested();
 		}
 	}
 
@@ -167,12 +168,12 @@ namespace emdl
 		if (!userIdPdus.empty())
 		{
 			const auto& userId = *userIdPdus.front();
-			switch (userId.type())
+			switch (request.userIdentity.type)
 			{
-			case 3:
+			case UserIdentity::Type::Kerberos:
 				userIdentity = {UserIdentity::Type::Kerberos, userId.serverResponse(), ""};
 				break;
-			case 4:
+			case UserIdentity::Type::SAML:
 				userIdentity = {UserIdentity::Type::SAML, userId.serverResponse(), ""};
 				break;
 			}
@@ -289,7 +290,7 @@ namespace emdl
 		userInformation->subItems.add(params.sopClassExtendedNegotiation);
 		// No SOPClassCommonExtendedNegotiation in AC
 
-		if (params.userIdentity.type != UserIdentity::Type::None)
+		if (!params.userIdentity.primaryField.empty())
 			userInformation->subItems.add(std::make_shared<pdu::UserIdentityAC>(params.userIdentity.primaryField));
 
 		pdu->setUserInformation(userInformation);

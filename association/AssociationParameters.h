@@ -34,6 +34,6 @@ namespace emdl
 		std::vector<std::shared_ptr<pdu::SOPClassCommonExtendedNegotiation>> sopClassCommonExtendedNegotiation;
 	};
 
-	std::shared_ptr<pdu::AAssociateRQ> toAAssociateRQ(const AssociationParameters& params); /// Create an A-ASSOCIATE-RQ PDU.
-	std::shared_ptr<pdu::AAssociateAC> toAAssociateAC(const AssociationParameters& params); /// Create an A-ASSOCIATE-AC PDU.
+	std::shared_ptr<pdu::AAssociateRQ> EMDL_API toAAssociateRQ(const AssociationParameters& params); /// Create an A-ASSOCIATE-RQ PDU.
+	std::shared_ptr<pdu::AAssociateAC> EMDL_API toAAssociateAC(const AssociationParameters& params); /// Create an A-ASSOCIATE-AC PDU.
 }
