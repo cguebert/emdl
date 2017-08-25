@@ -135,6 +135,7 @@ namespace emdl
 	void DataSet::updateViewSize(size_t size)
 	{
 		m_view = BinaryView(m_view.data(), size);
+		m_modified = false;
 	}
 
 	DataSet::const_iterator DataSet::begin() const
