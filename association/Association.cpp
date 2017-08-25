@@ -29,8 +29,11 @@ namespace emdl
 			m_stateMachine->transport().close();
 		else if (m_status == Status::Associated)
 		{
-			if (m_stateMachine->state() != dul::StateMachine::StateId::Sta13)
+			if (m_stateMachine->state() != dul::StateMachine::StateId::Sta1
+				&& m_stateMachine->state() != dul::StateMachine::StateId::Sta13)
+			{
 				abort(0, 0);
+			}
 			m_stateMachine->transport().close();
 		}
 	}
@@ -210,6 +213,9 @@ namespace emdl
 
 	void Association::setStatus(Status status)
 	{
+		if (status == Status::Closed && (m_status == Status::Released || m_status == Status::Aborted))
+			return;
+
 		m_status = status;
 
 		switch (status)
