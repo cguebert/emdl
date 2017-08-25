@@ -110,8 +110,16 @@ namespace emdl
 				transition(Event::AReleaseRPLocal, data);
 				break;
 			case 0x07:
+			{
+				const auto abortPdu = std::dynamic_pointer_cast<pdu::AAbort>(data.pdu);
+				if (abortPdu)
+				{
+					m_abortParameters.first = abortPdu->source.get();
+					m_abortParameters.second = abortPdu->reason.get();
+				}
 				transition(Event::AAbortLocal, data);
 				break;
+			}
 			default:
 				transition(Event::InvalidPDU, data);
 			}
@@ -167,25 +175,6 @@ namespace emdl
 			transition(event, data);
 		}
 
-		void StateMachine::release()
-		{
-			auto pdu = std::make_shared<pdu::AReleaseRQ>();
-			dul::EventData data;
-			data.pdu = pdu;
-			sendPdu(data);
-		}
-
-		void StateMachine::abort(int source, int reason)
-		{
-			m_abortParameters.first = source;
-			m_abortParameters.second = reason;
-
-			auto pdu = std::make_shared<pdu::AAbort>(source, reason);
-			dul::EventData data;
-			data.pdu = pdu;
-			sendPdu(data);
-		}
-
 		void StateMachine::startTimer(EventData& data)
 		{
 			if (m_artimTimer.expires_from_now(m_timeout))
@@ -229,7 +218,8 @@ namespace emdl
 		const StateMachine::States StateMachine::m_states = {
 			{ StateId::Sta1, {
 				tr_def(AAssociateRQLocal, AE_1, Sta4),
-				tr_def(TransportConnectionIndication, AE_5, Sta2)
+				tr_def(TransportConnectionIndication, AE_5, Sta2),
+				tr_def(TransportConnectionClosedIndication, AA_6, Sta1) // This has been added (not in the standard) for when we free the association
 			} },
 			{ StateId::Sta2, {
 				tr_def(AAssociateACRemote, AA_1, Sta13),

@@ -83,8 +83,6 @@ namespace emdl
 			void onTransportClose();
 
 			void sendPdu(EventData& data); /// Send a PDU to the transport, perform the corresponding transition.
-			void release(); /// Gracefully release the association. Throws an exception if not associated.
-			void abort(int source, int reason); /// Forcefully release the association. Throws an exception if not associated.
 
 			const AssociationAcceptor& associationAcceptor() const; /// Return the callback checking whether the association request is acceptable.
 			void setAssociationAcceptor(const AssociationAcceptor& acceptor); /// Set the callback checking whether the association request is acceptable.

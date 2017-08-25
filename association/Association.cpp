@@ -5,6 +5,8 @@
 #include <emdl/dataset/writer/DataSetWriter.h>
 #include <emdl/registry.h>
 
+#include <emdl/pdu/AAbort.h>
+#include <emdl/pdu/AReleaseRQ.h>
 #include <emdl/pdu/AAssociateAC.h>
 #include <emdl/pdu/AAssociateRQ.h>
 #include <emdl/pdu/AAssociateRJ.h>
@@ -27,7 +29,8 @@ namespace emdl
 			m_stateMachine->transport().close();
 		else if (m_status == Status::Associated)
 		{
-			m_stateMachine->abort(0, 0);
+			if (m_stateMachine->state() != dul::StateMachine::StateId::Sta13)
+				abort(0, 0);
 			m_stateMachine->transport().close();
 		}
 	}
@@ -440,6 +443,22 @@ namespace emdl
 			data.pdu = std::make_shared<pdu::PDataTF>(pdvItems);
 			m_stateMachine->sendPdu(data);
 		}
+	}
+
+	void Association::release()
+	{
+		auto pdu = std::make_shared<pdu::AReleaseRQ>();
+		dul::EventData data;
+		data.pdu = pdu;
+		m_stateMachine->sendPdu(data);
+	}
+
+	void Association::abort(int source, int reason)
+	{
+		auto pdu = std::make_shared<pdu::AAbort>(source, reason);
+		dul::EventData data;
+		data.pdu = pdu;
+		m_stateMachine->sendPdu(data);
 	}
 
 	bool Association::isCancel(const MessageWrapperSPtr& wrapper)

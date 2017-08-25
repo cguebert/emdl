@@ -144,6 +144,12 @@ namespace emdl
 		MessageWrapperSPtr popMessage(); /// Block and return the next message. Raise an exception if the association has been released, aborted or closed.
 		void sendMessage(const message::Message& message, uint8_t presentationContextId, TransferSyntax transferSyntax);
 
+		/// @name Close the association
+		/// @{
+		void release(); /// Gracefully release the association. Throws an exception if not associated.
+		void abort(int source, int reason); /// Forcefully release the association. Throws an exception if not associated.
+		/// @}
+
 		/// @name Called by the state machine
 		/// @{
 		void setStatus(Status status);
