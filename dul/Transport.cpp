@@ -94,6 +94,9 @@ namespace emdl
 
 		void Transport::readHeader()
 		{
+			if (!isOpen())
+				return;
+
 			const auto buf = boost::asio::buffer(&m_readHeader, 6);
 			auto self = shared_from_this();
 			boost::asio::async_read(*m_socket, buf, m_strand.wrap([this, self](boost::system::error_code ec, std::size_t) {
@@ -106,6 +109,9 @@ namespace emdl
 
 		void Transport::readBody()
 		{
+			if (!isOpen())
+				return;
+
 			const size_t size = ntohl(m_readHeader.size); // Big endian to little endian
 			m_readBody = std::string(size, '\0');
 
