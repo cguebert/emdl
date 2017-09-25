@@ -12,19 +12,19 @@ namespace emdl
 		{
 		public:
 			Time();
-			Time(unsigned int hours, unsigned int minutes, double seconds, double timeZone = 0);
+			Time(unsigned int hours, unsigned int minutes, double seconds, int timeZone = 0);
 			explicit Time(const std::string time);
 
-			void set(unsigned int hours, unsigned int minutes, double seconds, double timeZone = 0);
+			void set(unsigned int hours, unsigned int minutes, double seconds, int timeZone = 0);
 			void setHours(unsigned int hours);
 			void setMinutes(unsigned int minutes);
 			void setSeconds(double seconds);
-			void setTimeZone(double timeZone);
+			void setTimeZone(int timeZone);
 
 			unsigned int hours() const;
 			unsigned int minutes() const;
 			double seconds() const;
-			double timeZone() const;
+			int timeZone() const;
 
 			std::string isoTime() const;
 			std::string dicomTime() const;
@@ -33,7 +33,15 @@ namespace emdl
 
 		private:
 			unsigned int m_hours = 0, m_minutes = 0;
-			double m_seconds = 0, m_timeZone = 0;
+			double m_seconds = 0;
+			int m_timeZone = 0; // Delta, in minutes
 		};
+
+		EMDL_API bool operator<(const Time& lhs, const Time& rhs);
+		EMDL_API bool operator>(const Time& lhs, const Time& rhs);
+		EMDL_API bool operator<=(const Time& lhs, const Time& rhs);
+		EMDL_API bool operator>=(const Time& lhs, const Time& rhs);
+		EMDL_API bool operator==(const Time& lhs, const Time& rhs);
+		EMDL_API bool operator!=(const Time& lhs, const Time& rhs);
 	}
 }

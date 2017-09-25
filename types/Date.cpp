@@ -3,6 +3,7 @@
 
 #include <ctime>
 #include <chrono>
+#include <tuple>
 #include <fmt/format.h>
 
 #ifdef WIN32
@@ -95,6 +96,39 @@ namespace emdl
 			time_t tt = system_clock::to_time_t(now);
 			const std::tm t = *std::localtime(&tt);
 			return Date(t.tm_year + 1900, t.tm_mon + 1, t.tm_mday);
+		}
+
+		bool operator<(const Date& lhs, const Date& rhs)
+		{
+			return std::tuple<unsigned int, unsigned int, unsigned int>(lhs.year(), lhs.month(), lhs.day())
+				   < std::tuple<unsigned int, unsigned int, unsigned int>(rhs.year(), rhs.month(), rhs.day());
+		}
+
+		bool operator>(const Date& lhs, const Date& rhs)
+		{
+			return rhs < lhs;
+		}
+
+		bool operator<=(const Date& lhs, const Date& rhs)
+		{
+			return !(lhs > rhs);
+		}
+
+		bool operator>=(const Date& lhs, const Date& rhs)
+		{
+			return !(lhs < rhs);
+		}
+
+		bool operator==(const Date& lhs, const Date& rhs)
+		{
+			return lhs.year() == rhs.year()
+				   && lhs.month() == rhs.month()
+				   && lhs.day() == rhs.day();
+		}
+
+		bool operator!=(const Date& lhs, const Date& rhs)
+		{
+			return !(lhs == rhs);
 		}
 	}
 }

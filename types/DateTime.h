@@ -13,11 +13,11 @@ namespace emdl
 		public:
 			DateTime();
 			DateTime(unsigned int year, unsigned int month, unsigned int day,
-					 unsigned int hours, unsigned int minutes, double seconds, double timeZone = 0);
+					 unsigned int hours, unsigned int minutes, double seconds, int timeZone = 0);
 			explicit DateTime(const std::string dateTime);
 
 			void set(unsigned int year, unsigned int month, unsigned int day,
-					 unsigned int hours, unsigned int minutes, double seconds, double timeZone = 0);
+					 unsigned int hours, unsigned int minutes, double seconds, int timeZone = 0);
 
 			void setDate(const Date& date);
 			void setTime(const Time& time);
@@ -34,5 +34,12 @@ namespace emdl
 			Date m_date;
 			Time m_time;
 		};
+
+		EMDL_API bool operator<(const DateTime& lhs, const DateTime& rhs);
+		EMDL_API bool operator>(const DateTime& lhs, const DateTime& rhs);
+		EMDL_API bool operator<=(const DateTime& lhs, const DateTime& rhs);
+		EMDL_API bool operator>=(const DateTime& lhs, const DateTime& rhs);
+		EMDL_API bool operator==(const DateTime& lhs, const DateTime& rhs);
+		EMDL_API bool operator!=(const DateTime& lhs, const DateTime& rhs);
 	}
 }

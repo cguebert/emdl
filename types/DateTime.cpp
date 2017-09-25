@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <chrono>
+#include <tuple>
 #include <fmt/format.h>
 
 #ifdef WIN32
@@ -18,7 +19,7 @@ namespace emdl
 		DateTime::DateTime() = default;
 
 		DateTime::DateTime(unsigned int year, unsigned int month, unsigned int day,
-						   unsigned int hours, unsigned int minutes, double seconds, double timeZone)
+						   unsigned int hours, unsigned int minutes, double seconds, int timeZone)
 			: m_date(year, month, day)
 			, m_time(hours, minutes, seconds, timeZone)
 		{
@@ -30,7 +31,7 @@ namespace emdl
 				throw emdl::Exception("Error parsing a DT value: {}", dateTime);
 
 			// Check if there is a time zone
-			double timeZone = 0;
+			int timeZone = 0;
 			std::string timeZoneStr = dateTime.substr(dateTime.size() - 5);
 			if (timeZoneStr.size() == 5 && ((timeZoneStr[0] == '+') || (timeZoneStr[0] == '-')))
 			{
@@ -38,7 +39,9 @@ namespace emdl
 				unsigned int minutes;
 				if (sscanf(timeZoneStr.c_str(), "%03i%02u", &hours, &minutes) == 2)
 				{
-					timeZone = (hours > 0) ? (hours + minutes / 60.0) : (hours - minutes / 60.0);
+					timeZone = (hours > 0)
+								   ? (hours * 60 + minutes)
+								   : (hours * 60 - minutes);
 					dateTime = dateTime.substr(0, dateTime.size() - 5);
 				}
 				else
@@ -72,7 +75,7 @@ namespace emdl
 		}
 
 		void DateTime::set(unsigned int year, unsigned int month, unsigned int day,
-						   unsigned int hours, unsigned int minutes, double seconds, double timezone)
+						   unsigned int hours, unsigned int minutes, double seconds, int timezone)
 		{
 			m_date.set(year, month, day);
 			m_time.set(hours, minutes, seconds, timezone);
@@ -109,8 +112,8 @@ namespace emdl
 
 			const char sign = (timeZone < 0) ? '-' : '+';
 			timeZone = std::abs(timeZone);
-			const int hours = static_cast<int>(timeZone);
-			const unsigned int minutes = static_cast<unsigned int>((timeZone - hours) * 60);
+			const int hours = timeZone / 60;
+			const int minutes = timeZone - (hours * 60);
 			auto timeZoneStr = fmt::format("{}{:02d}:{:02d}", sign, hours, minutes);
 			return dateTimeStr + timeZoneStr;
 		}
@@ -126,8 +129,8 @@ namespace emdl
 
 			const char sign = (timeZone < 0) ? '-' : '+';
 			timeZone = std::abs(timeZone);
-			const int hours = static_cast<int>(timeZone);
-			const unsigned int minutes = static_cast<unsigned int>((timeZone - hours) * 60);
+			const int hours = timeZone / 60;
+			const int minutes = timeZone - (hours * 60);
 			auto timeZoneStr = fmt::format("{}{:02d}{:02d}", sign, hours, minutes);
 			return dateTimeStr + timeZoneStr;
 		}
@@ -146,6 +149,38 @@ namespace emdl
 			const std::tm t = *std::localtime(&tt);
 			return DateTime(t.tm_year + 1900, t.tm_mon + 1, t.tm_mday,
 							t.tm_hour, t.tm_min, t.tm_sec + milli);
+		}
+
+		bool operator<(const DateTime& lhs, const DateTime& rhs)
+		{
+			return std::tuple<Date, Time>(lhs.date(), lhs.time())
+				   < std::tuple<Date, Time>(rhs.date(), rhs.time());
+		}
+
+		bool operator>(const DateTime& lhs, const DateTime& rhs)
+		{
+			return rhs < lhs;
+		}
+
+		bool operator<=(const DateTime& lhs, const DateTime& rhs)
+		{
+			return !(lhs > rhs);
+		}
+
+		bool operator>=(const DateTime& lhs, const DateTime& rhs)
+		{
+			return !(lhs < rhs);
+		}
+
+		bool operator==(const DateTime& lhs, const DateTime& rhs)
+		{
+			return lhs.date() == rhs.date()
+				   && lhs.time() == rhs.time();
+		}
+
+		bool operator!=(const DateTime& lhs, const DateTime& rhs)
+		{
+			return !(lhs == rhs);
 		}
 	}
 }

@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <chrono>
+#include <tuple>
 #include <errno.h>
 #include <fmt/format.h>
 
@@ -18,7 +19,7 @@ namespace emdl
 	{
 		Time::Time() = default;
 
-		Time::Time(unsigned int hours, unsigned int minutes, double seconds, double timeZone)
+		Time::Time(unsigned int hours, unsigned int minutes, double seconds, int timeZone)
 			: m_hours(hours)
 			, m_minutes(minutes)
 			, m_seconds(seconds)
@@ -55,7 +56,7 @@ namespace emdl
 			}
 		}
 
-		void Time::set(unsigned int hours, unsigned int minutes, double seconds, double timeZone)
+		void Time::set(unsigned int hours, unsigned int minutes, double seconds, int timeZone)
 		{
 			m_hours = hours;
 			m_minutes = minutes;
@@ -78,7 +79,7 @@ namespace emdl
 			m_seconds = seconds;
 		}
 
-		void Time::setTimeZone(double timeZone)
+		void Time::setTimeZone(int timeZone)
 		{
 			m_timeZone = timeZone;
 		}
@@ -98,7 +99,7 @@ namespace emdl
 			return m_seconds;
 		}
 
-		double Time::timeZone() const
+		int Time::timeZone() const
 		{
 			return m_timeZone;
 		}
@@ -126,6 +127,43 @@ namespace emdl
 			time_t tt = system_clock::to_time_t(now);
 			const std::tm t = *std::localtime(&tt);
 			return Time(t.tm_hour, t.tm_min, t.tm_sec + milli);
+		}
+
+		bool operator<(const Time& lhs, const Time& rhs)
+		{
+			double l = (lhs.hours() * 60 + lhs.minutes() - lhs.timeZone()) * 60 + lhs.seconds();
+			double r = (rhs.hours() * 60 + rhs.minutes() - rhs.timeZone()) * 60 + rhs.seconds();
+
+			return l < r;
+		}
+
+		bool operator>(const Time& lhs, const Time& rhs)
+		{
+			return rhs < lhs;
+		}
+
+		bool operator<=(const Time& lhs, const Time& rhs)
+		{
+			return !(lhs > rhs);
+		}
+
+		bool operator>=(const Time& lhs, const Time& rhs)
+		{
+			return !(lhs < rhs);
+		}
+
+		bool operator==(const Time& lhs, const Time& rhs)
+		{
+			const int lm = lhs.hours() * 60 + lhs.minutes() - lhs.timeZone();
+			const int rm = rhs.hours() * 60 + rhs.minutes() - rhs.timeZone();
+
+			return lm == rm
+				   && lhs.seconds() == rhs.seconds();
+		}
+
+		bool operator!=(const Time& lhs, const Time& rhs)
+		{
+			return !(lhs == rhs);
 		}
 	}
 }

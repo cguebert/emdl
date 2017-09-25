@@ -32,5 +32,12 @@ namespace emdl
 		private:
 			unsigned int m_year = 0, m_month = 0, m_day = 0;
 		};
+
+		EMDL_API bool operator<(const Date& lhs, const Date& rhs);
+		EMDL_API bool operator>(const Date& lhs, const Date& rhs);
+		EMDL_API bool operator<=(const Date& lhs, const Date& rhs);
+		EMDL_API bool operator>=(const Date& lhs, const Date& rhs);
+		EMDL_API bool operator==(const Date& lhs, const Date& rhs);
+		EMDL_API bool operator!=(const Date& lhs, const Date& rhs);
 	}
 }
