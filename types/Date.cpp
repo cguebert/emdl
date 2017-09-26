@@ -16,7 +16,7 @@ namespace emdl
 	{
 		Date::Date() = default;
 
-		Date::Date(unsigned int year, unsigned int month, unsigned int day)
+		Date::Date(int year, unsigned int month, unsigned int day)
 			: m_year(year)
 			, m_month(month)
 			, m_day(day)
@@ -40,14 +40,14 @@ namespace emdl
 				throw emdl::Exception("Error parsing a DA value: {}", date);
 		}
 
-		void Date::set(unsigned int year, unsigned int month, unsigned int day)
+		void Date::set(int year, unsigned int month, unsigned int day)
 		{
 			m_year = year;
 			m_month = month;
 			m_day = day;
 		}
 
-		void Date::setYear(unsigned int year)
+		void Date::setYear(int year)
 		{
 			m_year = year;
 		}
@@ -62,7 +62,7 @@ namespace emdl
 			m_day = day;
 		}
 
-		unsigned int Date::year() const
+		int Date::year() const
 		{
 			return m_year;
 		}

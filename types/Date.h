@@ -12,15 +12,15 @@ namespace emdl
 		{
 		public:
 			Date();
-			Date(unsigned int year, unsigned int month, unsigned int day);
+			Date(int year, unsigned int month, unsigned int day);
 			explicit Date(const std::string& date);
 
-			void set(unsigned int year, unsigned int month, unsigned int day);
-			void setYear(unsigned int year);
+			void set(int year, unsigned int month, unsigned int day);
+			void setYear(int year);
 			void setMonth(unsigned int month);
 			void setDay(unsigned int day);
 
-			unsigned int year() const;
+			int year() const;
 			unsigned int month() const;
 			unsigned int day() const;
 
@@ -30,7 +30,8 @@ namespace emdl
 			static Date currentDate();
 
 		private:
-			unsigned int m_year = 0, m_month = 0, m_day = 0;
+			int m_year = 0;
+			unsigned int m_month = 0, m_day = 0;
 		};
 
 		EMDL_API bool operator<(const Date& lhs, const Date& rhs);

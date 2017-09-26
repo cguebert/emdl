@@ -18,7 +18,7 @@ namespace emdl
 	{
 		DateTime::DateTime() = default;
 
-		DateTime::DateTime(unsigned int year, unsigned int month, unsigned int day,
+		DateTime::DateTime(int year, unsigned int month, unsigned int day,
 						   unsigned int hours, unsigned int minutes, double seconds, int timeZone)
 			: m_date(year, month, day)
 			, m_time(hours, minutes, seconds, timeZone)
@@ -74,7 +74,7 @@ namespace emdl
 			set(year, month, day, hours, minutes, seconds, timeZone);
 		}
 
-		void DateTime::set(unsigned int year, unsigned int month, unsigned int day,
+		void DateTime::set(int year, unsigned int month, unsigned int day,
 						   unsigned int hours, unsigned int minutes, double seconds, int timezone)
 		{
 			m_date.set(year, month, day);
