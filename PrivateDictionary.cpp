@@ -11,7 +11,7 @@ namespace
 	{
 		static const PrivateTagsMap tagsMap = [] {
 			PrivateTagsMap tagsMap;
-			const auto tagsList = emdl::registry::getPrivateDictionary();
+			const auto& tagsList = emdl::registry::getPrivateDictionary();
 			for (const auto& entry : tagsList)
 				tagsMap[PrivateTagKey{entry.group, entry.creator, entry.element}] = &entry;
 			return tagsMap;
