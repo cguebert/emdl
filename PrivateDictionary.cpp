@@ -1,4 +1,5 @@
 #include <emdl/PrivateDictionary.h>
+#include <emdl/dataset/DataSetAccessors.h>
 
 #include <map>
 
@@ -35,6 +36,16 @@ namespace emdl
 				return it->second;
 
 			return nullptr;
+		}
+
+		const PrivateDictionaryEntry* getPrivateTag(const DataSet& dataSet, Tag tag)
+		{
+			const std::uint8_t block = tag.element >> 8;
+			emdl::Tag creatorTag{tag.group, block};
+			const auto creator = firstString(dataSet, creatorTag);
+			if (!creator)
+				return nullptr;
+			return getPrivateTag(tag, *creator);
 		}
 	}
 }

@@ -37,9 +37,12 @@ namespace emdl
 
 	using PrivateTags = std::vector<PrivateDictionaryEntry>;
 
+	class DataSet;
+
 	namespace registry
 	{
 		EMDL_API const PrivateTags& getPrivateDictionary();
 		EMDL_API const PrivateDictionaryEntry* getPrivateTag(Tag tag, const std::string& creator);
+		EMDL_API const PrivateDictionaryEntry* getPrivateTag(const DataSet& dataSet, Tag tag); // Will look for the creator and then return the corresponding entry or null
 	}
 }
