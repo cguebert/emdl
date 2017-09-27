@@ -28,9 +28,9 @@ namespace
 	{
 		/* January 01, 2000 */
 		std::tm refDate;
-		std::memset(&refDate, 0, sizeof(refDate)); 
+		std::memset(&refDate, 0, sizeof(refDate));
 		refDate.tm_mday = 1;
-		refDate.tm_year = 2000;
+		refDate.tm_year = 100;
 		m_timeRef = std::mktime(&refDate);
 
 		std::random_device rd;
