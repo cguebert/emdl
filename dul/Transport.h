@@ -61,7 +61,7 @@ namespace emdl
 			boost::optional<Socket> m_socket;
 			boost::asio::strand m_strand;
 
-			PDUHeader m_readHeader;
+			PDUHeader m_readHeader = {};
 			std::string m_readBody;
 
 			bool m_closed = false;

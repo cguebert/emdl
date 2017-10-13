@@ -168,7 +168,7 @@ namespace emdl
 
 		std::string m_peerHost;
 		uint16_t m_peerPort = 104;
-		Status m_status;
+		Status m_status = Status::Idle;
 
 		std::map<uint8_t, TransferSyntax> m_transferSyntaxesById;
 

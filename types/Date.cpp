@@ -28,12 +28,12 @@ namespace emdl
 			auto len = date.size();
 			if (len == 8) // YYYYMMDD
 			{
-				if (sscanf(date.c_str(), "%04u%02u%02u", &m_year, &m_month, &m_day) != 3)
+				if (sscanf(date.c_str(), "%04d%02u%02u", &m_year, &m_month, &m_day) != 3)
 					throw emdl::Exception("Error parsing a DA value: {}", date);
 			}
 			else if (len == 10) // YYYY-MM-DD with any delimiter
 			{
-				if (sscanf(date.c_str(), "%04u%*c%02u%*c%02u", &m_year, &m_month, &m_day) != 3)
+				if (sscanf(date.c_str(), "%04d%*c%02u%*c%02u", &m_year, &m_month, &m_day) != 3)
 					throw emdl::Exception("Error parsing a DA value: {}", date);
 			}
 			else

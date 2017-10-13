@@ -137,7 +137,7 @@ namespace emdl
 			}
 
 		protected:
-			value_type m_value;
+			value_type m_value = {};
 		};
 	}
 }

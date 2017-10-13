@@ -208,7 +208,7 @@ namespace emdl
 				for (unsigned int i = 0; i < nb; ++i)
 					result[i] = read<double>();
 			}
-			else if (vr == VR::FL)
+			else // vr == VR::FL
 			{
 				for (unsigned int i = 0; i < nb; ++i)
 					result[i] = read<float>();

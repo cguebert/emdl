@@ -49,8 +49,6 @@ namespace
 	std::string IdGenerator::seconds()
 	{
 		std::time_t now = std::time(nullptr);
-		std::gmtime(&now);
-
 		const double diff = std::floor(std::difftime(now, m_timeRef));
 		const auto nbSeconds = static_cast<uint32_t>(diff);
 
