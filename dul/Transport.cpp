@@ -132,11 +132,8 @@ namespace emdl
 
 		void Transport::onError(boost::system::error_code ec)
 		{
-			// TODO: add logs!
 			if (!m_closed)
 			{
-				if (ec != boost::asio::error::eof)
-					std::cerr << "Socket error\n";
 				m_closed = true;
 				m_socket.reset();
 
@@ -145,5 +142,5 @@ namespace emdl
 					stateMachine->onTransportClose();
 			}
 		}
-	}
-}
+	} // namespace dul
+} // namespace emdl
