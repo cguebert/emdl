@@ -35,10 +35,10 @@ generate_export_header(${target} EXPORT_FILE_NAME ${export_file} EXPORT_MACRO_NA
 # Include directories
 target_include_directories(${target} 
 	PRIVATE
-	${CMAKE_SOURCE_DIR}/libs
+	${CMAKE_SOURCE_DIR}/src
 	${CMAKE_CURRENT_BINARY_DIR}/include
 	INTERFACE
-	$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/libs> 
+	$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src> 
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include> 
 	$<INSTALL_INTERFACE:include>)
 
@@ -57,9 +57,6 @@ target_compile_options(${target} PRIVATE ${DEFAULT_COMPILE_OPTIONS})
 
 # Linker options
 target_link_libraries(${target} PRIVATE ${DEFAULT_LINKER_OPTIONS})
-
-# Project options
-set_target_properties(${target} PROPERTIES FOLDER "Libraries")
 
 if(WIN32)
 	# We have to set _WIN32_WINNT for Asio
@@ -92,7 +89,7 @@ install(TARGETS ${target}
 
 # Header files
 install(DIRECTORY
-	${CMAKE_CURRENT_SOURCE_DIR} DESTINATION ${INSTALL_INCLUDE} 
+	${CMAKE_CURRENT_SOURCE_DIR}/emdl DESTINATION ${INSTALL_INCLUDE} 
 	COMPONENT dev
 	FILES_MATCHING PATTERN "*.h"
 )
@@ -109,9 +106,3 @@ install(EXPORT ${target}-export
 	DESTINATION ${INSTALL_CMAKE}/${target}
 	COMPONENT   dev
 )
-
-# Dlls for the package
-if(WIN32 AND BUILD_SHARED_LIBS)
-	install(TARGETS ${target} RUNTIME DESTINATION debug   CONFIGURATIONS Debug   COMPONENT runtime)
-	install(TARGETS ${target} RUNTIME DESTINATION release CONFIGURATIONS Release COMPONENT runtime)
-endif()
