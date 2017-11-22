@@ -10,3 +10,5 @@ It aims to offer a few improvements over Odil:
 - Fewer strings manipulation in favor of more enumerations
 - Faster access to data sets elements, and in fewer function calls (with respect to the user)
 - Greater use of templates, use of `boost::variant` and `boost::optional`
+- Asynchronous networking
+- Support for C-Cancel
